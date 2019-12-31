@@ -22,7 +22,6 @@
     <PackageReference Include="Arbor.KVConfiguration.Urns" Version="0.20.0-build.1577577006" />
     <PackageReference Include="Arbor.KVConfiguration.UserConfiguration" Version="0.20.0-build.1577577006" />
     <PackageReference Include="Arbor.ModelBinding" Version="0.7.2" />
-    <PackageReference Include="Arbor.Tooler" Version="0.6.5" />
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
     <PackageReference Include="Marten.Analyzers" Version="1.5.0" />
     <PackageReference Include="MediatR" Version="7.0.0" />
@@ -54,7 +53,6 @@
     <PackageReference Include="Arbor.KVConfiguration.Urns" Version="0.20.0-build.1577577006" />
     <PackageReference Include="Arbor.KVConfiguration.UserConfiguration" Version="0.20.0-build.1577577006" />
     <PackageReference Include="Arbor.ModelBinding" Version="0.7.2" />
-    <PackageReference Include="Arbor.Tooler" Version="0.6.5" />
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
     <PackageReference Include="Marten.Analyzers" Version="1.5.0" />
     <PackageReference Include="MediatR" Version="7.0.0" />
