@@ -1,0 +1,9 @@
+{
+    "version": "1.0",
+    "keys": [
+      {
+        "key": "urn:sample:bound:key:instance2:name",
+        "value": "Test2"
+      }
+    ]
+}

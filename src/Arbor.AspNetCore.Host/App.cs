@@ -152,7 +152,7 @@ namespace Arbor.AspNetCore.Host
 
             configurationInstanceHolder.AddInstance(configurationInstanceHolder);
 
-            foreach (object instance in instances.Where(i => i is {}))
+            foreach (object instance in instances.Where(item => item is {}))
             {
                 configurationInstanceHolder.AddInstance(instance);
             }
@@ -449,6 +449,7 @@ namespace Arbor.AspNetCore.Host
             {
                 throw new ArgumentNullException(nameof(args));
             }
+
             bool runAsService = args.Any(arg => arg.Equals(ApplicationConstants.RunAsService, StringComparison.OrdinalIgnoreCase));
 
             try

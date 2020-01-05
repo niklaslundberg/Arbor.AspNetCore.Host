@@ -3,7 +3,6 @@ using System.IO;
 using System.Linq;
 using Arbor.App.Extensions;
 using Arbor.App.Extensions.Application;
-using Arbor.App.Extensions.Validation;
 using Arbor.KVConfiguration.JsonConfiguration;
 using Arbor.KVConfiguration.Urns;
 using JetBrains.Annotations;
@@ -61,12 +60,9 @@ namespace Arbor.AspNetCore.Host.Configuration
 
                 foreach (var instance in allInstances)
                 {
-                    if (instance.Value is IValidationObject validationObject)
+                    if (instance is { })
                     {
-                        if (validationObject.IsValid)
-                        {
-                            _configurationHolder.Add(instance);
-                        }
+                        _configurationHolder.Add(instance);
                     }
                 }
             }
