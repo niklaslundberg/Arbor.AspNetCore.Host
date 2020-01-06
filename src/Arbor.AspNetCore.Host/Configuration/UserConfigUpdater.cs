@@ -41,6 +41,26 @@ namespace Arbor.AspNetCore.Host.Configuration
             }
         }
 
+        public void Dispose()
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
+
+            if (_fileSystemWatcher != null)
+            {
+                _fileSystemWatcher.EnableRaisingEvents = false;
+                _fileSystemWatcher.Changed -= WatcherOnChanged;
+                _fileSystemWatcher.Created -= WatcherOnChanged;
+                _fileSystemWatcher.Renamed -= WatcherOnChanged;
+                _fileSystemWatcher.Dispose();
+            }
+
+            _fileSystemWatcher = null;
+            _isDisposed = true;
+        }
+
         private void WatcherOnChanged(object sender, FileSystemEventArgs fileSystemEventArgs)
         {
             if (!File.Exists(_fileName))
@@ -79,26 +99,6 @@ namespace Arbor.AspNetCore.Host.Configuration
             {
                 _fileSystemWatcher.EnableRaisingEvents = true;
             }
-        }
-
-        public void Dispose()
-        {
-            if (_isDisposed)
-            {
-                return;
-            }
-
-            if (_fileSystemWatcher != null)
-            {
-                _fileSystemWatcher.EnableRaisingEvents = false;
-                _fileSystemWatcher.Changed -= WatcherOnChanged;
-                _fileSystemWatcher.Created -= WatcherOnChanged;
-                _fileSystemWatcher.Renamed -= WatcherOnChanged;
-                _fileSystemWatcher.Dispose();
-            }
-
-            _fileSystemWatcher = null;
-            _isDisposed = true;
         }
     }
 }

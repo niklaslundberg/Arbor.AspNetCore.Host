@@ -27,7 +27,7 @@ namespace Arbor.AspNetCore.Host.Application
                 throw new ArgumentNullException(nameof(environmentConfiguration));
             }
 
-            string proxiesValue = _keyValueConfiguration[ApplicationConstants.ProxyAddresses].WithDefault("");
+            string proxiesValue = _keyValueConfiguration[ApplicationConstants.ProxyAddresses].WithDefault("")!;
 
             var proxies = proxiesValue.Split(",", StringSplitOptions.RemoveEmptyEntries)
                 .Select(ipString =>

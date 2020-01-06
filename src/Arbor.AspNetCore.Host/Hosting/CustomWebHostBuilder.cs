@@ -24,7 +24,7 @@ namespace Arbor.AspNetCore.Host.Hosting
             ServiceProviderHolder serviceProviderHolder,
             ILogger logger,
             string[] commandLineArgs,
-            Action<IServiceCollection> onRegistration = null)
+            Action<IServiceCollection>? onRegistration = null)
         {
             string contentRoot = environmentConfiguration?.ContentBasePath ?? Directory.GetCurrentDirectory();
 

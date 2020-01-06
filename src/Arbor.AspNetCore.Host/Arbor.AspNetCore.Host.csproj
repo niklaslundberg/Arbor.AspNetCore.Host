@@ -43,7 +43,8 @@
     <PackageReference Include="Arbor.KVConfiguration.DependencyInjection" Version="0.20.0-build.1578316893" />
     <PackageReference Include="Arbor.KVConfiguration.Core" Version="0.20.0-build.1578316893" />
     <PackageReference Include="Arbor.KVConfiguration.JsonConfiguration" Version="0.20.0-build.1578316893" />
-    <PackageReference Include="Arbor.KVConfiguration.Microsoft.Extensions.Configuration.Urns" Version="0.20.0-build.1578316893" />
+    <PackageReference Include="Arbor.KVConfiguration.Microsoft.Extensions.Configuration.Urns"
+                      Version="0.20.0-build.1578316893" />
     <PackageReference Include="Arbor.KVConfiguration.Urns" Version="0.20.0-build.1578316893" />
     <PackageReference Include="Arbor.KVConfiguration.UserConfiguration" Version="0.20.0-build.1578316893" />
     <PackageReference Include="Arbor.ModelBinding" Version="0.7.2" />

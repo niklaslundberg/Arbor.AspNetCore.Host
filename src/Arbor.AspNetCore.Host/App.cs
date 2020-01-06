@@ -57,14 +57,14 @@ namespace Arbor.AspNetCore.Host
 
         public CancellationTokenSource CancellationTokenSource { get; }
 
-        public ILogger? Logger { get; private set; }
+        public ILogger Logger { get; private set; }
 
         public MultiSourceKeyValueConfiguration Configuration { get; private set; }
 
         public ConfigurationInstanceHolder ConfigurationInstanceHolder { get; }
 
         [PublicAPI]
-        public IHostBuilder? HostBuilder { get; private set; }
+        public IHostBuilder HostBuilder { get; private set; }
 
         public IHost? Host { get; private set; }
 
@@ -114,10 +114,12 @@ namespace Arbor.AspNetCore.Host
                     _instanceId);
             }
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Configuration = null;
             Logger = null;
             Host = null;
             HostBuilder = null;
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             _disposed = true;
             _disposing = false;
         }
@@ -136,7 +138,8 @@ namespace Arbor.AspNetCore.Host
                     environmentVariables,
                     scanAssemblies);
 
-            ConfigurationInstanceHolder configurationInstanceHolder = GetConfigurationRegistrations(startupConfiguration, scanAssemblies);
+            ConfigurationInstanceHolder configurationInstanceHolder =
+                GetConfigurationRegistrations(startupConfiguration, scanAssemblies);
 
             configurationInstanceHolder.AddInstance(configurationInstanceHolder);
 
@@ -154,6 +157,11 @@ namespace Arbor.AspNetCore.Host
                 new ApplicationPaths();
 
             AppPathHelper.SetApplicationPaths(paths, commandLineArgs);
+
+            if (paths.BasePath is null)
+            {
+                throw new InvalidOperationException("Base path is not set");
+            }
 
             var startupLoggerConfigurationHandlers = ApplicationAssemblies.FilteredAssemblies()
                 .GetLoadablePublicConcreteTypesImplementing<IStartupLoggerConfigurationHandler>()
@@ -187,7 +195,8 @@ namespace Arbor.AspNetCore.Host
                 throw;
             }
 
-            ConfigurationInstanceHolder appInstanceHolder = GetConfigurationRegistrations(appConfiguration, scanAssemblies);
+            ConfigurationInstanceHolder appInstanceHolder =
+                GetConfigurationRegistrations(appConfiguration, scanAssemblies);
 
             foreach (var registeredType in appInstanceHolder.RegisteredTypes)
             {
@@ -197,7 +206,8 @@ namespace Arbor.AspNetCore.Host
                 {
                     if (configurationInstanceHolder.Get(registeredType, appInstance.Key) is var item && item is {})
                     {
-                        configurationInstanceHolder.TryRemove(appInstance.Key, appInstance.Value.GetType(), out object? _);
+                        configurationInstanceHolder.TryRemove(appInstance.Key, appInstance.Value.GetType(),
+                            out object? _);
                     }
 
                     configurationInstanceHolder.Add(new NamedInstance<object>(appInstance.Value, appInstance.Key));
@@ -222,10 +232,10 @@ namespace Arbor.AspNetCore.Host
 
                 startupLogger.Verbose("Log level: {Level}", loggingLevelSwitch.MinimumLevel);
 
-                var loggerConfigurationHandlers = ApplicationAssemblies.FilteredAssemblies()
+                IEnumerable<ILoggerConfigurationHandler> loggerConfigurationHandlers = ApplicationAssemblies.FilteredAssemblies()
                     .GetLoadablePublicConcreteTypesImplementing<ILoggerConfigurationHandler>()
                     .Select(type => configurationInstanceHolder.Create(type) as ILoggerConfigurationHandler)
-                    .Where(item => item != null);
+                    .Where(item => item != null)!;
 
                 ILogger appLogger;
                 try
@@ -259,7 +269,7 @@ namespace Arbor.AspNetCore.Host
                     EnvironmentName = environmentVariables.ValueOrDefault(ApplicationConstants.AspNetEnvironment)
                 };
 
-                ServiceCollection serviceCollection = new ServiceCollection();
+                var serviceCollection = new ServiceCollection();
 
                 try
                 {
@@ -302,7 +312,7 @@ namespace Arbor.AspNetCore.Host
                     }
                     else
                     {
-                        var instance = all.Single().Value;
+                        object instance = all.Single().Value;
 
                         foreach (var @interface in interfaces)
                         {
@@ -314,8 +324,8 @@ namespace Arbor.AspNetCore.Host
                     }
                 }
 
-                var serviceProviderModules = scanAssemblies.
-                    GetLoadablePublicConcreteTypesImplementing<IServiceProviderModule>();
+                var serviceProviderModules =
+                    scanAssemblies.GetLoadablePublicConcreteTypesImplementing<IServiceProviderModule>();
 
                 var serviceProviderHolder = new ServiceProviderHolder(serviceCollection.BuildServiceProvider(),
                     serviceCollection);
@@ -418,16 +428,16 @@ namespace Arbor.AspNetCore.Host
                 .Where(type => type.IsPublicConcreteTypeImplementing<IModule>())
                 .ToImmutableArray();
 
-            var modules = moduleTypes
+            ImmutableArray<IModule> modules = moduleTypes
                 .Select(moduleType =>
                     holder.Create(moduleType) as IModule)
                 .Where(instance => instance is {})
-                .ToImmutableArray();
+                .ToImmutableArray()!;
 
             return modules;
         }
 
-        private static string GetBaseDirectoryFile(string basePath, string fileName)
+        private static string GetBaseDirectoryFile(string basePath, string? fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName))
             {
@@ -487,7 +497,8 @@ namespace Arbor.AspNetCore.Host
                 throw new ArgumentNullException(nameof(args));
             }
 
-            bool runAsService = args.Any(arg => arg.Equals(ApplicationConstants.RunAsService, StringComparison.OrdinalIgnoreCase));
+            bool runAsService = args.Any(arg =>
+                arg.Equals(ApplicationConstants.RunAsService, StringComparison.OrdinalIgnoreCase));
 
             try
             {
