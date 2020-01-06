@@ -131,24 +131,12 @@ namespace Arbor.AspNetCore.Host
             var scanAssemblies = ApplicationAssemblies.FilteredAssemblies().ToArray();
 
             MultiSourceKeyValueConfiguration startupConfiguration =
-                ConfigurationInitialization.InitializeStartupConfiguration(commandLineArgs, environmentVariables,
+                ConfigurationInitialization.InitializeStartupConfiguration(
+                    commandLineArgs,
+                    environmentVariables,
                     scanAssemblies);
 
-            ConfigurationRegistrations startupRegistrations = startupConfiguration.ScanRegistrations(scanAssemblies);
-
-            if (startupRegistrations.UrnTypeRegistrations
-                .Any(registrationErrors => !registrationErrors.ConfigurationRegistrationErrors.IsDefaultOrEmpty))
-            {
-                var errors = startupRegistrations.UrnTypeRegistrations
-                    .Where(registrationErrors => registrationErrors.ConfigurationRegistrationErrors.Length > 0)
-                    .SelectMany(registrationErrors => registrationErrors.ConfigurationRegistrationErrors)
-                    .Select(registrationError => registrationError.ErrorMessage);
-
-                throw new InvalidOperationException(
-                    $"Error {string.Join(Environment.NewLine, errors)}"); // review exception
-            }
-
-            ConfigurationInstanceHolder configurationInstanceHolder = startupRegistrations.CreateHolder();
+            ConfigurationInstanceHolder configurationInstanceHolder = GetConfigurationRegistrations(startupConfiguration, scanAssemblies);
 
             configurationInstanceHolder.AddInstance(configurationInstanceHolder);
 
@@ -179,10 +167,10 @@ namespace Arbor.AspNetCore.Host
                     environmentVariables,
                     startupLoggerConfigurationHandlers);
 
-            MultiSourceKeyValueConfiguration configuration;
+            MultiSourceKeyValueConfiguration appConfiguration;
             try
             {
-                configuration =
+                appConfiguration =
                     ConfigurationInitialization.InitializeConfiguration(
                         file => GetBaseDirectoryFile(paths.BasePath, file),
                         paths.ContentBasePath,
@@ -191,7 +179,7 @@ namespace Arbor.AspNetCore.Host
                         environmentVariables,
                         startupConfiguration);
 
-                configurationInstanceHolder.AddInstance(configuration);
+                configurationInstanceHolder.AddInstance(appConfiguration);
             }
             catch (Exception ex) when (!ex.IsFatal())
             {
@@ -199,11 +187,28 @@ namespace Arbor.AspNetCore.Host
                 throw;
             }
 
+            ConfigurationInstanceHolder appInstanceHolder = GetConfigurationRegistrations(appConfiguration, scanAssemblies);
+
+            foreach (var registeredType in appInstanceHolder.RegisteredTypes)
+            {
+                var appInstances = appInstanceHolder.GetInstances(registeredType);
+
+                foreach (var appInstance in appInstances)
+                {
+                    if (configurationInstanceHolder.Get(registeredType, appInstance.Key) is var item && item is {})
+                    {
+                        configurationInstanceHolder.TryRemove(appInstance.Key, appInstance.Value.GetType(), out object? _);
+                    }
+
+                    configurationInstanceHolder.Add(new NamedInstance<object>(appInstance.Value, appInstance.Key));
+                }
+            }
+
             startupLogger.Information("Configuration done using chain {Chain}",
-                configuration.SourceChain);
+                appConfiguration.SourceChain);
 
             startupLogger.Verbose("Configuration values {KeyValues}",
-                configuration.AllValues.Select(pair =>
+                appConfiguration.AllValues.Select(pair =>
                     $"\"{pair.Key}\": \"{pair.Value.MakeAnonymous(pair.Key, $"{ApplicationStringExtensions.DefaultAnonymousKeyWords.ToArray()}\"")}"));
 
             App<T> app;
@@ -211,9 +216,9 @@ namespace Arbor.AspNetCore.Host
             {
                 startupLogger.Verbose("Trying to create application");
 
-                TempPathHelper.SetTempPath(configuration, startupLogger);
+                TempPathHelper.SetTempPath(appConfiguration, startupLogger);
 
-                SetLoggingLevelSwitch(loggingLevelSwitch, configuration);
+                SetLoggingLevelSwitch(loggingLevelSwitch, appConfiguration);
 
                 startupLogger.Verbose("Log level: {Level}", loggingLevelSwitch.MinimumLevel);
 
@@ -228,7 +233,7 @@ namespace Arbor.AspNetCore.Host
                     startupLogger.Verbose("Creating application logger");
                     appLogger =
                         SerilogApiInitialization.InitializeAppLogging(
-                            configuration,
+                            appConfiguration,
                             startupLogger,
                             loggerConfigurationHandlers,
                             loggingLevelSwitch);
@@ -273,30 +278,40 @@ namespace Arbor.AspNetCore.Host
                     throw;
                 }
 
-                configurationInstanceHolder.AddInstance(new ApplicationEnvironmentConfigurator(configuration));
+                configurationInstanceHolder.AddInstance(new ApplicationEnvironmentConfigurator(appConfiguration));
 
                 EnvironmentConfigurator.ConfigureEnvironment(configurationInstanceHolder);
 
                 foreach (Type registeredType in configurationInstanceHolder.RegisteredTypes)
                 {
                     var interfaces = registeredType.GetInterfaces();
-
                     var all = configurationInstanceHolder.GetInstances(registeredType);
 
                     if (all.Count > 1)
                     {
+                        foreach (var item in all)
+                        {
+                            foreach (var @interface in interfaces)
+                            {
+                                serviceCollection.AddSingleton(@interface, context => item.Value);
+                            }
 
+                            var serviceType = item.Value.GetType();
+                            serviceCollection.AddSingleton(serviceType, item.Value);
+                        }
                     }
-
-                    var instance = all.Single().Value;
-
-                    foreach (var @interface in interfaces)
+                    else
                     {
-                        serviceCollection.AddSingleton(@interface, context => instance);
-                    }
+                        var instance = all.Single().Value;
 
-                    var serviceType = instance.GetType();
-                    serviceCollection.AddSingleton(serviceType, instance);
+                        foreach (var @interface in interfaces)
+                        {
+                            serviceCollection.AddSingleton(@interface, context => instance);
+                        }
+
+                        var serviceType = instance.GetType();
+                        serviceCollection.AddSingleton(serviceType, instance);
+                    }
                 }
 
                 var serviceProviderModules = scanAssemblies.
@@ -321,7 +336,7 @@ namespace Arbor.AspNetCore.Host
                 }
 
                 var webHostBuilder = CustomWebHostBuilder<T>.GetWebHostBuilder(environmentConfiguration,
-                    configuration,
+                    appConfiguration,
                     serviceProviderHolder,
                     appLogger,
                     commandLineArgs);
@@ -330,7 +345,7 @@ namespace Arbor.AspNetCore.Host
                     webHostBuilder,
                     cancellationTokenSource,
                     appLogger,
-                    configuration,
+                    appConfiguration,
                     configurationInstanceHolder);
             }
             catch (Exception ex)
@@ -347,6 +362,28 @@ namespace Arbor.AspNetCore.Host
             }
 
             return Task.FromResult(app);
+        }
+
+        private static ConfigurationInstanceHolder GetConfigurationRegistrations(
+            MultiSourceKeyValueConfiguration startupConfiguration,
+            Assembly[] scanAssemblies)
+        {
+            ConfigurationRegistrations startupRegistrations = startupConfiguration.ScanRegistrations(scanAssemblies);
+
+            if (startupRegistrations.UrnTypeRegistrations
+                .Any(registrationErrors => !registrationErrors.ConfigurationRegistrationErrors.IsDefaultOrEmpty))
+            {
+                var errors = startupRegistrations.UrnTypeRegistrations
+                    .Where(registrationErrors => registrationErrors.ConfigurationRegistrationErrors.Length > 0)
+                    .SelectMany(registrationErrors => registrationErrors.ConfigurationRegistrationErrors)
+                    .Select(registrationError => registrationError.ErrorMessage);
+
+                throw new InvalidOperationException(
+                    $"Error {string.Join(Environment.NewLine, errors)}"); // review exception
+            }
+
+            ConfigurationInstanceHolder configurationInstanceHolder = startupRegistrations.CreateHolder();
+            return configurationInstanceHolder;
         }
 
         private static void LogCommandLineArgs(string[] commandLineArgs, ILogger appLogger)
