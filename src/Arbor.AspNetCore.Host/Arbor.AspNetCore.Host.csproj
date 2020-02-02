@@ -44,7 +44,6 @@
     <PackageReference Include="Arbor.KVConfiguration.Urns" Version="0.20.0" />
     <PackageReference Include="Arbor.KVConfiguration.UserConfiguration" Version="0.20.0" />
     <PackageReference Include="Arbor.ModelBinding" Version="0.7.2" />
-    <PackageReference Include="Serilog.AspNetCore" Version="3.2.0" />
 
   </ItemGroup>
 
