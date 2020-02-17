@@ -55,6 +55,13 @@ namespace Arbor.AspNetCore.Host.Hosting
                     hostingContext.Configuration =
                         new ConfigurationWrapper((IConfigurationRoot)hostingContext.Configuration,
                             serviceProviderHolder);
+
+                    string applicationName = configuration[HostConfigurationConstants.ApplicationName];
+
+                    if (!string.IsNullOrWhiteSpace(applicationName))
+                    {
+                        hostingContext.HostingEnvironment.ApplicationName = applicationName;
+                    }
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

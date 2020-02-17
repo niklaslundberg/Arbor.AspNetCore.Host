@@ -4,6 +4,10 @@
     {
       "key": "urn:sample:bound:key:instance2:name",
       "value": "Test2"
+    },
+    {
+      "key": "urn:arbor:app:web:application-name",
+      "value": "Arbor.AspNetCore.Host.Sample"
     }
   ]
 }
