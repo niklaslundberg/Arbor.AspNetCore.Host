@@ -19,7 +19,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Global", "Global", "{D96A78
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host", "src\Arbor.AspNetCore.Host\Arbor.AspNetCore.Host.csproj", "{5F802DF9-C5B9-43EC-9030-0437F6F58954}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arbor.AspNetCore.Host.Sample", "Arbor.AspNetCore.Host.Sample\Arbor.AspNetCore.Host.Sample.csproj", "{F80FBA6A-83C7-45C0-AAE9-6C62EB8F43B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host.Sample", "Arbor.AspNetCore.Host.Sample\Arbor.AspNetCore.Host.Sample.csproj", "{F80FBA6A-83C7-45C0-AAE9-6C62EB8F43B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arbor.AspNetCore.Host.Tests", "Arbor.AspNetCore.Host.Tests\Arbor.AspNetCore.Host.Tests.csproj", "{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,18 @@ Global
 		{F80FBA6A-83C7-45C0-AAE9-6C62EB8F43B8}.Release|x64.Build.0 = Release|Any CPU
 		{F80FBA6A-83C7-45C0-AAE9-6C62EB8F43B8}.Release|x86.ActiveCfg = Release|Any CPU
 		{F80FBA6A-83C7-45C0-AAE9-6C62EB8F43B8}.Release|x86.Build.0 = Release|Any CPU
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}.Debug|x64.Build.0 = Debug|Any CPU
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}.Debug|x86.Build.0 = Debug|Any CPU
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}.Release|x64.ActiveCfg = Release|Any CPU
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}.Release|x64.Build.0 = Release|Any CPU
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}.Release|x86.ActiveCfg = Release|Any CPU
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
