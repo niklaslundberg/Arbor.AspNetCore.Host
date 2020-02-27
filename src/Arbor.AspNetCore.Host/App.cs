@@ -34,7 +34,7 @@ namespace Arbor.AspNetCore.Host
         private bool _disposing;
 
         public App(
-            [NotNull] IHostBuilder webHost,
+            [NotNull] IHostBuilder hostBuilder,
             [NotNull] CancellationTokenSource cancellationTokenSource,
             [NotNull] ILogger appLogger,
             MultiSourceKeyValueConfiguration configuration,
@@ -45,7 +45,7 @@ namespace Arbor.AspNetCore.Host
             Logger = appLogger ?? throw new ArgumentNullException(nameof(appLogger));
             Configuration = configuration;
             ConfigurationInstanceHolder = configurationInstanceHolder;
-            HostBuilder = webHost ?? throw new ArgumentNullException(nameof(webHost));
+            HostBuilder = hostBuilder ?? throw new ArgumentNullException(nameof(hostBuilder));
             _instanceId = Guid.NewGuid();
             ApplicationName = configuration.GetApplicationName();
             AppInstance = ApplicationName + " " + _instanceId;
@@ -345,14 +345,14 @@ namespace Arbor.AspNetCore.Host
                     }
                 }
 
-                var webHostBuilder = CustomWebHostBuilder<T>.GetWebHostBuilder(environmentConfiguration,
+                var hostBuilder = CustomHostBuilder<T>.GetHostBuilder(environmentConfiguration,
                     appConfiguration,
                     serviceProviderHolder,
                     appLogger,
                     commandLineArgs);
 
                 app = new App<T>(
-                    webHostBuilder,
+                    hostBuilder,
                     cancellationTokenSource,
                     appLogger,
                     appConfiguration,

@@ -17,9 +17,9 @@ using ILogger = Serilog.ILogger;
 
 namespace Arbor.AspNetCore.Host.Hosting
 {
-    public static class CustomWebHostBuilder<T> where T : class
+    public static class CustomHostBuilder<T> where T : class
     {
-        public static IHostBuilder GetWebHostBuilder(EnvironmentConfiguration environmentConfiguration,
+        public static IHostBuilder GetHostBuilder(EnvironmentConfiguration environmentConfiguration,
             IKeyValueConfiguration configuration,
             ServiceProviderHolder serviceProviderHolder,
             ILogger logger,
@@ -40,6 +40,7 @@ namespace Arbor.AspNetCore.Host.Hosting
                 {
                     foreach (var serviceDescriptor in serviceProviderHolder.ServiceCollection)
                     {
+                        logger.Verbose("Adding service descriptor {Descriptor}", serviceDescriptor.GetDescription());
                         services.Add(serviceDescriptor);
                     }
 
@@ -62,14 +63,18 @@ namespace Arbor.AspNetCore.Host.Hosting
                     {
                         hostingContext.HostingEnvironment.ApplicationName = applicationName;
                     }
-                })
-                .ConfigureWebHostDefaults(webBuilder =>
+                });
+
+            if (environmentConfiguration?.HttpEnabled ?? true)
+            {
+                hostBuilder.ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder
                         .UseKestrel(options =>
                         {
                             if (kestrelServerOptions.Contains(options))
                             {
+                                logger.Debug("Kestrel options has already been configured");
                                 return;
                             }
 
@@ -77,6 +82,8 @@ namespace Arbor.AspNetCore.Host.Hosting
                             {
                                 if (environmentConfiguration.UseExplicitPorts)
                                 {
+                                    logger.Debug("Environment configuration is set to use explicit ports");
+
                                     if (environmentConfiguration.HttpPort.HasValue)
                                     {
                                         logger.Information("Listening on http port {Port}",
@@ -103,6 +110,10 @@ namespace Arbor.AspNetCore.Host.Hosting
                                     }
                                 }
                             }
+                            else
+                            {
+                                logger.Debug("Environment configuration is not set, using defaults");
+                            }
 
                             kestrelServerOptions.Add(options);
                         })
@@ -115,15 +126,16 @@ namespace Arbor.AspNetCore.Host.Hosting
                         })
                         .UseStartup<T>();
 
-                    if (environmentConfiguration != null)
+                    if (environmentConfiguration?.EnvironmentName is {})
                     {
-                        if (environmentConfiguration.EnvironmentName.HasValue())
-                        {
-                            webBuilder.UseEnvironment(environmentConfiguration.EnvironmentName);
-                        }
+                        webBuilder.UseEnvironment(environmentConfiguration.EnvironmentName);
                     }
                 });
-
+            }
+            else
+            {
+                logger.Debug("Environment has http-enabled explicitly set to false, http server will not be available");
+            }
 
             var webHostBuilderWrapper = new HostBuilderWrapper(hostBuilder);
 
