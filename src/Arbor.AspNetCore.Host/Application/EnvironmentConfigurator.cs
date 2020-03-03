@@ -18,12 +18,18 @@ namespace Arbor.AspNetCore.Host.Application
             var configureEnvironments = configurationInstanceHolder.CreateInstances<IConfigureEnvironment>();
             var environmentConfiguration = configurationInstanceHolder.Get<EnvironmentConfiguration>();
 
-            if (environmentConfiguration is { })
+            if (environmentConfiguration is null)
             {
-                foreach (var configureEnvironment in configureEnvironments)
-                {
-                    configureEnvironment.Configure(environmentConfiguration);
-                }
+                var newConfiguration = new EnvironmentConfiguration();
+                environmentConfiguration = newConfiguration;
+
+                configurationInstanceHolder.Add(
+                    new NamedInstance<EnvironmentConfiguration>(newConfiguration, "default"));
+            }
+
+            foreach (var configureEnvironment in configureEnvironments)
+            {
+                configureEnvironment.Configure(environmentConfiguration);
             }
         }
     }

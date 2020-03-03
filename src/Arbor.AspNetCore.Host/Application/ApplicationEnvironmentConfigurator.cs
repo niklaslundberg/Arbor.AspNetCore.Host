@@ -11,6 +11,7 @@ using JetBrains.Annotations;
 
 namespace Arbor.AspNetCore.Host.Application
 {
+    [RegistrationOrder(0)]
     [UsedImplicitly]
     public class ApplicationEnvironmentConfigurator : IConfigureEnvironment
     {

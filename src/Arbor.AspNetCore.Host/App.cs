@@ -288,7 +288,19 @@ namespace Arbor.AspNetCore.Host
                     throw;
                 }
 
-                configurationInstanceHolder.AddInstance(new ApplicationEnvironmentConfigurator(appConfiguration));
+                var environmentConfigurators =
+                    scanAssemblies.GetLoadablePublicConcreteTypesImplementing<IConfigureEnvironment>()
+                        .Select(type => configurationInstanceHolder.Create(type) as IConfigureEnvironment)
+                        .Where(item => item != null)
+                        .ToImmutableArray();
+
+                var sorted = environmentConfigurators.OrderBy(configurator => configurator.GetRegistrationOrder(int.MaxValue)).ToImmutableArray();
+
+                foreach (var configurator in sorted)
+                {
+                    configurationInstanceHolder.Add(
+                        new NamedInstance<IConfigureEnvironment>(configurator, configurator.GetType().Name));
+                }
 
                 EnvironmentConfigurator.ConfigureEnvironment(configurationInstanceHolder);
 
