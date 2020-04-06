@@ -527,6 +527,13 @@ namespace Arbor.AspNetCore.Host
                 throw new InvalidOperationException($"Could not build web host in {AppInstance}", ex);
             }
 
+            var preStartModules = Host.Services.GetServices<IPreStartModule>().ToArray();
+
+            foreach (var preStartModule in preStartModules)
+            {
+                await preStartModule.RunAsync(CancellationToken.None);
+            }
+
             if (runAsService)
             {
                 Logger.Information("Starting {AppInstance} as a Windows Service", AppInstance);

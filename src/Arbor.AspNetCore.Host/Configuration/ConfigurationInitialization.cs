@@ -168,8 +168,8 @@ namespace Arbor.AspNetCore.Host.Configuration
 
             const char variableAssignmentCharacter = '=';
 
-            foreach (string arg in args.Where(a =>
-                a.Count(c => c == variableAssignmentCharacter) == 1 && a.Length >= 3))
+            foreach (string arg in args.Where(currentArg =>
+                currentArg.Count(currentChar => currentChar == variableAssignmentCharacter) == 1 && currentArg.Length >= 3))
             {
                 string[] parts = arg.Split(variableAssignmentCharacter, StringSplitOptions.RemoveEmptyEntries);
 
@@ -193,8 +193,6 @@ namespace Arbor.AspNetCore.Host.Configuration
             Func<string, string>? basePath,
             IReadOnlyCollection<string>? args,
             IReadOnlyDictionary<string, string>? environmentVariables)
-
-
         {
             if (basePath is null)
             {
