@@ -3,7 +3,7 @@ using Arbor.Primitives;
 
 namespace Arbor.AspNetCore.Host.Sample
 {
-    internal class Program
+    internal static class Program
     {
         private static async Task<int> Main(string[] args)
         {

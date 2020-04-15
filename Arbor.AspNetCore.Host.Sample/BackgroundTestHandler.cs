@@ -47,9 +47,6 @@ namespace Arbor.AspNetCore.Host.Sample
             }
         }
 
-        public void Test()
-        {
-            _logger.Information("Test was called on background service");
-        }
+        public void Test() => _logger.Information("Test was called on background service");
     }
 }

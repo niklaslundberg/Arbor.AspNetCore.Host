@@ -10,7 +10,7 @@ namespace Arbor.AspNetCore.Host.Application
     {
         public static void ConfigureEnvironment([NotNull] ConfigurationInstanceHolder configurationInstanceHolder)
         {
-            if (configurationInstanceHolder == null)
+            if (configurationInstanceHolder is null)
             {
                 throw new ArgumentNullException(nameof(configurationInstanceHolder));
             }

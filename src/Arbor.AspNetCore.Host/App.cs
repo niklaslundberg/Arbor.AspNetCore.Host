@@ -75,11 +75,8 @@ namespace Arbor.AspNetCore.Host
                 return;
             }
 
-            if (!_disposing)
-            {
-                Stop();
-                _disposing = true;
-            }
+            Stop();
+            _disposing = true;
 
             Logger?.Debug("Disposing application {Application} {Instance}",
                 ApplicationName,
@@ -166,7 +163,7 @@ namespace Arbor.AspNetCore.Host
             var startupLoggerConfigurationHandlers = ApplicationAssemblies.FilteredAssemblies()
                 .GetLoadablePublicConcreteTypesImplementing<IStartupLoggerConfigurationHandler>()
                 .Select(type => configurationInstanceHolder.Create(type) as IStartupLoggerConfigurationHandler)
-                .Where(item => item != null)
+                .Where(item => item is {})
                 .ToImmutableArray();
 
             var startupLogger =
@@ -235,7 +232,7 @@ namespace Arbor.AspNetCore.Host
                 IEnumerable<ILoggerConfigurationHandler> loggerConfigurationHandlers = ApplicationAssemblies.FilteredAssemblies()
                     .GetLoadablePublicConcreteTypesImplementing<ILoggerConfigurationHandler>()
                     .Select(type => configurationInstanceHolder.Create(type) as ILoggerConfigurationHandler)
-                    .Where(item => item != null)!;
+                    .Where(item => item is {})!;
 
                 ILogger appLogger;
                 try
@@ -291,7 +288,8 @@ namespace Arbor.AspNetCore.Host
                 var environmentConfigurators =
                     scanAssemblies.GetLoadablePublicConcreteTypesImplementing<IConfigureEnvironment>()
                         .Select(type => configurationInstanceHolder.Create(type) as IConfigureEnvironment)
-                        .Where(item => item != null)
+                        .Where(item => item is {})
+                        .Select(item => item!)
                         .ToImmutableArray();
 
                 var sorted = environmentConfigurators.OrderBy(configurator => configurator.GetRegistrationOrder(int.MaxValue)).ToImmutableArray();
@@ -299,7 +297,7 @@ namespace Arbor.AspNetCore.Host
                 foreach (var configurator in sorted)
                 {
                     configurationInstanceHolder.Add(
-                        new NamedInstance<IConfigureEnvironment>(configurator, configurator.GetType().Name));
+                        new NamedInstance<IConfigureEnvironment>(configurator, configurator.GetType()!.Name));
                 }
 
                 EnvironmentConfigurator.ConfigureEnvironment(configurationInstanceHolder);
@@ -459,17 +457,26 @@ namespace Arbor.AspNetCore.Host
             return Path.Combine(basePath, fileName);
         }
 
-        public static async Task<App<T>> CreateAsync(
+        public static Task<App<T>> CreateAsync(
+            CancellationTokenSource cancellationTokenSource,
+            [NotNull] string[] args,
+            IReadOnlyDictionary<string, string> environmentVariables,
+            params object[] instances)
+        {
+            if (args is null)
+            {
+                throw new ArgumentNullException(nameof(args));
+            }
+
+            return CreateInternalAsync(cancellationTokenSource, args, environmentVariables, instances);
+        }
+
+        private static async Task<App<T>> CreateInternalAsync(
             CancellationTokenSource cancellationTokenSource,
             string[] args,
             IReadOnlyDictionary<string, string> environmentVariables,
             params object[] instances)
         {
-            if (args == null)
-            {
-                throw new ArgumentNullException(nameof(args));
-            }
-
             try
             {
                 var app = await BuildAppAsync(
@@ -498,17 +505,23 @@ namespace Arbor.AspNetCore.Host
                 }
                 catch (ObjectDisposedException)
                 {
+                    // ignore
                 }
             }
         }
 
-        public async Task<int> RunAsync([NotNull] params string[] args)
+        public Task<int> RunAsync([NotNull] params string[] args)
         {
-            if (args == null)
+            if (args is null)
             {
                 throw new ArgumentNullException(nameof(args));
             }
 
+            return InternalRunAsync(args);
+        }
+
+        private async Task<int> InternalRunAsync([NotNull] params string[] args)
+        {
             bool runAsService = args.Any(arg =>
                 arg.Equals(ApplicationConstants.RunAsService, StringComparison.OrdinalIgnoreCase));
 

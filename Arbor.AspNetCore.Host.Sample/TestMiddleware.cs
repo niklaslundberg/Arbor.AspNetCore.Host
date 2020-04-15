@@ -27,6 +27,8 @@ namespace Arbor.AspNetCore.Host.Sample
             var example = context.RequestServices.GetService<IKeyValueConfiguration>();
 
 
+            logger.Debug("Configuration is {Type}", example.GetType().FullName);
+
             await _next(context);
         }
     }

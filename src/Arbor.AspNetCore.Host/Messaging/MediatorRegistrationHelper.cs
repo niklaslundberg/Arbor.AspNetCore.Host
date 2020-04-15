@@ -11,16 +11,16 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Arbor.AspNetCore.Host.Messaging
 {
-    public class MediatorRegistrationHelper
+    public static class MediatorRegistrationHelper
     {
         public static IServiceCollection Register([NotNull] IServiceCollection builder, [NotNull] IReadOnlyCollection<Assembly> assemblies, IModule? module = null)
         {
-            if (builder == null)
+            if (builder is null)
             {
                 throw new ArgumentNullException(nameof(builder));
             }
 
-            if (assemblies == null)
+            if (assemblies is null)
             {
                 throw new ArgumentNullException(nameof(assemblies));
             }
@@ -55,7 +55,7 @@ namespace Arbor.AspNetCore.Host.Messaging
             IServiceCollection builder,
             ServiceLifetime serviceLifetime,
             Type[] concreteTypes,
-            IModule module = null)
+            IModule? module = null)
         {
             var types = concreteTypes
                 .Where(concreteType => concreteType.Closes(openGenericType))

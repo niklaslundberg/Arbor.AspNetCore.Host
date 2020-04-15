@@ -9,9 +9,15 @@ namespace Arbor.AspNetCore.Host.Sample
     {
         [Route("~/")]
         [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index() => View();
+
+        [Route("~/request")]
+        [HttpGet]
+        public async Task<IActionResult> RequestEndpoint([FromServices] IMediator mediator)
         {
-            return View();
+            await mediator.Send(new TestRequest(Guid.NewGuid()));
+
+            return Ok();
         }
 
         [Route("~/notify")]
@@ -22,14 +28,7 @@ namespace Arbor.AspNetCore.Host.Sample
 
             return Ok();
         }
-        [Route("~/request")]
-        [HttpGet]
-        public async Task<IActionResult> Request([FromServices] IMediator mediator)
-        {
-            await mediator.Send(new TestRequest(Guid.NewGuid()));
 
-            return Ok();
-        }
         [Route("~/notify-indirect")]
         [HttpGet]
         public async Task<IActionResult> Notify([FromServices] IMediator mediator, [FromServices] UsingBackgroundService usingBackgroundService)

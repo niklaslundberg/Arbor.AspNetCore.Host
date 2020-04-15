@@ -31,7 +31,7 @@ namespace Arbor.AspNetCore.Host.Configuration
             {
                 var fileInfo = new FileInfo(_fileName);
 
-                if (fileInfo.Directory != null)
+                if (fileInfo.Directory is {})
                 {
                     _fileSystemWatcher = new FileSystemWatcher(fileInfo.Directory.FullName, fileInfo.Name);
                     _fileSystemWatcher.Changed += WatcherOnChanged;
@@ -48,14 +48,14 @@ namespace Arbor.AspNetCore.Host.Configuration
                 return;
             }
 
-            if (_fileSystemWatcher != null)
+            if (_fileSystemWatcher is {})
             {
                 _fileSystemWatcher.EnableRaisingEvents = false;
                 _fileSystemWatcher.Changed -= WatcherOnChanged;
                 _fileSystemWatcher.Created -= WatcherOnChanged;
                 _fileSystemWatcher.Renamed -= WatcherOnChanged;
                 _fileSystemWatcher.Dispose();
-            }
+            }   
 
             _fileSystemWatcher = null;
             _isDisposed = true;

@@ -3,25 +3,20 @@ using Serilog;
 
 namespace Arbor.AspNetCore.Host.Sample
 {
-    public class UsingBackgroundService
+    public sealed class UsingBackgroundService
     {
         private readonly BackgroundTestHandler _backgroundTestHandler;
-        private Guid _id;
-        private ILogger _logger;
+        private readonly Guid _id;
 
         public UsingBackgroundService(BackgroundTestHandler backgroundTestHandler, ILogger logger)
         {
             _backgroundTestHandler = backgroundTestHandler;
             _id = Guid.NewGuid();
-            _logger = logger;
-            _logger.Information("Created using test handler {Id}", ToString());
+            logger.Information("Created using test handler {Id}", ToString());
         }
 
         public override string ToString() => base.ToString() + " " + _id;
 
-        public void CallOnBackgrounService()
-        {
-            _backgroundTestHandler.Test();
-        }
+        public void CallOnBackgrounService() => _backgroundTestHandler.Test();
     }
 }

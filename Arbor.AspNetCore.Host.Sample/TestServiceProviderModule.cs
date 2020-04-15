@@ -25,8 +25,8 @@ namespace Arbor.AspNetCore.Host.Sample
             var loaded = AppDomain.CurrentDomain.GetAssemblies()
                 .Where(assembly => !assembly.IsDynamic)
                 .Where(assembly =>
-                    !assembly.GetName().Name.StartsWith("Microsoft")
-                    && assembly.GetName().Name.IndexOf("Views", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
+                    !assembly.GetName().Name!.StartsWith("Microsoft")
+                    && assembly.GetName().Name!.IndexOf("Views", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
 
             assemblies.AddRange(loaded);
 

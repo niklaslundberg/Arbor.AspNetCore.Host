@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using MediatR;
 using Serilog;
 
 namespace Arbor.AspNetCore.Host.Sample
 {
+    [UsedImplicitly]
     public sealed class TestHandler :
         INotificationHandler<TestNotificationA>,
         INotificationHandler<TestNotificationB>,
         IRequestHandler<TestRequest, Unit>
     {
+        private readonly Guid _id;
         private readonly ILogger _logger;
-        private Guid _id;
 
         public TestHandler(ILogger logger)
         {
@@ -23,7 +25,17 @@ namespace Arbor.AspNetCore.Host.Sample
 
         public Task Handle(TestNotificationA notification, CancellationToken cancellationToken)
         {
-            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(), notification.ToString());
+            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(),
+                notification.ToString());
+
+            return Task.CompletedTask;
+        }
+
+        public Task Handle(TestNotificationB notification, CancellationToken cancellationToken)
+        {
+            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(),
+                notification.ToString());
+
             return Task.CompletedTask;
         }
 
@@ -31,15 +43,11 @@ namespace Arbor.AspNetCore.Host.Sample
         {
             _logger.Information("Handler {Id} handling request {RequestId}", ToString(), request.ToString());
 
-            return Task.FromResult<Unit>(Unit.Value);
+            return Task.FromResult(Unit.Value);
         }
 
-        public override string ToString() => base.ToString() + " " + _id;
-
-        public Task Handle(TestNotificationB notification, CancellationToken cancellationToken)
-        {
-            _logger.Information("Handler {Id} handling notification {NotificationId}",ToString(), notification.ToString());
-            return Task.CompletedTask;
-        }
+#pragma warning disable IDE0071 // Simplify interpolation
+        public override string ToString() => $"{base.ToString()} {_id}";
+#pragma warning restore IDE0071 // Simplify interpolation
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -12,7 +11,6 @@ using Arbor.App.Extensions.Cli;
 using Arbor.App.Extensions.Configuration;
 using Arbor.App.Extensions.Logging;
 using Arbor.KVConfiguration.Core.Extensions.BoolExtensions;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Events;
@@ -127,12 +125,9 @@ namespace Arbor.AspNetCore.Host
                 var loggerConfiguration = new LoggerConfiguration()
                     .WriteTo.File(fatalLogFile, flushToDiskInterval: TimeSpan.FromMilliseconds(50));
 
-                if (environmentVariables.TryGetValue(LoggingConstants.SeqStartupUrl, out string? url))
+                if (environmentVariables.TryGetValue(LoggingConstants.SeqStartupUrl, out string? url) && Uri.TryCreate(url, UriKind.Absolute, out Uri? uri))
                 {
-                    if (Uri.TryCreate(url, UriKind.Absolute, out Uri? uri))
-                    {
-                        loggerConfiguration = loggerConfiguration.WriteTo.Seq(uri.AbsoluteUri);
-                    }
+                    loggerConfiguration = loggerConfiguration.WriteTo.Seq(uri.AbsoluteUri);
                 }
 
                 var logger = loggerConfiguration

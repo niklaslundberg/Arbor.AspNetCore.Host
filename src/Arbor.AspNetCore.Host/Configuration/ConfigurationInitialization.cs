@@ -70,14 +70,16 @@ namespace Arbor.AspNetCore.Host.Configuration
                 return appSettingsBuilder;
             }
 
-            foreach (var currentAssembly in scanAssemblies.OrderBy(assembly => assembly.FullName))
+            foreach (var currentAssembly in scanAssemblies
+                .Where(assembly => assembly.FullName is {})
+                .OrderBy(assembly => assembly.FullName))
             {
                 string[] allValues =
                     configuration?.AllValues.Where(pair => pair.Key.Equals(ApplicationConstants.AssemblyPrefix))
                         ?.Select(pair => pair.Value).ToArray() ?? Array.Empty<string>();
 
                 if (allValues.Length > 0 && !allValues.Any(currentValue =>
-                        currentAssembly.FullName?.StartsWith(currentValue) ?? false))
+                        currentAssembly.FullName!.StartsWith(currentValue)))
                 {
                     continue;
                 }
@@ -231,7 +233,7 @@ namespace Arbor.AspNetCore.Host.Configuration
 
                 var currentDirectory = baseDirectory;
 
-                while (machineSpecificConfig is null && currentDirectory != null)
+                while (machineSpecificConfig is null && currentDirectory is {})
                 {
                     try
                     {

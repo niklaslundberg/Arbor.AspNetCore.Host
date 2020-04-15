@@ -4,6 +4,7 @@ namespace Arbor.AspNetCore.Host
 {
     public static class ServiceDescriptorExtensions
     {
-        public static string GetDescription(this ServiceDescriptor descriptor) => descriptor.ToString(); // TODO
+        public static string GetDescription(this ServiceDescriptor descriptor) =>
+            $"{descriptor.ServiceType.FullName} {descriptor.ImplementationInstance ?? "(function)"} {descriptor.Lifetime}";
     }
 }

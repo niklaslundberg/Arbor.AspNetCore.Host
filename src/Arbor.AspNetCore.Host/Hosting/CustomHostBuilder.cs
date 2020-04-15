@@ -78,7 +78,7 @@ namespace Arbor.AspNetCore.Host.Hosting
                                 return;
                             }
 
-                            if (environmentConfiguration != null)
+                            if (environmentConfiguration is {})
                             {
                                 if (environmentConfiguration.UseExplicitPorts)
                                 {

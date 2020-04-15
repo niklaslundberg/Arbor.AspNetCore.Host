@@ -66,7 +66,7 @@ namespace Arbor.AspNetCore.Host.Tests
             Assert.Contains(id2, ids);
             Assert.Contains(id3, ids);
             Assert.Equal(3, testHandler1.InvokedRequests.Count);
-            Assert.Equal(0, testHandler2.InvokedRequests.Count);
+            Assert.Empty(testHandler2.InvokedRequests);
         }
     }
 }

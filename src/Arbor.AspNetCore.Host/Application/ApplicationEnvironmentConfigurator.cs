@@ -23,7 +23,7 @@ namespace Arbor.AspNetCore.Host.Application
 
         public void Configure([NotNull] EnvironmentConfiguration environmentConfiguration)
         {
-            if (environmentConfiguration == null)
+            if (environmentConfiguration is null)
             {
                 throw new ArgumentNullException(nameof(environmentConfiguration));
             }
@@ -73,8 +73,8 @@ namespace Arbor.AspNetCore.Host.Application
                 environmentConfiguration.ForwardLimit = proxyLimit;
             }
 
-            string pfxFile = _keyValueConfiguration[ApplicationConstants.PfxFile];
-            string pfxPassword = _keyValueConfiguration[ApplicationConstants.PfxPassword];
+            string? pfxFile = _keyValueConfiguration[ApplicationConstants.PfxFile];
+            string? pfxPassword = _keyValueConfiguration[ApplicationConstants.PfxPassword];
 
             if (!string.IsNullOrWhiteSpace(pfxFile) && File.Exists(pfxFile))
             {
