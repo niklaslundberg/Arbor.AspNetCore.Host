@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Runtime.Loader;
-using Arbor.App.Extensions;
+using Arbor.App.Extensions.ExtensionMethods;
 using Serilog;
 
 namespace Arbor.AspNetCore.Host.Mvc

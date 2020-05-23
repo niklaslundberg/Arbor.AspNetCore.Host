@@ -1,6 +1,6 @@
-﻿using Arbor.App.Extensions;
-using Arbor.App.Extensions.Application;
+﻿using Arbor.App.Extensions.Application;
 using Arbor.App.Extensions.DependencyInjection;
+using Arbor.App.Extensions.ExtensionMethods;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Arbor.AspNetCore.Host

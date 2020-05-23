@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Arbor.App.Extensions;
 using Arbor.App.Extensions.DependencyInjection;
+using Arbor.App.Extensions.ExtensionMethods;
 using JetBrains.Annotations;
 using MediatR;
 using MediatR.Pipeline;

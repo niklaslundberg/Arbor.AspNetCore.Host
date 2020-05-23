@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Arbor.App.Extensions;
 using Arbor.App.Extensions.Application;
+using Arbor.App.Extensions.ExtensionMethods;
 
 namespace Arbor.AspNetCore.Host
 {

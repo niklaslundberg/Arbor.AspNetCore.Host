@@ -21,7 +21,7 @@ namespace Arbor.AspNetCore.Host
     {
         public static async Task<int> StartAsync(
             string[] args,
-            IReadOnlyDictionary<string, string> environmentVariables,
+            IReadOnlyDictionary<string, string?> environmentVariables,
             params object[] instances)
         {
             try

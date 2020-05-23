@@ -8,7 +8,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Global", "Global", "{D96A78
 		.editorconfig = .editorconfig
 		.gitattributes = .gitattributes
 		.gitignore = .gitignore
-		Arbor.ruleset = Arbor.ruleset
 		build\build.bat = build\build.bat
 		.github\workflows\ci.yml = .github\workflows\ci.yml
 		Directory.Build.props = Directory.Build.props
@@ -23,7 +22,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host.Sampl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host.Tests", "Arbor.AspNetCore.Host.Tests\Arbor.AspNetCore.Host.Tests.csproj", "{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Arbor.AspNetCore.Host.NoHttpSample", "Arbor.AspNetCore.Host.NoHttpSample\Arbor.AspNetCore.Host.NoHttpSample.csproj", "{C94E01FC-5EAB-4AAC-B585-52BF5F7B029C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host.NoHttpSample", "Arbor.AspNetCore.Host.NoHttpSample\Arbor.AspNetCore.Host.NoHttpSample.csproj", "{C94E01FC-5EAB-4AAC-B585-52BF5F7B029C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

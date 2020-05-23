@@ -6,10 +6,10 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Arbor.App.Extensions;
 using Arbor.App.Extensions.Application;
 using Arbor.App.Extensions.Configuration;
 using Arbor.App.Extensions.DependencyInjection;
+using Arbor.App.Extensions.ExtensionMethods;
 using Arbor.App.Extensions.IO;
 using Arbor.App.Extensions.Logging;
 using Arbor.AspNetCore.Host.Application;
@@ -124,7 +124,7 @@ namespace Arbor.AspNetCore.Host
         private static Task<App<T>> BuildAppAsync(
             CancellationTokenSource cancellationTokenSource,
             string[] commandLineArgs,
-            IReadOnlyDictionary<string, string> environmentVariables,
+            IReadOnlyDictionary<string, string?> environmentVariables,
             params object[] instances)
         {
             var scanAssemblies = ApplicationAssemblies.FilteredAssemblies().ToArray();
@@ -216,7 +216,7 @@ namespace Arbor.AspNetCore.Host
 
             startupLogger.Verbose("Configuration values {KeyValues}",
                 appConfiguration.AllValues.Select(pair =>
-                    $"\"{pair.Key}\": \"{pair.Value.MakeAnonymous(pair.Key, $"{ApplicationStringExtensions.DefaultAnonymousKeyWords.ToArray()}\"")}"));
+                    $"\"{pair.Key}\": \"{pair.Value.MakeAnonymous(pair.Key, $"{ArborStringExtensions.DefaultAnonymousKeyWords.ToArray()}\"")}"));
 
             App<T> app;
             try
@@ -460,7 +460,7 @@ namespace Arbor.AspNetCore.Host
         public static Task<App<T>> CreateAsync(
             CancellationTokenSource cancellationTokenSource,
             [NotNull] string[] args,
-            IReadOnlyDictionary<string, string> environmentVariables,
+            IReadOnlyDictionary<string, string?> environmentVariables,
             params object[] instances)
         {
             if (args is null)
@@ -474,7 +474,7 @@ namespace Arbor.AspNetCore.Host
         private static async Task<App<T>> CreateInternalAsync(
             CancellationTokenSource cancellationTokenSource,
             string[] args,
-            IReadOnlyDictionary<string, string> environmentVariables,
+            IReadOnlyDictionary<string, string?> environmentVariables,
             params object[] instances)
         {
             try

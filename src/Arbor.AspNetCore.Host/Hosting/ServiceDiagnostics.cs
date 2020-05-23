@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
-using Arbor.App.Extensions;
+using Arbor.App.Extensions.ExtensionMethods;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Arbor.AspNetCore.Host.Hosting
