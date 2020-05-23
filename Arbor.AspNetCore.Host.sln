@@ -18,11 +18,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Global", "Global", "{D96A78
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host", "src\Arbor.AspNetCore.Host\Arbor.AspNetCore.Host.csproj", "{5F802DF9-C5B9-43EC-9030-0437F6F58954}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host.Sample", "Arbor.AspNetCore.Host.Sample\Arbor.AspNetCore.Host.Sample.csproj", "{F80FBA6A-83C7-45C0-AAE9-6C62EB8F43B8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host.Sample", "samples\Arbor.AspNetCore.Host.Sample\Arbor.AspNetCore.Host.Sample.csproj", "{F80FBA6A-83C7-45C0-AAE9-6C62EB8F43B8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host.Tests", "Arbor.AspNetCore.Host.Tests\Arbor.AspNetCore.Host.Tests.csproj", "{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host.Tests", "tests\Arbor.AspNetCore.Host.Tests\Arbor.AspNetCore.Host.Tests.csproj", "{583EF38F-5B5E-420E-83F2-7D94A62FDA5B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host.NoHttpSample", "Arbor.AspNetCore.Host.NoHttpSample\Arbor.AspNetCore.Host.NoHttpSample.csproj", "{C94E01FC-5EAB-4AAC-B585-52BF5F7B029C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host.NoHttpSample", "samples\Arbor.AspNetCore.Host.NoHttpSample\Arbor.AspNetCore.Host.NoHttpSample.csproj", "{C94E01FC-5EAB-4AAC-B585-52BF5F7B029C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

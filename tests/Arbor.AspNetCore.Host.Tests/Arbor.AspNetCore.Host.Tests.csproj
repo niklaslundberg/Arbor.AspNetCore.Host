@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\src\Arbor.AspNetCore.Host\Arbor.AspNetCore.Host.csproj" />
+    <ProjectReference Include="..\..\src\Arbor.AspNetCore.Host\Arbor.AspNetCore.Host.csproj" />
   </ItemGroup>
 
 </Project>
