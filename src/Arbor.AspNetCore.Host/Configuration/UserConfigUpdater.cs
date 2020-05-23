@@ -55,7 +55,7 @@ namespace Arbor.AspNetCore.Host.Configuration
                 _fileSystemWatcher.Created -= WatcherOnChanged;
                 _fileSystemWatcher.Renamed -= WatcherOnChanged;
                 _fileSystemWatcher.Dispose();
-            }   
+            }
 
             _fileSystemWatcher = null;
             _isDisposed = true;

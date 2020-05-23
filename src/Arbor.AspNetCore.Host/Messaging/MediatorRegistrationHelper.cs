@@ -13,7 +13,9 @@ namespace Arbor.AspNetCore.Host.Messaging
 {
     public static class MediatorRegistrationHelper
     {
-        public static IServiceCollection Register([NotNull] IServiceCollection builder, [NotNull] IReadOnlyCollection<Assembly> assemblies, IModule? module = null)
+        public static IServiceCollection Register([NotNull] IServiceCollection builder,
+            [NotNull] IReadOnlyCollection<Assembly> assemblies,
+            IModule? module = null)
         {
             if (builder is null)
             {
@@ -47,7 +49,6 @@ namespace Arbor.AspNetCore.Host.Messaging
             builder.AddSingleton(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>), module);
 
             return builder;
-
         }
 
         private static void RegisterTypes(

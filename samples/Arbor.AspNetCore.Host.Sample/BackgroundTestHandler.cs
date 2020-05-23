@@ -12,7 +12,7 @@ namespace Arbor.AspNetCore.Host.Sample
         INotificationHandler<TestNotificationB>
     {
         private readonly ILogger _logger;
-        private Guid _id;
+        private readonly Guid _id;
 
         public BackgroundTestHandler(ILogger logger)
         {
@@ -21,19 +21,21 @@ namespace Arbor.AspNetCore.Host.Sample
             _logger.Information("Created test handler {Id}", ToString());
         }
 
-        public override string ToString() => base.ToString() +  " " + _id;
-
         public Task Handle(TestNotificationA notification, CancellationToken cancellationToken)
         {
-            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(), notification.ToString());
+            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(),
+                notification.ToString());
             return Task.CompletedTask;
         }
 
         public Task Handle(TestNotificationB notification, CancellationToken cancellationToken)
         {
-            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(), notification.ToString());
+            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(),
+                notification.ToString());
             return Task.CompletedTask;
         }
+
+        public override string ToString() => base.ToString() + " " + _id;
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {

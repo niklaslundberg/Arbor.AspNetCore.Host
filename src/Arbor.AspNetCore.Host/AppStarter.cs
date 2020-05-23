@@ -43,8 +43,8 @@ namespace Arbor.AspNetCore.Host
                 CancellationTokenSource cancellationTokenSource;
 
                 if (int.TryParse(
-                        environmentVariables.GetValueOrDefault(ConfigurationConstants.RestartTimeInSeconds),
-                        out int intervalInSeconds) && intervalInSeconds > 0)
+                    environmentVariables.GetValueOrDefault(ConfigurationConstants.RestartTimeInSeconds),
+                    out int intervalInSeconds) && intervalInSeconds > 0)
                 {
                     cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(intervalInSeconds));
                 }
@@ -106,8 +106,8 @@ namespace Arbor.AspNetCore.Host
                 }
 
                 if (int.TryParse(
-                        environmentVariables.GetValueOrDefault(ConfigurationConstants.ShutdownTimeInSeconds),
-                        out int shutDownTimeInSeconds) && shutDownTimeInSeconds > 0)
+                    environmentVariables.GetValueOrDefault(ConfigurationConstants.ShutdownTimeInSeconds),
+                    out int shutDownTimeInSeconds) && shutDownTimeInSeconds > 0)
                 {
                     await Task.Delay(TimeSpan.FromSeconds(shutDownTimeInSeconds), CancellationToken.None);
                 }
@@ -125,7 +125,8 @@ namespace Arbor.AspNetCore.Host
                 var loggerConfiguration = new LoggerConfiguration()
                     .WriteTo.File(fatalLogFile, flushToDiskInterval: TimeSpan.FromMilliseconds(50));
 
-                if (environmentVariables.TryGetValue(LoggingConstants.SeqStartupUrl, out string? url) && Uri.TryCreate(url, UriKind.Absolute, out Uri? uri))
+                if (environmentVariables.TryGetValue(LoggingConstants.SeqStartupUrl, out string? url) &&
+                    Uri.TryCreate(url, UriKind.Absolute, out var uri))
                 {
                     loggerConfiguration = loggerConfiguration.WriteTo.Seq(uri.AbsoluteUri);
                 }

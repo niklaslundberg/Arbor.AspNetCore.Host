@@ -204,7 +204,7 @@ namespace Arbor.AspNetCore.Host
                     if (configurationInstanceHolder.Get(registeredType, appInstance.Key) is var item && item is {})
                     {
                         configurationInstanceHolder.TryRemove(appInstance.Key, appInstance.Value.GetType(),
-                            out object? _);
+                            out _);
                     }
 
                     configurationInstanceHolder.Add(new NamedInstance<object>(appInstance.Value, appInstance.Key));
@@ -229,7 +229,8 @@ namespace Arbor.AspNetCore.Host
 
                 startupLogger.Verbose("Log level: {Level}", loggingLevelSwitch.MinimumLevel);
 
-                IEnumerable<ILoggerConfigurationHandler> loggerConfigurationHandlers = ApplicationAssemblies.FilteredAssemblies()
+                IEnumerable<ILoggerConfigurationHandler> loggerConfigurationHandlers = ApplicationAssemblies
+                    .FilteredAssemblies()
                     .GetLoadablePublicConcreteTypesImplementing<ILoggerConfigurationHandler>()
                     .Select(type => configurationInstanceHolder.Create(type) as ILoggerConfigurationHandler)
                     .Where(item => item is {})!;
@@ -292,7 +293,8 @@ namespace Arbor.AspNetCore.Host
                         .Select(item => item!)
                         .ToImmutableArray();
 
-                var sorted = environmentConfigurators.OrderBy(configurator => configurator.GetRegistrationOrder(int.MaxValue)).ToImmutableArray();
+                var sorted = environmentConfigurators
+                    .OrderBy(configurator => configurator.GetRegistrationOrder(int.MaxValue)).ToImmutableArray();
 
                 foreach (var configurator in sorted)
                 {

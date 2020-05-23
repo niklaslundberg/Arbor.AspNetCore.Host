@@ -5,6 +5,7 @@ namespace Arbor.AspNetCore.Host.Sample
 {
     public class TestModule : IModule
     {
-        public IServiceCollection Register(IServiceCollection builder) => builder.AddSingleton<UsingBackgroundService>();
+        public IServiceCollection Register(IServiceCollection builder) =>
+            builder.AddSingleton<UsingBackgroundService>();
     }
 }

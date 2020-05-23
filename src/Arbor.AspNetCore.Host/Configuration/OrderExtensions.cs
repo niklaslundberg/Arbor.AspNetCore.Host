@@ -12,7 +12,7 @@ namespace Arbor.AspNetCore.Host.Configuration
                 return defaultOrder;
             }
 
-            var attribute =  instance.GetType().GetCustomAttribute<RegistrationOrderAttribute>();
+            var attribute = instance.GetType().GetCustomAttribute<RegistrationOrderAttribute>();
 
             if (attribute is null)
             {

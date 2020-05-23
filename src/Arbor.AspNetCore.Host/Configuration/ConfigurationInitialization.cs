@@ -79,7 +79,7 @@ namespace Arbor.AspNetCore.Host.Configuration
                         ?.Select(pair => pair.Value).ToArray() ?? Array.Empty<string>();
 
                 if (allValues.Length > 0 && !allValues.Any(currentValue =>
-                        currentAssembly.FullName!.StartsWith(currentValue)))
+                    currentAssembly.FullName!.StartsWith(currentValue)))
                 {
                     continue;
                 }
@@ -105,7 +105,7 @@ namespace Arbor.AspNetCore.Host.Configuration
             IReadOnlyDictionary<string, string?>? environmentVariables)
         {
             string? settingsPath = args?.ParseParameter(ConfigurationConstants.JsonSettingsFile)
-                                  ?? environmentVariables?.ValueOrDefault(ConfigurationConstants.JsonSettingsFile);
+                                   ?? environmentVariables?.ValueOrDefault(ConfigurationConstants.JsonSettingsFile);
 
             if (settingsPath.HasValue() && File.Exists(settingsPath))
             {
@@ -171,7 +171,8 @@ namespace Arbor.AspNetCore.Host.Configuration
             const char variableAssignmentCharacter = '=';
 
             foreach (string arg in args.Where(currentArg =>
-                currentArg.Count(currentChar => currentChar == variableAssignmentCharacter) == 1 && currentArg.Length >= 3))
+                currentArg.Count(currentChar => currentChar == variableAssignmentCharacter) == 1 &&
+                currentArg.Length >= 3))
             {
                 string[] parts = arg.Split(variableAssignmentCharacter, StringSplitOptions.RemoveEmptyEntries);
 

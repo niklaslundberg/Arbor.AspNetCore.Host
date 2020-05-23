@@ -7,8 +7,8 @@ namespace Arbor.AspNetCore.Host.Sample
     {
         public TestRequest(Guid newGuid) => Id = newGuid;
 
-        public override string ToString() => base.ToString() + " " + Id.ToString();
-
         public Guid Id { get; set; }
+
+        public override string ToString() => base.ToString() + " " + Id;
     }
 }

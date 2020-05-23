@@ -31,7 +31,8 @@ namespace Arbor.AspNetCore.Host.Sample
 
         [Route("~/notify-indirect")]
         [HttpGet]
-        public async Task<IActionResult> Notify([FromServices] IMediator mediator, [FromServices] UsingBackgroundService usingBackgroundService)
+        public async Task<IActionResult> Notify([FromServices] IMediator mediator,
+            [FromServices] UsingBackgroundService usingBackgroundService)
         {
             usingBackgroundService.CallOnBackgrounService();
 

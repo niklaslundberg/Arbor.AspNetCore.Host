@@ -11,7 +11,8 @@ namespace Arbor.AspNetCore.Host
         {
             var filteredAssemblies = ApplicationAssemblies.FilteredAssemblies();
 
-            var loadablePublicConcreteTypesImplementing = filteredAssemblies.GetLoadablePublicConcreteTypesImplementing<IPreStartModule>();
+            var loadablePublicConcreteTypesImplementing =
+                filteredAssemblies.GetLoadablePublicConcreteTypesImplementing<IPreStartModule>();
 
             foreach (var loadable in loadablePublicConcreteTypesImplementing)
             {
