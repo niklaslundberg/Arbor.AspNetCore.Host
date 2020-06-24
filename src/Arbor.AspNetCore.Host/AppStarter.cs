@@ -22,7 +22,8 @@ namespace Arbor.AspNetCore.Host
         public static async Task<int> StartAsync(
             string[] args,
             IReadOnlyDictionary<string, string?> environmentVariables,
-            params object[] instances)
+            CancellationTokenSource? cancellationTokenSource = null,
+            object[]? instances = null)
         {
             try
             {
@@ -40,9 +41,9 @@ namespace Arbor.AspNetCore.Host
                     }
                 }
 
-                CancellationTokenSource cancellationTokenSource;
+                bool shouldDisposeCancellationToken = cancellationTokenSource is null;
 
-                if (int.TryParse(
+                if (cancellationTokenSource is null && int.TryParse(
                     environmentVariables.GetValueOrDefault(ConfigurationConstants.RestartTimeInSeconds),
                     out int intervalInSeconds) && intervalInSeconds > 0)
                 {
@@ -50,10 +51,12 @@ namespace Arbor.AspNetCore.Host
                 }
                 else
                 {
-                    cancellationTokenSource = new CancellationTokenSource();
+                    intervalInSeconds = 0;
                 }
 
-                using (cancellationTokenSource)
+                cancellationTokenSource ??= new CancellationTokenSource();
+
+                try
                 {
                     cancellationTokenSource.Token.Register(
                         () => TempLogger.WriteLine("App cancellation token triggered"));
@@ -83,7 +86,7 @@ namespace Arbor.AspNetCore.Host
                     if (!args.Contains(ApplicationConstants.RunAsService) && runAsService)
                     {
                         runArgs = args
-                            .Concat(new[] {ApplicationConstants.RunAsService})
+                            .Concat(new[] { ApplicationConstants.RunAsService })
                             .ToArray();
                     }
                     else
@@ -103,6 +106,13 @@ namespace Arbor.AspNetCore.Host
                     app.Logger.Information(
                         "Stopping application {Application}",
                         app.AppInstance);
+                }
+                finally
+                {
+                    if (shouldDisposeCancellationToken)
+                    {
+                        cancellationTokenSource.Dispose();
+                    }
                 }
 
                 if (int.TryParse(

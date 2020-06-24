@@ -127,6 +127,7 @@ namespace Arbor.AspNetCore.Host
             IReadOnlyDictionary<string, string?> environmentVariables,
             params object[] instances)
         {
+            instances ??= Array.Empty<object>();
             var scanAssemblies = ApplicationAssemblies.FilteredAssemblies().ToArray();
 
             MultiSourceKeyValueConfiguration startupConfiguration =
@@ -573,9 +574,18 @@ namespace Arbor.AspNetCore.Host
                 {
                     await Host.StartAsync(CancellationTokenSource.Token);
                 }
+                catch (TaskCanceledException ex)
+                {
+                    Logger.Information(ex, "App cancellation was requested");
+                }
+                catch (OperationCanceledException ex)
+                {
+                    Logger.Information(ex, "App cancellation was requested");
+                }
                 catch (Exception ex) when (!ex.IsFatal())
                 {
                     Logger.Fatal(ex, "Could not start web host, {AppInstance}", AppInstance);
+
                     throw new InvalidOperationException(
                         $"Could not start web host, configuration {Configuration?.SourceChain} {AppInstance}",
                         ex);

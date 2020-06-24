@@ -2,6 +2,15 @@
   "version": 1,
   "dependencies": {
     ".NETCoreApp,Version=v3.1": {
+      "FluentAssertions": {
+        "type": "Direct",
+        "requested": "[5.10.3, )",
+        "resolved": "5.10.3",
+        "contentHash": "gVPEVp1hLVqcv+7Q2wiDf7kqCNn7+bQcQ0jbJ2mcRT6CeRoZl1tNkqvzSIhvekyldDptk77j1b03MXTTRIqqpg==",
+        "dependencies": {
+          "System.Configuration.ConfigurationManager": "4.4.0"
+        }
+      },
       "Microsoft.Extensions.DependencyInjection": {
         "type": "Direct",
         "requested": "[3.1.5, )",
@@ -19,6 +28,18 @@
         "dependencies": {
           "Microsoft.CodeCoverage": "16.6.1",
           "Microsoft.TestPlatform.TestHost": "16.6.1"
+        }
+      },
+      "Serilog.Sinks.XUnit": {
+        "type": "Direct",
+        "requested": "[2.0.4, )",
+        "resolved": "2.0.4",
+        "contentHash": "L9R01Z3EzsNlr6iPozwSX1TekFHyg8YiaaUncXG+WWSvT/wQp/8jIsN1EmXYtTbPbfUgzNdTdU/lCveYPFtNlA==",
+        "dependencies": {
+          "NETStandard.Library": "1.6.1",
+          "Serilog": "2.9.0",
+          "xunit.abstractions": "2.0.3",
+          "xunit.core": "2.4.1"
         }
       },
       "xunit": {
@@ -1002,6 +1023,14 @@
         "resolved": "4.7.0",
         "contentHash": "0YFqjhp/mYkDGpU0Ye1GjE53HMp9UVfGN7seGpAMttAC0C40v5gw598jCgpbBLMmCo0E5YRLBv5Z2doypO49ZQ=="
       },
+      "System.Configuration.ConfigurationManager": {
+        "type": "Transitive",
+        "resolved": "4.4.0",
+        "contentHash": "gWwQv/Ug1qWJmHCmN17nAbxJYmQBM/E94QxKLksvUiiKB1Ld3Sc/eK1lgmbSjDFxkQhVuayI/cGFZhpBSodLrg==",
+        "dependencies": {
+          "System.Security.Cryptography.ProtectedData": "4.4.0"
+        }
+      },
       "System.Console": {
         "type": "Transitive",
         "resolved": "4.3.0",
@@ -1564,6 +1593,11 @@
           "System.Threading": "4.3.0",
           "System.Threading.Tasks": "4.3.0"
         }
+      },
+      "System.Security.Cryptography.ProtectedData": {
+        "type": "Transitive",
+        "resolved": "4.4.0",
+        "contentHash": "cJV7ScGW7EhatRsjehfvvYVBvtiSMKgN8bOVI0bQhnF5bU7vnHVIsH49Kva7i7GWaWYvmEzkYVk1TC+gZYBEog=="
       },
       "System.Security.Cryptography.X509Certificates": {
         "type": "Transitive",
