@@ -12,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using Serilog.Extensions.Logging;
 using ILogger = Serilog.ILogger;
 
@@ -130,7 +131,7 @@ namespace Arbor.AspNetCore.Host.Hosting
                     {
                         webBuilder.UseEnvironment(environmentConfiguration.EnvironmentName);
                     }
-                });
+                }).UseSerilog(logger);
             }
             else
             {
