@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Http.Extensions;
 using Serilog;
 using Serilog.Events;
 
-namespace Milou.Deployer.Web.IisHost.Areas.Logging
+namespace Arbor.AspNetCore.Host.Logging
 {
     public class VerboseLoggingMiddleware
     {

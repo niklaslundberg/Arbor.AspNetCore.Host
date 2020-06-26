@@ -1,7 +1,7 @@
 ﻿using Arbor.App.Extensions.Application;
 using Microsoft.AspNetCore.Builder;
 
-namespace Milou.Deployer.Web.IisHost.Areas.Logging
+namespace Arbor.AspNetCore.Host.Logging
 {
     public static class VerboseLoggingExtensions
     {
