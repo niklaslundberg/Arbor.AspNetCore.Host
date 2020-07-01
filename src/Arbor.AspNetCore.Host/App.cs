@@ -38,12 +38,14 @@ namespace Arbor.AspNetCore.Host
             [NotNull] CancellationTokenSource cancellationTokenSource,
             [NotNull] ILogger appLogger,
             MultiSourceKeyValueConfiguration configuration,
+            IReadOnlyCollection<Assembly> scanAssemblies,
             ConfigurationInstanceHolder configurationInstanceHolder)
         {
             CancellationTokenSource = cancellationTokenSource ??
                                       throw new ArgumentNullException(nameof(cancellationTokenSource));
             Logger = appLogger ?? throw new ArgumentNullException(nameof(appLogger));
             Configuration = configuration;
+            ScanAssemblies = scanAssemblies.SafeToImmutableArray();
             ConfigurationInstanceHolder = configurationInstanceHolder;
             HostBuilder = hostBuilder ?? throw new ArgumentNullException(nameof(hostBuilder));
             _instanceId = Guid.NewGuid();
@@ -60,6 +62,8 @@ namespace Arbor.AspNetCore.Host
         public ILogger Logger { get; private set; }
 
         public MultiSourceKeyValueConfiguration Configuration { get; private set; }
+
+        public ImmutableArray<Assembly> ScanAssemblies { get; }
 
         public ConfigurationInstanceHolder ConfigurationInstanceHolder { get; }
 
@@ -125,10 +129,10 @@ namespace Arbor.AspNetCore.Host
             CancellationTokenSource cancellationTokenSource,
             string[] commandLineArgs,
             IReadOnlyDictionary<string, string?> environmentVariables,
+            IReadOnlyCollection<Assembly> scanAssemblies,
             params object[] instances)
         {
             instances ??= Array.Empty<object>();
-            var scanAssemblies = ApplicationAssemblies.FilteredAssemblies().ToArray();
 
             MultiSourceKeyValueConfiguration startupConfiguration =
                 ConfigurationInitialization.InitializeStartupConfiguration(
@@ -369,6 +373,7 @@ namespace Arbor.AspNetCore.Host
                     cancellationTokenSource,
                     appLogger,
                     appConfiguration,
+                    scanAssemblies,
                     configurationInstanceHolder);
             }
             catch (Exception ex)
@@ -389,9 +394,9 @@ namespace Arbor.AspNetCore.Host
 
         private static ConfigurationInstanceHolder GetConfigurationRegistrations(
             MultiSourceKeyValueConfiguration startupConfiguration,
-            Assembly[] scanAssemblies)
+            IReadOnlyCollection<Assembly> scanAssemblies)
         {
-            ConfigurationRegistrations startupRegistrations = startupConfiguration.ScanRegistrations(scanAssemblies);
+            ConfigurationRegistrations startupRegistrations = startupConfiguration.ScanRegistrations(scanAssemblies.ToArray());
 
             if (startupRegistrations.UrnTypeRegistrations
                 .Any(registrationErrors => !registrationErrors.ConfigurationRegistrationErrors.IsDefaultOrEmpty))
@@ -434,7 +439,7 @@ namespace Arbor.AspNetCore.Host
 
         private static ImmutableArray<IModule> GetConfigurationModules(
             ConfigurationInstanceHolder holder,
-            Assembly[] scanAssemblies)
+            IReadOnlyCollection<Assembly> scanAssemblies)
         {
             var moduleTypes = scanAssemblies
                 .SelectMany(assembly => assembly.GetLoadableTypes())
@@ -464,6 +469,7 @@ namespace Arbor.AspNetCore.Host
             CancellationTokenSource cancellationTokenSource,
             [NotNull] string[] args,
             IReadOnlyDictionary<string, string?> environmentVariables,
+            IReadOnlyCollection<Assembly> scanAssemblies,
             params object[] instances)
         {
             if (args is null)
@@ -471,13 +477,14 @@ namespace Arbor.AspNetCore.Host
                 throw new ArgumentNullException(nameof(args));
             }
 
-            return CreateInternalAsync(cancellationTokenSource, args, environmentVariables, instances);
+            return CreateInternalAsync(cancellationTokenSource, args, environmentVariables, scanAssemblies, instances);
         }
 
         private static async Task<App<T>> CreateInternalAsync(
             CancellationTokenSource cancellationTokenSource,
             string[] args,
             IReadOnlyDictionary<string, string?> environmentVariables,
+            IReadOnlyCollection<Assembly> scanAssemblies,
             params object[] instances)
         {
             try
@@ -486,6 +493,7 @@ namespace Arbor.AspNetCore.Host
                     cancellationTokenSource,
                     args,
                     environmentVariables,
+                    scanAssemblies,
                     instances);
 
                 return app;

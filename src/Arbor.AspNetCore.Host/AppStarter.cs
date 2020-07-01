@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -23,14 +24,12 @@ namespace Arbor.AspNetCore.Host
             string[] args,
             IReadOnlyDictionary<string, string?> environmentVariables,
             CancellationTokenSource? cancellationTokenSource = null,
+            IReadOnlyCollection<Assembly>? assemblies = null,
             object[]? instances = null)
         {
             try
             {
-                if (args is null)
-                {
-                    args = Array.Empty<string>();
-                }
+                args ??= Array.Empty<string>();
 
                 if (args.Length > 0)
                 {
@@ -56,12 +55,15 @@ namespace Arbor.AspNetCore.Host
 
                 cancellationTokenSource ??= new CancellationTokenSource();
 
+                assemblies ??= ApplicationAssemblies.FilteredAssemblies();
+
                 try
                 {
                     cancellationTokenSource.Token.Register(
                         () => TempLogger.WriteLine("App cancellation token triggered"));
 
                     using var app = await App<T>.CreateAsync(cancellationTokenSource, args, environmentVariables,
+                        assemblies,
                         instances);
 
                     bool runAsService = app.Configuration.ValueOrDefault(ApplicationConstants.RunAsService)
