@@ -57,6 +57,8 @@ namespace Arbor.AspNetCore.Host
 
                 assemblies ??= ApplicationAssemblies.FilteredAssemblies();
 
+                instances ??= Array.Empty<object>();
+
                 try
                 {
                     cancellationTokenSource.Token.Register(

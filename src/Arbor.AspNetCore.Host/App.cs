@@ -143,6 +143,10 @@ namespace Arbor.AspNetCore.Host
             ConfigurationInstanceHolder configurationInstanceHolder =
                 GetConfigurationRegistrations(startupConfiguration, scanAssemblies);
 
+            var assemblyResolver = new InstanceApplicationAssemblyResolver(scanAssemblies.SafeToImmutableArray());
+
+            configurationInstanceHolder.AddInstance(assemblyResolver);
+
             configurationInstanceHolder.AddInstance(configurationInstanceHolder);
 
             foreach (object instance in instances.Where(item => item is {}))
