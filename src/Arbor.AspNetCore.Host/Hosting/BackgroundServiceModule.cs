@@ -11,9 +11,14 @@ namespace Arbor.AspNetCore.Host.Hosting
     [UsedImplicitly]
     public class BackgroundServiceModule : IModule
     {
+        private readonly IApplicationAssemblyResolver _applicationAssemblyResolver;
+
+        public BackgroundServiceModule(IApplicationAssemblyResolver applicationAssemblyResolver) =>
+            _applicationAssemblyResolver = applicationAssemblyResolver;
+
         public IServiceCollection Register(IServiceCollection builder)
         {
-            var types = ApplicationAssemblies.FilteredAssemblies()
+            var types = _applicationAssemblyResolver.GetAssemblies()
                 .GetLoadablePublicConcreteTypesImplementing<IHostedService>();
 
             foreach (var type in types)

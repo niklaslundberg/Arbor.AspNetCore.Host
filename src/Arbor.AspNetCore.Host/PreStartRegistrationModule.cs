@@ -7,9 +7,14 @@ namespace Arbor.AspNetCore.Host
 {
     public class PreStartRegistrationModule : IModule
     {
+        private readonly IApplicationAssemblyResolver _applicationAssemblyResolver;
+
+        public PreStartRegistrationModule(IApplicationAssemblyResolver applicationAssemblyResolver) =>
+            _applicationAssemblyResolver = applicationAssemblyResolver;
+
         public IServiceCollection Register(IServiceCollection builder)
         {
-            var filteredAssemblies = ApplicationAssemblies.FilteredAssemblies();
+            var filteredAssemblies = _applicationAssemblyResolver.GetAssemblies();
 
             var loadablePublicConcreteTypesImplementing =
                 filteredAssemblies.GetLoadablePublicConcreteTypesImplementing<IPreStartModule>();

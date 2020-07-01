@@ -169,7 +169,7 @@ namespace Arbor.AspNetCore.Host
                 throw new InvalidOperationException("Base path is not set");
             }
 
-            var startupLoggerConfigurationHandlers = ApplicationAssemblies.FilteredAssemblies()
+            var startupLoggerConfigurationHandlers = assemblyResolver.GetAssemblies()
                 .GetLoadablePublicConcreteTypesImplementing<IStartupLoggerConfigurationHandler>()
                 .Select(type => configurationInstanceHolder.Create(type) as IStartupLoggerConfigurationHandler)
                 .Where(item => item is {})
@@ -238,8 +238,7 @@ namespace Arbor.AspNetCore.Host
 
                 startupLogger.Verbose("Log level: {Level}", loggingLevelSwitch.MinimumLevel);
 
-                IEnumerable<ILoggerConfigurationHandler> loggerConfigurationHandlers = ApplicationAssemblies
-                    .FilteredAssemblies()
+                IEnumerable<ILoggerConfigurationHandler> loggerConfigurationHandlers = assemblyResolver.GetAssemblies()
                     .GetLoadablePublicConcreteTypesImplementing<ILoggerConfigurationHandler>()
                     .Select(type => configurationInstanceHolder.Create(type) as ILoggerConfigurationHandler)
                     .Where(item => item is {})!;
