@@ -7,15 +7,15 @@ using Serilog;
 
 namespace Arbor.AspNetCore.Host.Tests
 {
-    public sealed class TestHandler1 :
+    public sealed class TestHandler2 :
         INotificationHandler<TestNotificationA>,
         INotificationHandler<TestNotificationB>,
-        IRequestHandler<TestRequest, Unit>
+        IRequestHandler<TestRequest2, Unit>
     {
         private readonly Guid _id;
         private readonly ILogger _logger;
 
-        public TestHandler1(ILogger logger)
+        public TestHandler2(ILogger logger)
         {
             _id = Guid.NewGuid();
             _logger = logger;
@@ -41,7 +41,7 @@ namespace Arbor.AspNetCore.Host.Tests
             return Task.CompletedTask;
         }
 
-        public Task<Unit> Handle(TestRequest request, CancellationToken cancellationToken)
+        public Task<Unit> Handle(TestRequest2 request, CancellationToken cancellationToken)
         {
             InvokedRequests.Add(request);
             _logger.Information("Handler {Id} handling request {RequestId}", ToString(), request.ToString());
