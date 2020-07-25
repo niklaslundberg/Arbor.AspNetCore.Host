@@ -556,7 +556,7 @@ namespace Arbor.AspNetCore.Host
 
             var preStartModules = Host.Services.GetServices<IPreStartModule>().ToArray();
 
-            foreach (var preStartModule in preStartModules)
+            foreach (var preStartModule in preStartModules.OrderBy(module => module.Order))
             {
                 await preStartModule.RunAsync(CancellationToken.None);
             }

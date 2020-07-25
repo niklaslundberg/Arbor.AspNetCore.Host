@@ -24,5 +24,7 @@ namespace Arbor.AspNetCore.Host.Sample
 
             return Task.CompletedTask;
         }
+
+        public int Order { get; }
     }
 }

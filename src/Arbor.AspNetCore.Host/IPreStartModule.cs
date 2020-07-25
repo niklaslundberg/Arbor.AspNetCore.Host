@@ -6,5 +6,7 @@ namespace Arbor.AspNetCore.Host
     public interface IPreStartModule
     {
         Task RunAsync(CancellationToken cancellationToken);
+
+        int Order { get; }
     }
 }
