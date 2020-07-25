@@ -6,6 +6,7 @@ using Arbor.App.Extensions.Application;
 using Arbor.App.Extensions.ExtensionMethods;
 using Arbor.KVConfiguration.Core;
 using Arbor.KVConfiguration.Microsoft.Extensions.Configuration.Urns;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.Extensions.Configuration;
@@ -20,14 +21,39 @@ namespace Arbor.AspNetCore.Host.Hosting
 {
     public static class CustomHostBuilder<T> where T : class
     {
-        public static IHostBuilder GetHostBuilder(EnvironmentConfiguration environmentConfiguration,
-            IKeyValueConfiguration configuration,
-            ServiceProviderHolder serviceProviderHolder,
-            ILogger logger,
-            string[] commandLineArgs,
+        public static IHostBuilder GetHostBuilder([NotNull] EnvironmentConfiguration environmentConfiguration,
+            [NotNull] IKeyValueConfiguration configuration,
+            [NotNull] ServiceProviderHolder serviceProviderHolder,
+            [NotNull] ILogger logger,
+            [NotNull] string[] commandLineArgs,
             Action<IServiceCollection>? onRegistration = null)
         {
-            string contentRoot = environmentConfiguration?.ContentBasePath ?? Directory.GetCurrentDirectory();
+            if (environmentConfiguration == null)
+            {
+                throw new ArgumentNullException(nameof(environmentConfiguration));
+            }
+
+            if (configuration == null)
+            {
+                throw new ArgumentNullException(nameof(configuration));
+            }
+
+            if (serviceProviderHolder == null)
+            {
+                throw new ArgumentNullException(nameof(serviceProviderHolder));
+            }
+
+            if (logger == null)
+            {
+                throw new ArgumentNullException(nameof(logger));
+            }
+
+            if (commandLineArgs == null)
+            {
+                throw new ArgumentNullException(nameof(commandLineArgs));
+            }
+
+            string contentRoot = environmentConfiguration.ContentBasePath ?? Directory.GetCurrentDirectory();
 
             logger.Debug("Using content root {ContentRoot}", contentRoot);
 
@@ -58,15 +84,14 @@ namespace Arbor.AspNetCore.Host.Hosting
                         new ConfigurationWrapper((IConfigurationRoot)hostingContext.Configuration,
                             serviceProviderHolder);
 
-                    string applicationName = configuration[HostConfigurationConstants.ApplicationName];
-
-                    if (!string.IsNullOrWhiteSpace(applicationName))
+                    if (!string.IsNullOrWhiteSpace(environmentConfiguration.ApplicationName))
                     {
-                        hostingContext.HostingEnvironment.ApplicationName = applicationName;
+                        hostingContext.HostingEnvironment.ApplicationName = environmentConfiguration.ApplicationName;
+                        environmentConfiguration.ApplicationName = environmentConfiguration.ApplicationName;
                     }
                 });
 
-            if (environmentConfiguration?.HttpEnabled ?? true)
+            if (environmentConfiguration.HttpEnabled)
             {
                 hostBuilder.ConfigureWebHostDefaults(webBuilder =>
                 {
@@ -79,42 +104,36 @@ namespace Arbor.AspNetCore.Host.Hosting
                                 return;
                             }
 
-                            if (environmentConfiguration is {})
+                            if (environmentConfiguration.UseExplicitPorts)
                             {
-                                if (environmentConfiguration.UseExplicitPorts)
+                                logger.Debug("Environment configuration is set to use explicit ports");
+
+                                if (environmentConfiguration.HttpPort.HasValue)
                                 {
-                                    logger.Debug("Environment configuration is set to use explicit ports");
+                                    logger.Information("Listening on http port {Port}",
+                                        environmentConfiguration.HttpPort.Value);
 
-                                    if (environmentConfiguration.HttpPort.HasValue)
-                                    {
-                                        logger.Information("Listening on http port {Port}",
-                                            environmentConfiguration.HttpPort.Value);
+                                    options.Listen(IPAddress.Any,
+                                        environmentConfiguration.HttpPort.Value);
+                                }
 
-                                        options.Listen(IPAddress.Any,
-                                            environmentConfiguration.HttpPort.Value);
-                                    }
+                                if (environmentConfiguration.HttpsPort.HasValue
+                                    && environmentConfiguration.PfxFile.HasValue()
+                                    && environmentConfiguration.PfxPassword.HasValue())
+                                {
+                                    logger.Information("Listening on https port {Port}",
+                                        environmentConfiguration.HttpsPort.Value);
 
-                                    if (environmentConfiguration.HttpsPort.HasValue
-                                        && environmentConfiguration.PfxFile.HasValue()
-                                        && environmentConfiguration.PfxPassword.HasValue())
-                                    {
-                                        logger.Information("Listening on https port {Port}",
-                                            environmentConfiguration.HttpsPort.Value);
-
-                                        options.Listen(IPAddress.Any,
-                                            environmentConfiguration.HttpsPort.Value,
-                                            listenOptions =>
-                                            {
-                                                listenOptions.UseHttps(environmentConfiguration.PfxFile,
-                                                    environmentConfiguration.PfxPassword);
-                                            });
-                                    }
+                                    options.Listen(IPAddress.Any,
+                                        environmentConfiguration.HttpsPort.Value,
+                                        listenOptions =>
+                                        {
+                                            listenOptions.UseHttps(environmentConfiguration.PfxFile,
+                                                environmentConfiguration.PfxPassword);
+                                        });
                                 }
                             }
-                            else
-                            {
-                                logger.Debug("Environment configuration is not set, using defaults");
-                            }
+
 
                             kestrelServerOptions.Add(options);
                         })
@@ -127,7 +146,7 @@ namespace Arbor.AspNetCore.Host.Hosting
                         })
                         .UseStartup<T>();
 
-                    if (environmentConfiguration?.EnvironmentName is {})
+                    if (environmentConfiguration.EnvironmentName is {})
                     {
                         webBuilder.UseEnvironment(environmentConfiguration.EnvironmentName);
                     }

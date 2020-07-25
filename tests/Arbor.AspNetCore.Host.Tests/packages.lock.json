@@ -61,8 +61,8 @@
       },
       "Arbor.App.Extensions": {
         "type": "Transitive",
-        "resolved": "0.4.1-build.1594929306",
-        "contentHash": "+EzJUUR9TrQgEtAZ3pDiNuvlCAgMf/weKFWuQD/OPIzBqt2FJVscfKiI696XLA4G22InXZcMcFLK4jxKnFCp3Q==",
+        "resolved": "0.4.1-build.1595703670",
+        "contentHash": "DGPF4GEma34zszW1UQQba7GnD+41uopBypx5ASxzozQGIOrTLK88hypd48Gbvj0e+0Ea29dF/WGJPziCvITOsQ==",
         "dependencies": {
           "Arbor.KVConfiguration.Urns": "0.20.0",
           "JetBrains.Annotations": "2020.1.0",
@@ -1816,7 +1816,7 @@
       "arbor.aspnetcore.host": {
         "type": "Project",
         "dependencies": {
-          "Arbor.App.Extensions": "0.4.1-build.1594929306",
+          "Arbor.App.Extensions": "0.4.1-build.1595703670",
           "Arbor.AspNetCore.Mvc.Formatting.HtmlForms": "0.10.2",
           "Arbor.KVConfiguration.Core": "0.20.0",
           "Arbor.KVConfiguration.DependencyInjection": "0.20.0",
