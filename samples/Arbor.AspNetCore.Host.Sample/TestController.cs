@@ -8,6 +8,7 @@ namespace Arbor.AspNetCore.Host.Sample
     public class TestController : Controller
     {
         [Route("~/")]
+        [Route("")]
         [HttpGet]
         public IActionResult Index() => View();
 
@@ -50,5 +51,6 @@ namespace Arbor.AspNetCore.Host.Sample
 
             return Ok();
         }
+
     }
 }

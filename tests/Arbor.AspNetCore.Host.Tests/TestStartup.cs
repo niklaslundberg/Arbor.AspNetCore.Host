@@ -1,6 +1,25 @@
-﻿namespace Arbor.AspNetCore.Host.Tests
+﻿using Arbor.AspNetCore.Host.Mvc;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
+
+namespace Arbor.AspNetCore.Host.Tests
 {
-    internal class TestStartup
+    public class TestStartup
     {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddControllers();
+
+            services.AddMvc(options => options.Filters.Add<ValidationActionFilter>());
+        }
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            app.UseRouting();
+
+            app.UseEndpoints(builder => builder.MapControllers());
+
+        }
     }
 }
