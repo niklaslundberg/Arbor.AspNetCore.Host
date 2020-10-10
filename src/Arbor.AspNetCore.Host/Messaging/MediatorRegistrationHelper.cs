@@ -80,7 +80,7 @@ namespace Arbor.AspNetCore.Host.Messaging
                 foreach (var @interface in interfaces)
                 {
                     builder.Add(new ExtendedServiceDescriptor(@interface,
-                        context => context.GetService(implementationType),
+                        context => context.GetRequiredService(implementationType),
                         serviceLifetime,
                         module?.GetType()));
                 }

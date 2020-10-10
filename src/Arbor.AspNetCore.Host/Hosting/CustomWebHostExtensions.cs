@@ -8,7 +8,7 @@ namespace Arbor.AspNetCore.Host.Hosting
     {
         public static async Task WaitForShutdownAsync(this IHost host)
         {
-            var applicationLifetime = host.Services.GetService<IHostApplicationLifetime>();
+            var applicationLifetime = host.Services.GetRequiredService<IHostApplicationLifetime>();
 
             var waitForStop = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
 

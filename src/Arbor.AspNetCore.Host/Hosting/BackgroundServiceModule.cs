@@ -23,7 +23,7 @@ namespace Arbor.AspNetCore.Host.Hosting
 
             foreach (var type in types)
             {
-                builder.AddSingleton<IHostedService>(context => context.GetService(type), this);
+                builder.AddSingleton<IHostedService>(context => context.GetRequiredService(type), this);
 
                 if (builder.Any(serviceDescriptor => serviceDescriptor.ImplementationType == type
                                                      && serviceDescriptor.ServiceType == type))

@@ -38,7 +38,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
             int startExitCode = await app.RunAsync();
 
-            var httpClientFactory = app.Host.Services.GetRequiredService<IHttpClientFactory>();
+            var httpClientFactory = app.Host!.Services.GetRequiredService<IHttpClientFactory>();
 
             var httpClient = httpClientFactory.CreateClient();
 
@@ -68,7 +68,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
             int startExitCode = await app.RunAsync();
 
-            var httpClientFactory = app.Host.Services.GetRequiredService<IHttpClientFactory>();
+            var httpClientFactory = app.Host!.Services.GetRequiredService<IHttpClientFactory>();
 
             var httpClient = httpClientFactory.CreateClient();
 
@@ -98,7 +98,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
             int startExitCode = await app.RunAsync();
 
-            var httpClientFactory = app.Host.Services.GetRequiredService<IHttpClientFactory>();
+            var httpClientFactory = app.Host!.Services.GetRequiredService<IHttpClientFactory>();
 
             var httpClient = httpClientFactory.CreateClient();
 

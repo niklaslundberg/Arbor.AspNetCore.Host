@@ -76,7 +76,7 @@ namespace Arbor.AspNetCore.Host.Configuration
             {
                 string[] allValues =
                     configuration?.AllValues.Where(pair => pair.Key.Equals(ApplicationConstants.AssemblyPrefix))
-                        ?.Select(pair => pair.Value).ToArray() ?? Array.Empty<string>();
+                        .Select(pair => pair.Value).ToArray() ?? Array.Empty<string>();
 
                 if (allValues.Length > 0 && !allValues.Any(currentValue =>
                     currentAssembly.FullName!.StartsWith(currentValue)))
@@ -219,7 +219,7 @@ namespace Arbor.AspNetCore.Host.Configuration
                 return appSettingsBuilder;
             }
 
-            static FileInfo MachineSpecificConfig(DirectoryInfo directoryInfo)
+            static FileInfo? MachineSpecificConfig(DirectoryInfo directoryInfo)
             {
                 return directoryInfo.GetFiles($"settings.{Environment.MachineName}.json").SingleOrDefault();
             }

@@ -15,17 +15,16 @@ namespace Arbor.AspNetCore.Host.Sample
 
         public async Task InvokeAsync(HttpContext context)
         {
-            var logger = context.RequestServices.GetService<ILogger>();
+            var logger = context.RequestServices.GetRequiredService<ILogger>();
 
-            var services = context.RequestServices.GetService<IEnumerable<UrnBoundExample>>();
+            var services = context.RequestServices.GetRequiredService<IEnumerable<UrnBoundExample>>();
 
             foreach (var urnBoundExample in services)
             {
                 logger.Debug("Found instance {Name}", urnBoundExample.Name);
             }
 
-            var example = context.RequestServices.GetService<IKeyValueConfiguration>();
-
+            var example = context.RequestServices.GetRequiredService<IKeyValueConfiguration>();
 
             logger.Debug("Configuration is {Type}", example.GetType().FullName);
 
