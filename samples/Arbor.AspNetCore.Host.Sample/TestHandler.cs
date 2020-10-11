@@ -45,9 +45,6 @@ namespace Arbor.AspNetCore.Host.Sample
 
             return Task.FromResult(Unit.Value);
         }
-
-#pragma warning disable IDE0071 // Simplify interpolation
         public override string ToString() => $"{base.ToString()} {_id}";
-#pragma warning restore IDE0071 // Simplify interpolation
     }
 }

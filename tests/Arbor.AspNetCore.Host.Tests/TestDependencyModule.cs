@@ -7,10 +7,7 @@ namespace Arbor.AspNetCore.Host.Tests
     {
         private readonly TestDependency _testDependency;
 
-        public TestDependencyModule(TestDependency testDependency)
-        {
-            _testDependency = testDependency;
-        }
+        public TestDependencyModule(TestDependency testDependency) => _testDependency = testDependency;
         public IServiceCollection Register(IServiceCollection builder) => builder;
     }
 }

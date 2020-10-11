@@ -14,7 +14,7 @@ namespace Arbor.AspNetCore.Host.Tests
             services.AddMvc(options => options.Filters.Add<ValidationActionFilter>());
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment _)
         {
             app.UseRouting();
 

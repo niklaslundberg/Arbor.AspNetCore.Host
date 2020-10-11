@@ -43,7 +43,7 @@ namespace Arbor.AspNetCore.Host.Sample
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromSeconds(10));
+                await Task.Delay(TimeSpan.FromSeconds(10), stoppingToken);
 
                 _logger.Information("Background task handler waiting");
             }

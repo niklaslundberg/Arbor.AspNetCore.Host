@@ -10,9 +10,7 @@ namespace Arbor.AspNetCore.Host.Sample
         {
             int exitCode = await AppStarter<Startup>.StartAsync(
                 args,
-#pragma warning disable S1905 // Redundant casts should not be used
                 (IReadOnlyDictionary<string, string?>)EnvironmentVariables.GetEnvironmentVariables().Variables);
-#pragma warning restore S1905 // Redundant casts should not be used
 
             return exitCode;
         }

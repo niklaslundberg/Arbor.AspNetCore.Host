@@ -9,9 +9,9 @@ namespace Arbor.AspNetCore.Host.Hosting
         private ServiceRegistrationInfo(
             Type serviceDescriptorServiceType,
             Type serviceDescriptorImplementationType,
-            object serviceDescriptorImplementationInstance,
+            object? serviceDescriptorImplementationInstance,
             ServiceLifetime serviceDescriptorLifetime,
-            Func<IServiceProvider, object> factory,
+            Func<IServiceProvider, object>? factory,
             Type? module)
         {
             ServiceDescriptorServiceType = serviceDescriptorServiceType;
@@ -24,9 +24,9 @@ namespace Arbor.AspNetCore.Host.Hosting
 
         public Type ServiceDescriptorServiceType { get; }
         public Type ServiceDescriptorImplementationType { get; }
-        public object ServiceDescriptorImplementationInstance { get; }
+        public object? ServiceDescriptorImplementationInstance { get; }
         public ServiceLifetime ServiceDescriptorLifetime { get; }
-        public Func<IServiceProvider, object> Factory { get; }
+        public Func<IServiceProvider, object>? Factory { get; }
         public Type? Module { get; }
 
         public static ServiceRegistrationInfo Create(ServiceDescriptor serviceDescriptor)
@@ -38,7 +38,7 @@ namespace Arbor.AspNetCore.Host.Hosting
                 module = extendedServiceDescriptor.ModuleType;
             }
 
-            return new ServiceRegistrationInfo(serviceDescriptor.ServiceType, serviceDescriptor.ImplementationType,
+            return new ServiceRegistrationInfo(serviceDescriptor.ServiceType, serviceDescriptor.ImplementationType!,
                 serviceDescriptor.ImplementationInstance, serviceDescriptor.Lifetime,
                 serviceDescriptor.ImplementationFactory, module);
         }

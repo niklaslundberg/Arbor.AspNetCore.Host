@@ -39,7 +39,7 @@ namespace Arbor.AspNetCore.Host.Messaging
             RegisterTypes(typeof(IRequestPreProcessor<>), builder, ServiceLifetime.Singleton, concreteTypes);
             RegisterTypes(typeof(INotificationHandler<>), builder, ServiceLifetime.Singleton, concreteTypes);
 
-            builder.AddSingleton<ServiceFactory>(p => p.GetService, module);
+            builder.AddSingleton<ServiceFactory>(p => p.GetRequiredService, module);
             builder.AddSingleton<IMediator, Mediator>(module);
 
             builder.AddSingleton(typeof(IPipelineBehavior<,>),
