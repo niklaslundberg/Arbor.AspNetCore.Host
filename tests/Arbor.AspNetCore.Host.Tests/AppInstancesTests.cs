@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
+using Arbor.App.Extensions.Application;
+using Arbor.App.Extensions.Configuration;
 using Xunit;
 
 namespace Arbor.AspNetCore.Host.Tests

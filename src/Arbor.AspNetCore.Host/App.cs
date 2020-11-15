@@ -17,6 +17,7 @@ using Arbor.AspNetCore.Host.Configuration;
 using Arbor.AspNetCore.Host.Hosting;
 using Arbor.KVConfiguration.Core;
 using Arbor.KVConfiguration.Urns;
+using Arbor.Primitives;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -194,6 +195,7 @@ namespace Arbor.AspNetCore.Host
                         startupConfiguration);
 
                 configurationInstanceHolder.AddInstance(appConfiguration);
+                configurationInstanceHolder.AddInstance(new EnvironmentVariables(environmentVariables));
             }
             catch (Exception ex) when (!ex.IsFatal())
             {
