@@ -132,7 +132,7 @@ namespace Arbor.AspNetCore.Host
 
                 string? exceptionLogDirectory = args?.ParseParameter("exceptionDir");
 
-                string? logDirectory = exceptionLogDirectory ?? AppDomain.CurrentDomain.BaseDirectory!;
+                string logDirectory = exceptionLogDirectory ?? AppDomain.CurrentDomain.BaseDirectory!;
 
                 string fatalLogFile = Path.Combine(logDirectory, "Fatal.log");
 

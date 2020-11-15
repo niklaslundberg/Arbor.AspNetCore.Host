@@ -83,35 +83,35 @@ namespace Arbor.AspNetCore.Host
             Stop();
             _disposing = true;
 
-            Logger?.Debug("Disposing application {Application} {Instance}",
+            Logger.Debug("Disposing application {Application} {Instance}",
                 ApplicationName,
                 _instanceId);
-            Logger?.Verbose("Disposing web host {Application} {Instance}",
+            Logger.Verbose("Disposing web host {Application} {Instance}",
                 ApplicationName,
                 _instanceId);
             Host?.SafeDispose();
-            Logger?.Verbose("Disposing Application root scope {Application} {Instance}",
+            Logger.Verbose("Disposing Application root scope {Application} {Instance}",
                 ApplicationName,
                 _instanceId);
-            Logger?.Verbose("Disposing configuration {Application} {Instance}",
+            Logger.Verbose("Disposing configuration {Application} {Instance}",
                 ApplicationName,
                 _instanceId);
-            Configuration?.SafeDispose();
+            Configuration.SafeDispose();
 
-            Logger?.Debug("Application disposal complete, disposing logging {Application} {Instance}",
+            Logger.Debug("Application disposal complete, disposing logging {Application} {Instance}",
                 ApplicationName,
                 _instanceId);
 
             if (Logger is IDisposable disposable)
             {
-                Logger?.Verbose("Disposing Logger {Application} {Instance}",
+                Logger.Verbose("Disposing Logger {Application} {Instance}",
                     ApplicationName,
                     _instanceId);
                 disposable.SafeDispose();
             }
             else
             {
-                Logger?.Debug("Logger is not disposable {Application} {Instance}",
+                Logger.Debug("Logger is not disposable {Application} {Instance}",
                     ApplicationName,
                     _instanceId);
             }
@@ -133,8 +133,6 @@ namespace Arbor.AspNetCore.Host
             IReadOnlyCollection<Assembly> scanAssemblies,
             params object[] instances)
         {
-            instances ??= Array.Empty<object>();
-
             MultiSourceKeyValueConfiguration startupConfiguration =
                 ConfigurationInitialization.InitializeStartupConfiguration(
                     commandLineArgs,
@@ -150,7 +148,7 @@ namespace Arbor.AspNetCore.Host
 
             configurationInstanceHolder.AddInstance(configurationInstanceHolder);
 
-            foreach (object instance in instances.Where(item => item is {}))
+            foreach (object instance in instances.NotNull())
             {
                 configurationInstanceHolder.AddInstance(instance);
             }
@@ -575,7 +573,7 @@ namespace Arbor.AspNetCore.Host
                 {
                     Logger.Fatal(ex, "Could not start web host as a Windows service, {AppInstance}", AppInstance);
                     throw new InvalidOperationException(
-                        $"Could not start web host as a Windows service, configuration, {Configuration?.SourceChain} {AppInstance} ",
+                        $"Could not start web host as a Windows service, configuration, {Configuration.SourceChain} {AppInstance} ",
                         ex);
                 }
             }
@@ -600,7 +598,7 @@ namespace Arbor.AspNetCore.Host
                     Logger.Fatal(ex, "Could not start web host, {AppInstance}", AppInstance);
 
                     throw new InvalidOperationException(
-                        $"Could not start web host, configuration {Configuration?.SourceChain} {AppInstance}",
+                        $"Could not start web host, configuration {Configuration.SourceChain} {AppInstance}",
                         ex);
                 }
             }

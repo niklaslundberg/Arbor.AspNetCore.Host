@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Reflection;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -38,6 +37,8 @@ namespace Arbor.AspNetCore.Host.Tests
 
             int startExitCode = await app.RunAsync();
 
+            startExitCode.Should().Be(0);
+
             var httpClientFactory = app.Host!.Services.GetRequiredService<IHttpClientFactory>();
 
             var httpClient = httpClientFactory.CreateClient();
@@ -67,6 +68,8 @@ namespace Arbor.AspNetCore.Host.Tests
                 new Dictionary<string, string?>(), assemblies, instances);
 
             int startExitCode = await app.RunAsync();
+
+            startExitCode.Should().Be(0);
 
             var httpClientFactory = app.Host!.Services.GetRequiredService<IHttpClientFactory>();
 
