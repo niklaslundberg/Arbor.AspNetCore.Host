@@ -87,7 +87,6 @@ namespace Arbor.AspNetCore.Host.Hosting
                     if (!string.IsNullOrWhiteSpace(environmentConfiguration.ApplicationName))
                     {
                         hostingContext.HostingEnvironment.ApplicationName = environmentConfiguration.ApplicationName;
-                        environmentConfiguration.ApplicationName = environmentConfiguration.ApplicationName;
                     }
                 });
 

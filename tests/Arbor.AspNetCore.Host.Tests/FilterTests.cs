@@ -33,7 +33,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
             var assemblies = ApplicationAssemblies.FilteredAssemblies();
             using var app = await App<TestStartup>.CreateAsync(cancellationTokenSource, Array.Empty<string>(),
-                new Dictionary<string, string?>(), assemblies, instances);
+                new Dictionary<string, string>(), assemblies, instances);
 
             int startExitCode = await app.RunAsync();
 
@@ -65,7 +65,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
             var assemblies = ApplicationAssemblies.FilteredAssemblies();
             using var app = await App<TestStartup>.CreateAsync(cancellationTokenSource, Array.Empty<string>(),
-                new Dictionary<string, string?>(), assemblies, instances);
+                new Dictionary<string, string>(), assemblies, instances);
 
             int startExitCode = await app.RunAsync();
 
@@ -97,9 +97,11 @@ namespace Arbor.AspNetCore.Host.Tests
 
             var assemblies = ApplicationAssemblies.FilteredAssemblies();
             using var app = await App<TestStartup>.CreateAsync(cancellationTokenSource, Array.Empty<string>(),
-                new Dictionary<string, string?>(), assemblies, instances);
+                new Dictionary<string, string>(), assemblies, instances);
 
             int startExitCode = await app.RunAsync();
+
+            startExitCode.Should().Be(0);
 
             var httpClientFactory = app.Host!.Services.GetRequiredService<IHttpClientFactory>();
 

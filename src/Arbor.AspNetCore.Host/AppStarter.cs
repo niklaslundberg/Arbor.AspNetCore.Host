@@ -22,7 +22,7 @@ namespace Arbor.AspNetCore.Host
     {
         public static async Task<int> StartAsync(
             string[] args,
-            IReadOnlyDictionary<string, string?> environmentVariables,
+            IReadOnlyDictionary<string, string> environmentVariables,
             CancellationTokenSource? cancellationTokenSource = null,
             IReadOnlyCollection<Assembly>? assemblies = null,
             object[]? instances = null)

@@ -19,7 +19,7 @@ namespace Arbor.AspNetCore.Host.Configuration
     public static class ConfigurationInitialization
     {
         public static MultiSourceKeyValueConfiguration InitializeStartupConfiguration(IReadOnlyList<string> args,
-            IReadOnlyDictionary<string, string?> environmentVariables,
+            IReadOnlyDictionary<string, string> environmentVariables,
             IReadOnlyCollection<Assembly> assemblies)
         {
             var tempSource = KeyValueConfigurationManager.Add(NoConfiguration.Empty)
@@ -102,7 +102,7 @@ namespace Arbor.AspNetCore.Host.Configuration
         private static AppSettingsBuilder AddSettingsFileFromArgsOrEnvironment(
             this AppSettingsBuilder appSettingsBuilder,
             IReadOnlyList<string>? args,
-            IReadOnlyDictionary<string, string?>? environmentVariables)
+            IReadOnlyDictionary<string, string>? environmentVariables)
         {
             string? settingsPath = args?.ParseParameter(ConfigurationConstants.JsonSettingsFile)
                                    ?? environmentVariables?.ValueOrDefault(ConfigurationConstants.JsonSettingsFile);
@@ -121,7 +121,7 @@ namespace Arbor.AspNetCore.Host.Configuration
             string? contentBasePath = null,
             IReadOnlyCollection<Assembly>? scanAssemblies = null,
             IReadOnlyList<string>? args = null,
-            IReadOnlyDictionary<string, string?>? environmentVariables = null,
+            IReadOnlyDictionary<string, string>? environmentVariables = null,
             IKeyValueConfiguration? keyValueConfiguration = null)
         {
             var multiSourceKeyValueConfiguration = KeyValueConfigurationManager
@@ -141,7 +141,7 @@ namespace Arbor.AspNetCore.Host.Configuration
 
         public static AppSettingsBuilder AddEnvironmentVariables(
             this AppSettingsBuilder builder,
-            IReadOnlyDictionary<string, string?>? environmentVariables)
+            IReadOnlyDictionary<string, string>? environmentVariables)
         {
             if (environmentVariables is null)
             {
@@ -195,7 +195,7 @@ namespace Arbor.AspNetCore.Host.Configuration
             this AppSettingsBuilder appSettingsBuilder,
             Func<string, string>? basePath,
             IReadOnlyCollection<string>? args,
-            IReadOnlyDictionary<string, string?>? environmentVariables)
+            IReadOnlyDictionary<string, string>? environmentVariables)
         {
             if (basePath is null)
             {

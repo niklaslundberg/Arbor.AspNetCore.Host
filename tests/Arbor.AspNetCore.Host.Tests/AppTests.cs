@@ -24,7 +24,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
             object[] instances = {new TestDependency() };
             var appTask = Task.Run(() => AppStarter<TestStartup>.StartAsync(
-                Array.Empty<string>(), new Dictionary<string, string?>(), cancellationTokenSource, instances: instances));
+                Array.Empty<string>(), new Dictionary<string, string>(), cancellationTokenSource, instances: instances));
 
             await Task.Delay(1.Seconds());
             cancellationTokenSource.Cancel();

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Arbor.Primitives;
 
 namespace Arbor.AspNetCore.Host.Sample
@@ -10,7 +9,7 @@ namespace Arbor.AspNetCore.Host.Sample
         {
             int exitCode = await AppStarter<Startup>.StartAsync(
                 args,
-                (IReadOnlyDictionary<string, string?>)EnvironmentVariables.GetEnvironmentVariables().Variables);
+                EnvironmentVariables.GetEnvironmentVariables().Variables);
 
             return exitCode;
         }

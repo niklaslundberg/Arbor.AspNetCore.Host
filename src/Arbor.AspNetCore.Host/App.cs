@@ -129,7 +129,7 @@ namespace Arbor.AspNetCore.Host
         private static Task<App<T>> BuildAppAsync(
             CancellationTokenSource cancellationTokenSource,
             string[] commandLineArgs,
-            IReadOnlyDictionary<string, string?> environmentVariables,
+            IReadOnlyDictionary<string, string> environmentVariables,
             IReadOnlyCollection<Assembly> scanAssemblies,
             params object[] instances)
         {
@@ -272,7 +272,7 @@ namespace Arbor.AspNetCore.Host
                     ApplicationBasePath = paths.BasePath,
                     ContentBasePath = paths.ContentBasePath,
                     CommandLineArgs = commandLineArgs.ToImmutableArray(),
-                    EnvironmentName = environmentVariables.ValueOrDefault(ApplicationConstants.AspNetEnvironment)
+                    EnvironmentName = environmentVariables.ValueOrDefault(ApplicationConstants.AspNetEnvironment) ?? "Production"
                 };
 
                 var serviceCollection = new ServiceCollection();
@@ -471,7 +471,7 @@ namespace Arbor.AspNetCore.Host
         public static Task<App<T>> CreateAsync(
             CancellationTokenSource cancellationTokenSource,
             [NotNull] string[] args,
-            IReadOnlyDictionary<string, string?> environmentVariables,
+            IReadOnlyDictionary<string, string> environmentVariables,
             IReadOnlyCollection<Assembly> scanAssemblies,
             params object[] instances)
         {
@@ -486,7 +486,7 @@ namespace Arbor.AspNetCore.Host
         private static async Task<App<T>> CreateInternalAsync(
             CancellationTokenSource cancellationTokenSource,
             string[] args,
-            IReadOnlyDictionary<string, string?> environmentVariables,
+            IReadOnlyDictionary<string, string> environmentVariables,
             IReadOnlyCollection<Assembly> scanAssemblies,
             params object[] instances)
         {
