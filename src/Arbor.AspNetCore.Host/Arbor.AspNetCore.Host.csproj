@@ -39,12 +39,12 @@
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Arbor.Processing" Version="0.6.0" />
     <PackageReference Include="Arbor.AspNetCore.Mvc.Formatting.HtmlForms" Version="0.10.2" />
-    <PackageReference Include="Arbor.KVConfiguration.DependencyInjection" Version="1.1.0-build.*" />
-    <PackageReference Include="Arbor.KVConfiguration.Core" Version="1.1.0-build.*" />
-    <PackageReference Include="Arbor.KVConfiguration.JsonConfiguration" Version="1.1.0-build.*" />
-    <PackageReference Include="Arbor.KVConfiguration.Microsoft.Extensions.Configuration.Urns" Version="1.1.0-build.*" />
-    <PackageReference Include="Arbor.KVConfiguration.Urns" Version="1.1.0-build.*" />
-    <PackageReference Include="Arbor.KVConfiguration.UserConfiguration" Version="1.1.0-build.*" />
+    <PackageReference Include="Arbor.KVConfiguration.DependencyInjection" Version="1.1.0" />
+    <PackageReference Include="Arbor.KVConfiguration.Core" Version="1.1.0" />
+    <PackageReference Include="Arbor.KVConfiguration.JsonConfiguration" Version="1.1.0" />
+    <PackageReference Include="Arbor.KVConfiguration.Microsoft.Extensions.Configuration.Urns" Version="1.1.0" />
+    <PackageReference Include="Arbor.KVConfiguration.Urns" Version="1.1.0" />
+    <PackageReference Include="Arbor.KVConfiguration.UserConfiguration" Version="1.1.0" />
     <PackageReference Include="Arbor.ModelBinding" Version="1.0.0-build.*" />
 
   </ItemGroup>
