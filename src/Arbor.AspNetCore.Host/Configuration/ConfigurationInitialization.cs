@@ -5,10 +5,10 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Arbor.App.Extensions;
 using Arbor.App.Extensions.Application;
 using Arbor.App.Extensions.Cli;
 using Arbor.App.Extensions.Configuration;
+using Arbor.App.Extensions.ExtensionMethods;
 using Arbor.KVConfiguration.Core;
 using Arbor.KVConfiguration.Core.Decorators;
 using Arbor.KVConfiguration.JsonConfiguration;
@@ -19,7 +19,8 @@ namespace Arbor.AspNetCore.Host.Configuration
     public static class ConfigurationInitialization
     {
         public static MultiSourceKeyValueConfiguration InitializeStartupConfiguration(IReadOnlyList<string> args,
-            IReadOnlyDictionary<string, string> environmentVariables, IReadOnlyCollection<Assembly> assemblies)
+            IReadOnlyDictionary<string, string> environmentVariables,
+            IReadOnlyCollection<Assembly> assemblies)
         {
             var tempSource = KeyValueConfigurationManager.Add(NoConfiguration.Empty)
                 .AddEnvironmentVariables(environmentVariables)
@@ -37,7 +38,7 @@ namespace Arbor.AspNetCore.Host.Configuration
             return multiSourceKeyValueConfiguration;
         }
 
-        private static AppSettingsBuilder AddUserSettings(this AppSettingsBuilder builder, string basePath)
+        private static AppSettingsBuilder AddUserSettings(this AppSettingsBuilder builder, string? basePath)
         {
             if (string.IsNullOrWhiteSpace(basePath))
             {
@@ -61,7 +62,7 @@ namespace Arbor.AspNetCore.Host.Configuration
         }
 
         private static AppSettingsBuilder AddReflectionSettings(this AppSettingsBuilder appSettingsBuilder,
-            IReadOnlyCollection<Assembly> scanAssemblies,
+            IReadOnlyCollection<Assembly>? scanAssemblies,
             IKeyValueConfiguration? configuration = null)
         {
             if (scanAssemblies is null)
@@ -69,11 +70,16 @@ namespace Arbor.AspNetCore.Host.Configuration
                 return appSettingsBuilder;
             }
 
-            foreach (var currentAssembly in scanAssemblies.OrderBy(assembly => assembly.FullName))
+            foreach (var currentAssembly in scanAssemblies
+                .Where(assembly => assembly.FullName is {})
+                .OrderBy(assembly => assembly.FullName))
             {
-                string[] allValues = configuration?.AllValues.Where(pair => pair.Key.Equals(ApplicationConstants.AssemblyPrefix))?.Select(pair => pair.Value).ToArray() ?? Array.Empty<string>();
+                string[] allValues =
+                    configuration?.AllValues.Where(pair => pair.Key.Equals(ApplicationConstants.AssemblyPrefix))
+                        .Select(pair => pair.Value).ToArray() ?? Array.Empty<string>();
 
-                if (allValues.Length > 0 && !allValues.Any(currentValue => currentAssembly.FullName.StartsWith(currentValue)))
+                if (allValues.Length > 0 && !allValues.Any(currentValue =>
+                    currentAssembly.FullName!.StartsWith(currentValue)))
                 {
                     continue;
                 }
@@ -95,11 +101,11 @@ namespace Arbor.AspNetCore.Host.Configuration
 
         private static AppSettingsBuilder AddSettingsFileFromArgsOrEnvironment(
             this AppSettingsBuilder appSettingsBuilder,
-            IReadOnlyList<string> args,
-            IReadOnlyDictionary<string, string> environmentVariables)
+            IReadOnlyList<string>? args,
+            IReadOnlyDictionary<string, string>? environmentVariables)
         {
-            string settingsPath = args?.ParseParameter(ConfigurationConstants.JsonSettingsFile)
-                                  ?? environmentVariables.ValueOrDefault(ConfigurationConstants.JsonSettingsFile);
+            string? settingsPath = args?.ParseParameter(ConfigurationConstants.JsonSettingsFile)
+                                   ?? environmentVariables?.ValueOrDefault(ConfigurationConstants.JsonSettingsFile);
 
             if (settingsPath.HasValue() && File.Exists(settingsPath))
             {
@@ -111,11 +117,11 @@ namespace Arbor.AspNetCore.Host.Configuration
         }
 
         public static MultiSourceKeyValueConfiguration InitializeConfiguration(
-            Func<string, string> basePath = null,
-            string contentBasePath = null,
-            IReadOnlyCollection<Assembly> scanAssemblies = null,
-            IReadOnlyList<string> args = null,
-            IReadOnlyDictionary<string, string> environmentVariables = null,
+            Func<string?, string>? basePath = null,
+            string? contentBasePath = null,
+            IReadOnlyCollection<Assembly>? scanAssemblies = null,
+            IReadOnlyList<string>? args = null,
+            IReadOnlyDictionary<string, string>? environmentVariables = null,
             IKeyValueConfiguration? keyValueConfiguration = null)
         {
             var multiSourceKeyValueConfiguration = KeyValueConfigurationManager
@@ -135,7 +141,7 @@ namespace Arbor.AspNetCore.Host.Configuration
 
         public static AppSettingsBuilder AddEnvironmentVariables(
             this AppSettingsBuilder builder,
-            IReadOnlyDictionary<string, string> environmentVariables)
+            IReadOnlyDictionary<string, string>? environmentVariables)
         {
             if (environmentVariables is null)
             {
@@ -153,7 +159,7 @@ namespace Arbor.AspNetCore.Host.Configuration
 
         public static AppSettingsBuilder AddCommandLineArgsSettings(
             this AppSettingsBuilder builder,
-            IReadOnlyList<string> args)
+            IReadOnlyList<string>? args)
         {
             if (args is null)
             {
@@ -164,8 +170,9 @@ namespace Arbor.AspNetCore.Host.Configuration
 
             const char variableAssignmentCharacter = '=';
 
-            foreach (string arg in args.Where(a =>
-                a.Count(c => c == variableAssignmentCharacter) == 1 && a.Length >= 3))
+            foreach (string arg in args.Where(currentArg =>
+                currentArg.Count(currentChar => currentChar == variableAssignmentCharacter) == 1 &&
+                currentArg.Length >= 3))
             {
                 string[] parts = arg.Split(variableAssignmentCharacter, StringSplitOptions.RemoveEmptyEntries);
 
@@ -186,11 +193,9 @@ namespace Arbor.AspNetCore.Host.Configuration
 
         public static AppSettingsBuilder AddJsonSettings(
             this AppSettingsBuilder appSettingsBuilder,
-            Func<string, string> basePath,
-            IReadOnlyCollection<string> args,
-            IReadOnlyDictionary<string, string> environmentVariables)
-
-
+            Func<string, string>? basePath,
+            IReadOnlyCollection<string>? args,
+            IReadOnlyDictionary<string, string>? environmentVariables)
         {
             if (basePath is null)
             {
@@ -198,7 +203,7 @@ namespace Arbor.AspNetCore.Host.Configuration
             }
 
             string environmentName = args?.ParseParameter(ApplicationConstants.AspNetEnvironment)
-                                     ?? environmentVariables.ValueOrDefault(ApplicationConstants.AspNetEnvironment)
+                                     ?? environmentVariables?.ValueOrDefault(ApplicationConstants.AspNetEnvironment)
                                      ?? ApplicationConstants.EnvironmentProduction;
 
             return appSettingsBuilder.Add(new JsonKeyValueConfiguration(basePath("settings.json"), false))
@@ -207,27 +212,29 @@ namespace Arbor.AspNetCore.Host.Configuration
 
         public static AppSettingsBuilder AddMachineSpecificSettings(
             this AppSettingsBuilder appSettingsBuilder,
-            Func<string, string> basePath)
+            Func<string?, string>? basePath)
         {
             if (basePath is null)
             {
                 return appSettingsBuilder;
             }
 
-            FileInfo MachineSpecificConfig(DirectoryInfo directoryInfo)
+            static FileInfo? MachineSpecificConfig(DirectoryInfo directoryInfo)
             {
                 return directoryInfo.GetFiles($"settings.{Environment.MachineName}.json").SingleOrDefault();
             }
 
             string? MachineSpecificFile()
             {
-                var baseDirectory = new DirectoryInfo(basePath(null));
+                string path = basePath!(null);
 
-                FileInfo machineSpecificConfig = null;
+                var baseDirectory = new DirectoryInfo(path);
+
+                FileInfo? machineSpecificConfig = null;
 
                 var currentDirectory = baseDirectory;
 
-                while (machineSpecificConfig is null && currentDirectory != null)
+                while (machineSpecificConfig is null && currentDirectory is {})
                 {
                     try
                     {
@@ -244,7 +251,7 @@ namespace Arbor.AspNetCore.Host.Configuration
                 return machineSpecificConfig?.FullName;
             }
 
-            string machineSpecificFile = MachineSpecificFile();
+            string? machineSpecificFile = MachineSpecificFile();
 
             if (!string.IsNullOrWhiteSpace(machineSpecificFile))
             {

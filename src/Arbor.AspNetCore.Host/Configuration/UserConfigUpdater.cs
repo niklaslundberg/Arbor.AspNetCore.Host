@@ -1,9 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Arbor.App.Extensions;
 using Arbor.App.Extensions.Application;
-using Arbor.App.Extensions.Validation;
+using Arbor.App.Extensions.ExtensionMethods;
 using Arbor.KVConfiguration.JsonConfiguration;
 using Arbor.KVConfiguration.Urns;
 using JetBrains.Annotations;
@@ -32,7 +31,7 @@ namespace Arbor.AspNetCore.Host.Configuration
             {
                 var fileInfo = new FileInfo(_fileName);
 
-                if (fileInfo.Directory != null)
+                if (fileInfo.Directory is {})
                 {
                     _fileSystemWatcher = new FileSystemWatcher(fileInfo.Directory.FullName, fileInfo.Name);
                     _fileSystemWatcher.Changed += WatcherOnChanged;
@@ -40,6 +39,26 @@ namespace Arbor.AspNetCore.Host.Configuration
                     _fileSystemWatcher.Renamed += WatcherOnChanged;
                 }
             }
+        }
+
+        public void Dispose()
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
+
+            if (_fileSystemWatcher is {})
+            {
+                _fileSystemWatcher.EnableRaisingEvents = false;
+                _fileSystemWatcher.Changed -= WatcherOnChanged;
+                _fileSystemWatcher.Created -= WatcherOnChanged;
+                _fileSystemWatcher.Renamed -= WatcherOnChanged;
+                _fileSystemWatcher.Dispose();
+            }
+
+            _fileSystemWatcher = null;
+            _isDisposed = true;
         }
 
         private void WatcherOnChanged(object sender, FileSystemEventArgs fileSystemEventArgs)
@@ -61,12 +80,9 @@ namespace Arbor.AspNetCore.Host.Configuration
 
                 foreach (var instance in allInstances)
                 {
-                    if (instance.Value is IValidationObject validationObject)
+                    if (instance is { })
                     {
-                        if (validationObject.IsValid)
-                        {
-                            _configurationHolder.Add(instance);
-                        }
+                        _configurationHolder.Add(instance);
                     }
                 }
             }
@@ -83,26 +99,6 @@ namespace Arbor.AspNetCore.Host.Configuration
             {
                 _fileSystemWatcher.EnableRaisingEvents = true;
             }
-        }
-
-        public void Dispose()
-        {
-            if (_isDisposed)
-            {
-                return;
-            }
-
-            if (_fileSystemWatcher != null)
-            {
-                _fileSystemWatcher.EnableRaisingEvents = false;
-                _fileSystemWatcher.Changed -= WatcherOnChanged;
-                _fileSystemWatcher.Created -= WatcherOnChanged;
-                _fileSystemWatcher.Renamed -= WatcherOnChanged;
-                _fileSystemWatcher.Dispose();
-            }
-
-            _fileSystemWatcher = null;
-            _isDisposed = true;
         }
     }
 }

@@ -9,10 +9,10 @@ namespace Arbor.AspNetCore.Host.Hosting
         private ServiceRegistrationInfo(
             Type serviceDescriptorServiceType,
             Type serviceDescriptorImplementationType,
-            object serviceDescriptorImplementationInstance,
+            object? serviceDescriptorImplementationInstance,
             ServiceLifetime serviceDescriptorLifetime,
-            Func<IServiceProvider, object> factory,
-            Type module)
+            Func<IServiceProvider, object>? factory,
+            Type? module)
         {
             ServiceDescriptorServiceType = serviceDescriptorServiceType;
             ServiceDescriptorImplementationType = serviceDescriptorImplementationType;
@@ -24,21 +24,21 @@ namespace Arbor.AspNetCore.Host.Hosting
 
         public Type ServiceDescriptorServiceType { get; }
         public Type ServiceDescriptorImplementationType { get; }
-        public object ServiceDescriptorImplementationInstance { get; }
+        public object? ServiceDescriptorImplementationInstance { get; }
         public ServiceLifetime ServiceDescriptorLifetime { get; }
-        public Func<IServiceProvider, object> Factory { get; }
-        public Type Module { get; }
+        public Func<IServiceProvider, object>? Factory { get; }
+        public Type? Module { get; }
 
         public static ServiceRegistrationInfo Create(ServiceDescriptor serviceDescriptor)
         {
-            Type module = null;
+            Type? module = null;
 
             if (serviceDescriptor is ExtendedServiceDescriptor extendedServiceDescriptor)
             {
                 module = extendedServiceDescriptor.ModuleType;
             }
 
-            return new ServiceRegistrationInfo(serviceDescriptor.ServiceType, serviceDescriptor.ImplementationType,
+            return new ServiceRegistrationInfo(serviceDescriptor.ServiceType, serviceDescriptor.ImplementationType!,
                 serviceDescriptor.ImplementationInstance, serviceDescriptor.Lifetime,
                 serviceDescriptor.ImplementationFactory, module);
         }

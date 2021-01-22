@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using Arbor.App.Extensions;
 using Arbor.App.Extensions.Application;
+using Arbor.App.Extensions.ExtensionMethods;
 
 namespace Arbor.AspNetCore.Host
 {
@@ -21,20 +21,20 @@ namespace Arbor.AspNetCore.Host
 
             try
             {
-                using (var currentProcess = Process.GetCurrentProcess())
-                {
-                    if (currentProcess.MainModule is null)
-                    {
-                        throw new InvalidOperationException(
-                            "The main module for the current process could not be found");
-                    }
+                using var currentProcess = Process.GetCurrentProcess();
 
-                    return currentProcess.StartInfo.ArgumentList.Contains(ApplicationConstants.RunAsService,
-                        StringComparer.OrdinalIgnoreCase);
+                if (currentProcess.MainModule is null)
+                {
+                    throw new InvalidOperationException(
+                        "The main module for the current process could not be found");
                 }
+
+                return currentProcess.StartInfo.ArgumentList.Contains(ApplicationConstants.RunAsService,
+                    StringComparer.OrdinalIgnoreCase);
             }
             catch (Exception ex) when (!ex.IsFatal())
             {
+                // ignore
             }
 
             return !Environment.UserInteractive;

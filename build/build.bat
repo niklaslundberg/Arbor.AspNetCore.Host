@@ -1,21 +1,23 @@
 @ECHO OFF
+SET Arbor.Build.Bootstrapper.AllowPrerelease=true
 SET Arbor.Build.Build.Bootstrapper.AllowPrerelease=true
 SET Arbor.Build.NuGet.Package.Artifacts.Suffix=
 SET Arbor.Build.NuGet.Package.Artifacts.BuildNumber.Enabled=
 SET Arbor.Build.NuGetPackageVersion=
 SET Arbor.Build.Vcs.Branch.Name.Version.OverrideEnabled=true
 SET Arbor.Build.Vcs.Branch.Name=%GITHUB_REF%
-SET Arbor.Build.Build.VariableOverrideEnabled=true
+SET Arbor.Build.VariableOverrideEnabled=true
 SET Arbor.Build.Artifacts.CleanupBeforeBuildEnabled=true
-SET Arbor.Build.Build.NetAssembly.Configuration=
+SET Arbor.Build.NetAssembly.Configuration=
 SET Arbor.Build.MSBuild.NuGetRestore.Enabled=true
 SET Arbor.Build.Tools.External.Xunit.NetCoreApp.Enabled=false
-SET Arbor.Build.BuilderNumber.UnixEpochSecondsEnabled=true
+SET Arbor.Build.BuildNumber.UnixEpochSecondsEnabled=true
+SET Arbor.Build.Tools.External.MSBuild.DotNet.Enabled=true
 
 SET Fallback.Version.Build=0
 
-IF "%Arbor.Build.Build.Bootstrapper.AllowPrerelease%" == "" (
-	SET Arbor.Build.Build.Bootstrapper.AllowPrerelease=true
+IF "%Arbor.Build.Bootstrapper.AllowPrerelease%" == "" (
+	SET Arbor.Build.Bootstrapper.AllowPrerelease=true
 )
 
 SET Arbor.Build.NuGet.ReinstallArborPackageEnabled=true

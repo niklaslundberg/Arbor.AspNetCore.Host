@@ -3,14 +3,15 @@ using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Net;
-using Arbor.App.Extensions;
 using Arbor.App.Extensions.Application;
 using Arbor.App.Extensions.Configuration;
+using Arbor.App.Extensions.ExtensionMethods;
 using Arbor.KVConfiguration.Core;
 using JetBrains.Annotations;
 
 namespace Arbor.AspNetCore.Host.Application
 {
+    [RegistrationOrder(0)]
     [UsedImplicitly]
     public class ApplicationEnvironmentConfigurator : IConfigureEnvironment
     {
@@ -22,12 +23,12 @@ namespace Arbor.AspNetCore.Host.Application
 
         public void Configure([NotNull] EnvironmentConfiguration environmentConfiguration)
         {
-            if (environmentConfiguration == null)
+            if (environmentConfiguration is null)
             {
                 throw new ArgumentNullException(nameof(environmentConfiguration));
             }
 
-            string proxiesValue = _keyValueConfiguration[ApplicationConstants.ProxyAddresses].WithDefault("");
+            string proxiesValue = _keyValueConfiguration[ApplicationConstants.ProxyAddresses].WithDefault("")!;
 
             var proxies = proxiesValue.Split(",", StringSplitOptions.RemoveEmptyEntries)
                 .Select(ipString =>
@@ -72,8 +73,8 @@ namespace Arbor.AspNetCore.Host.Application
                 environmentConfiguration.ForwardLimit = proxyLimit;
             }
 
-            string pfxFile = _keyValueConfiguration[ApplicationConstants.PfxFile];
-            string pfxPassword = _keyValueConfiguration[ApplicationConstants.PfxPassword];
+            string? pfxFile = _keyValueConfiguration[ApplicationConstants.PfxFile];
+            string? pfxPassword = _keyValueConfiguration[ApplicationConstants.PfxPassword];
 
             if (!string.IsNullOrWhiteSpace(pfxFile) && File.Exists(pfxFile))
             {

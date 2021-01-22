@@ -6,10 +6,10 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Arbor.App.Extensions;
 using Arbor.App.Extensions.Application;
 using Arbor.App.Extensions.Configuration;
 using Arbor.App.Extensions.DependencyInjection;
+using Arbor.App.Extensions.ExtensionMethods;
 using Arbor.App.Extensions.IO;
 using Arbor.App.Extensions.Logging;
 using Arbor.AspNetCore.Host.Application;
@@ -17,6 +17,7 @@ using Arbor.AspNetCore.Host.Configuration;
 using Arbor.AspNetCore.Host.Hosting;
 using Arbor.KVConfiguration.Core;
 using Arbor.KVConfiguration.Urns;
+using Arbor.Primitives;
 using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -34,18 +35,20 @@ namespace Arbor.AspNetCore.Host
         private bool _disposing;
 
         public App(
-            [NotNull] IHostBuilder webHost,
+            [NotNull] IHostBuilder hostBuilder,
             [NotNull] CancellationTokenSource cancellationTokenSource,
             [NotNull] ILogger appLogger,
             MultiSourceKeyValueConfiguration configuration,
+            IReadOnlyCollection<Assembly> scanAssemblies,
             ConfigurationInstanceHolder configurationInstanceHolder)
         {
             CancellationTokenSource = cancellationTokenSource ??
                                       throw new ArgumentNullException(nameof(cancellationTokenSource));
             Logger = appLogger ?? throw new ArgumentNullException(nameof(appLogger));
             Configuration = configuration;
+            ScanAssemblies = scanAssemblies.SafeToImmutableArray();
             ConfigurationInstanceHolder = configurationInstanceHolder;
-            HostBuilder = webHost ?? throw new ArgumentNullException(nameof(webHost));
+            HostBuilder = hostBuilder ?? throw new ArgumentNullException(nameof(hostBuilder));
             _instanceId = Guid.NewGuid();
             ApplicationName = configuration.GetApplicationName();
             AppInstance = ApplicationName + " " + _instanceId;
@@ -57,14 +60,16 @@ namespace Arbor.AspNetCore.Host
 
         public CancellationTokenSource CancellationTokenSource { get; }
 
-        public ILogger? Logger { get; private set; }
+        public ILogger Logger { get; private set; }
 
         public MultiSourceKeyValueConfiguration Configuration { get; private set; }
+
+        public ImmutableArray<Assembly> ScanAssemblies { get; }
 
         public ConfigurationInstanceHolder ConfigurationInstanceHolder { get; }
 
         [PublicAPI]
-        public IHostBuilder? HostBuilder { get; private set; }
+        public IHostBuilder HostBuilder { get; private set; }
 
         public IHost? Host { get; private set; }
 
@@ -75,49 +80,48 @@ namespace Arbor.AspNetCore.Host
                 return;
             }
 
-            if (!_disposing)
-            {
-                Stop();
-                _disposing = true;
-            }
+            Stop();
+            _disposing = true;
 
-            Logger?.Debug("Disposing application {Application} {Instance}",
+            Logger.Debug("Disposing application {Application} {Instance}",
                 ApplicationName,
                 _instanceId);
-            Logger?.Verbose("Disposing web host {Application} {Instance}",
+            Logger.Verbose("Disposing web host {Application} {Instance}",
                 ApplicationName,
                 _instanceId);
             Host?.SafeDispose();
-            Logger?.Verbose("Disposing Application root scope {Application} {Instance}",
+            Logger.Verbose("Disposing Application root scope {Application} {Instance}",
                 ApplicationName,
                 _instanceId);
-            Logger?.Verbose("Disposing configuration {Application} {Instance}",
+            Logger.Verbose("Disposing configuration {Application} {Instance}",
                 ApplicationName,
                 _instanceId);
-            Configuration?.SafeDispose();
+            Configuration.SafeDispose();
 
-            Logger?.Debug("Application disposal complete, disposing logging {Application} {Instance}",
+            Logger.Debug("Application disposal complete, disposing logging {Application} {Instance}",
                 ApplicationName,
                 _instanceId);
 
             if (Logger is IDisposable disposable)
             {
-                Logger?.Verbose("Disposing Logger {Application} {Instance}",
+                Logger.Verbose("Disposing Logger {Application} {Instance}",
                     ApplicationName,
                     _instanceId);
                 disposable.SafeDispose();
             }
             else
             {
-                Logger?.Debug("Logger is not disposable {Application} {Instance}",
+                Logger.Debug("Logger is not disposable {Application} {Instance}",
                     ApplicationName,
                     _instanceId);
             }
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Configuration = null;
             Logger = null;
             Host = null;
             HostBuilder = null;
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
             _disposed = true;
             _disposing = false;
         }
@@ -126,33 +130,25 @@ namespace Arbor.AspNetCore.Host
             CancellationTokenSource cancellationTokenSource,
             string[] commandLineArgs,
             IReadOnlyDictionary<string, string> environmentVariables,
+            IReadOnlyCollection<Assembly> scanAssemblies,
             params object[] instances)
         {
-            var scanAssemblies = ApplicationAssemblies.FilteredAssemblies().ToArray();
-
             MultiSourceKeyValueConfiguration startupConfiguration =
-                ConfigurationInitialization.InitializeStartupConfiguration(commandLineArgs, environmentVariables,
+                ConfigurationInitialization.InitializeStartupConfiguration(
+                    commandLineArgs,
+                    environmentVariables,
                     scanAssemblies);
 
-            ConfigurationRegistrations startupRegistrations = startupConfiguration.ScanRegistrations(scanAssemblies);
+            ConfigurationInstanceHolder configurationInstanceHolder =
+                GetConfigurationRegistrations(startupConfiguration, scanAssemblies);
 
-            if (startupRegistrations.UrnTypeRegistrations
-                .Any(registrationErrors => !registrationErrors.ConfigurationRegistrationErrors.IsDefaultOrEmpty))
-            {
-                var errors = startupRegistrations.UrnTypeRegistrations
-                    .Where(registrationErrors => registrationErrors.ConfigurationRegistrationErrors.Length > 0)
-                    .SelectMany(registrationErrors => registrationErrors.ConfigurationRegistrationErrors)
-                    .Select(registrationError => registrationError.ErrorMessage);
+            var assemblyResolver = new InstanceApplicationAssemblyResolver(scanAssemblies.SafeToImmutableArray());
 
-                throw new InvalidOperationException(
-                    $"Error {string.Join(Environment.NewLine, errors)}"); // review exception
-            }
-
-            ConfigurationInstanceHolder configurationInstanceHolder = startupRegistrations.CreateHolder();
+            configurationInstanceHolder.AddInstance(assemblyResolver);
 
             configurationInstanceHolder.AddInstance(configurationInstanceHolder);
 
-            foreach (object instance in instances.Where(i => i is {}))
+            foreach (object instance in instances.NotNull())
             {
                 configurationInstanceHolder.AddInstance(instance);
             }
@@ -167,10 +163,15 @@ namespace Arbor.AspNetCore.Host
 
             AppPathHelper.SetApplicationPaths(paths, commandLineArgs);
 
-            var startupLoggerConfigurationHandlers = ApplicationAssemblies.FilteredAssemblies()
+            if (paths.BasePath is null)
+            {
+                throw new InvalidOperationException("Base path is not set");
+            }
+
+            var startupLoggerConfigurationHandlers = assemblyResolver.GetAssemblies()
                 .GetLoadablePublicConcreteTypesImplementing<IStartupLoggerConfigurationHandler>()
                 .Select(type => configurationInstanceHolder.Create(type) as IStartupLoggerConfigurationHandler)
-                .Where(item => item != null)
+                .Where(item => item is {})
                 .ToImmutableArray();
 
             var startupLogger =
@@ -179,10 +180,10 @@ namespace Arbor.AspNetCore.Host
                     environmentVariables,
                     startupLoggerConfigurationHandlers);
 
-            MultiSourceKeyValueConfiguration configuration;
+            MultiSourceKeyValueConfiguration appConfiguration;
             try
             {
-                configuration =
+                appConfiguration =
                     ConfigurationInitialization.InitializeConfiguration(
                         file => GetBaseDirectoryFile(paths.BasePath, file),
                         paths.ContentBasePath,
@@ -191,7 +192,8 @@ namespace Arbor.AspNetCore.Host
                         environmentVariables,
                         startupConfiguration);
 
-                configurationInstanceHolder.AddInstance(configuration);
+                configurationInstanceHolder.AddInstance(appConfiguration);
+                configurationInstanceHolder.AddInstance(new EnvironmentVariables(environmentVariables));
             }
             catch (Exception ex) when (!ex.IsFatal())
             {
@@ -199,28 +201,47 @@ namespace Arbor.AspNetCore.Host
                 throw;
             }
 
+            ConfigurationInstanceHolder appInstanceHolder =
+                GetConfigurationRegistrations(appConfiguration, scanAssemblies);
+
+            foreach (var registeredType in appInstanceHolder.RegisteredTypes)
+            {
+                var appInstances = appInstanceHolder.GetInstances(registeredType);
+
+                foreach (var appInstance in appInstances)
+                {
+                    if (configurationInstanceHolder.Get(registeredType, appInstance.Key) is var item && item is {})
+                    {
+                        configurationInstanceHolder.TryRemove(appInstance.Key, appInstance.Value.GetType(),
+                            out _);
+                    }
+
+                    configurationInstanceHolder.Add(new NamedInstance<object>(appInstance.Value, appInstance.Key));
+                }
+            }
+
             startupLogger.Information("Configuration done using chain {Chain}",
-                configuration.SourceChain);
+                appConfiguration.SourceChain);
 
             startupLogger.Verbose("Configuration values {KeyValues}",
-                configuration.AllValues.Select(pair =>
-                    $"\"{pair.Key}\": \"{pair.Value.MakeAnonymous(pair.Key, $"{ApplicationStringExtensions.DefaultAnonymousKeyWords.ToArray()}\"")}"));
+                appConfiguration.AllValues.Select(pair =>
+                    $"\"{pair.Key}\": \"{pair.Value.MakeAnonymous(pair.Key, $"{ArborStringExtensions.DefaultAnonymousKeyWords.ToArray()}\"")}"));
 
             App<T> app;
             try
             {
                 startupLogger.Verbose("Trying to create application");
 
-                TempPathHelper.SetTempPath(configuration, startupLogger);
+                TempPathHelper.SetTempPath(appConfiguration, startupLogger);
 
-                SetLoggingLevelSwitch(loggingLevelSwitch, configuration);
+                SetLoggingLevelSwitch(loggingLevelSwitch, appConfiguration);
 
                 startupLogger.Verbose("Log level: {Level}", loggingLevelSwitch.MinimumLevel);
 
-                var loggerConfigurationHandlers = ApplicationAssemblies.FilteredAssemblies()
+                IEnumerable<ILoggerConfigurationHandler> loggerConfigurationHandlers = assemblyResolver.GetAssemblies()
                     .GetLoadablePublicConcreteTypesImplementing<ILoggerConfigurationHandler>()
                     .Select(type => configurationInstanceHolder.Create(type) as ILoggerConfigurationHandler)
-                    .Where(item => item != null);
+                    .Where(item => item is {})!;
 
                 ILogger appLogger;
                 try
@@ -228,7 +249,7 @@ namespace Arbor.AspNetCore.Host
                     startupLogger.Verbose("Creating application logger");
                     appLogger =
                         SerilogApiInitialization.InitializeAppLogging(
-                            configuration,
+                            appConfiguration,
                             startupLogger,
                             loggerConfigurationHandlers,
                             loggingLevelSwitch);
@@ -251,10 +272,10 @@ namespace Arbor.AspNetCore.Host
                     ApplicationBasePath = paths.BasePath,
                     ContentBasePath = paths.ContentBasePath,
                     CommandLineArgs = commandLineArgs.ToImmutableArray(),
-                    EnvironmentName = environmentVariables.ValueOrDefault(ApplicationConstants.AspNetEnvironment)
+                    EnvironmentName = environmentVariables.ValueOrDefault(ApplicationConstants.AspNetEnvironment) ?? "Production"
                 };
 
-                ServiceCollection serviceCollection = new ServiceCollection();
+                var serviceCollection = new ServiceCollection();
 
                 try
                 {
@@ -273,34 +294,58 @@ namespace Arbor.AspNetCore.Host
                     throw;
                 }
 
-                configurationInstanceHolder.AddInstance(new ApplicationEnvironmentConfigurator(configuration));
+                var environmentConfigurators =
+                    scanAssemblies.GetLoadablePublicConcreteTypesImplementing<IConfigureEnvironment>()
+                        .Select(type => configurationInstanceHolder.Create(type) as IConfigureEnvironment)
+                        .Where(item => item is {})
+                        .Select(item => item!)
+                        .ToImmutableArray();
+
+                var sorted = environmentConfigurators
+                    .OrderBy(configurator => configurator.GetRegistrationOrder(int.MaxValue)).ToImmutableArray();
+
+                foreach (var configurator in sorted)
+                {
+                    configurationInstanceHolder.Add(
+                        new NamedInstance<IConfigureEnvironment>(configurator, configurator.GetType()!.Name));
+                }
 
                 EnvironmentConfigurator.ConfigureEnvironment(configurationInstanceHolder);
 
                 foreach (Type registeredType in configurationInstanceHolder.RegisteredTypes)
                 {
                     var interfaces = registeredType.GetInterfaces();
-
                     var all = configurationInstanceHolder.GetInstances(registeredType);
 
                     if (all.Count > 1)
                     {
+                        foreach (var item in all)
+                        {
+                            foreach (var @interface in interfaces)
+                            {
+                                serviceCollection.AddSingleton(@interface, context => item.Value);
+                            }
 
+                            var serviceType = item.Value.GetType();
+                            serviceCollection.AddSingleton(serviceType, item.Value);
+                        }
                     }
-
-                    var instance = all.Single().Value;
-
-                    foreach (var @interface in interfaces)
+                    else
                     {
-                        serviceCollection.AddSingleton(@interface, context => instance);
-                    }
+                        object instance = all.Single().Value;
 
-                    var serviceType = instance.GetType();
-                    serviceCollection.AddSingleton(serviceType, instance);
+                        foreach (var @interface in interfaces)
+                        {
+                            serviceCollection.AddSingleton(@interface, context => instance);
+                        }
+
+                        var serviceType = instance.GetType();
+                        serviceCollection.AddSingleton(serviceType, instance);
+                    }
                 }
 
-                var serviceProviderModules = scanAssemblies.
-                    GetLoadablePublicConcreteTypesImplementing<IServiceProviderModule>();
+                var serviceProviderModules =
+                    scanAssemblies.GetLoadablePublicConcreteTypesImplementing<IServiceProviderModule>();
 
                 var serviceProviderHolder = new ServiceProviderHolder(serviceCollection.BuildServiceProvider(),
                     serviceCollection);
@@ -320,17 +365,18 @@ namespace Arbor.AspNetCore.Host
                     }
                 }
 
-                var webHostBuilder = CustomWebHostBuilder<T>.GetWebHostBuilder(environmentConfiguration,
-                    configuration,
+                var hostBuilder = CustomHostBuilder<T>.GetHostBuilder(environmentConfiguration,
+                    appConfiguration,
                     serviceProviderHolder,
                     appLogger,
                     commandLineArgs);
 
                 app = new App<T>(
-                    webHostBuilder,
+                    hostBuilder,
                     cancellationTokenSource,
                     appLogger,
-                    configuration,
+                    appConfiguration,
+                    scanAssemblies,
                     configurationInstanceHolder);
             }
             catch (Exception ex)
@@ -347,6 +393,28 @@ namespace Arbor.AspNetCore.Host
             }
 
             return Task.FromResult(app);
+        }
+
+        private static ConfigurationInstanceHolder GetConfigurationRegistrations(
+            MultiSourceKeyValueConfiguration startupConfiguration,
+            IReadOnlyCollection<Assembly> scanAssemblies)
+        {
+            ConfigurationRegistrations startupRegistrations = startupConfiguration.ScanRegistrations(scanAssemblies.ToArray());
+
+            if (startupRegistrations.UrnTypeRegistrations
+                .Any(registrationErrors => !registrationErrors.ConfigurationRegistrationErrors.IsDefaultOrEmpty))
+            {
+                var errors = startupRegistrations.UrnTypeRegistrations
+                    .Where(registrationErrors => registrationErrors.ConfigurationRegistrationErrors.Length > 0)
+                    .SelectMany(registrationErrors => registrationErrors.ConfigurationRegistrationErrors)
+                    .Select(registrationError => registrationError.ErrorMessage);
+
+                throw new InvalidOperationException(
+                    $"Error {string.Join(Environment.NewLine, errors)}"); // review exception
+            }
+
+            ConfigurationInstanceHolder configurationInstanceHolder = startupRegistrations.CreateHolder();
+            return configurationInstanceHolder;
         }
 
         private static void LogCommandLineArgs(string[] commandLineArgs, ILogger appLogger)
@@ -374,23 +442,23 @@ namespace Arbor.AspNetCore.Host
 
         private static ImmutableArray<IModule> GetConfigurationModules(
             ConfigurationInstanceHolder holder,
-            Assembly[] scanAssemblies)
+            IReadOnlyCollection<Assembly> scanAssemblies)
         {
             var moduleTypes = scanAssemblies
                 .SelectMany(assembly => assembly.GetLoadableTypes())
                 .Where(type => type.IsPublicConcreteTypeImplementing<IModule>())
                 .ToImmutableArray();
 
-            var modules = moduleTypes
+            ImmutableArray<IModule> modules = moduleTypes
                 .Select(moduleType =>
                     holder.Create(moduleType) as IModule)
                 .Where(instance => instance is {})
-                .ToImmutableArray();
+                .ToImmutableArray()!;
 
             return modules;
         }
 
-        private static string GetBaseDirectoryFile(string basePath, string fileName)
+        private static string GetBaseDirectoryFile(string basePath, string? fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName))
             {
@@ -400,23 +468,35 @@ namespace Arbor.AspNetCore.Host
             return Path.Combine(basePath, fileName);
         }
 
-        public static async Task<App<T>> CreateAsync(
+        public static Task<App<T>> CreateAsync(
             CancellationTokenSource cancellationTokenSource,
-            string[] args,
+            [NotNull] string[] args,
             IReadOnlyDictionary<string, string> environmentVariables,
+            IReadOnlyCollection<Assembly> scanAssemblies,
             params object[] instances)
         {
-            if (args == null)
+            if (args is null)
             {
                 throw new ArgumentNullException(nameof(args));
             }
 
+            return CreateInternalAsync(cancellationTokenSource, args, environmentVariables, scanAssemblies, instances);
+        }
+
+        private static async Task<App<T>> CreateInternalAsync(
+            CancellationTokenSource cancellationTokenSource,
+            string[] args,
+            IReadOnlyDictionary<string, string> environmentVariables,
+            IReadOnlyCollection<Assembly> scanAssemblies,
+            params object[] instances)
+        {
             try
             {
                 var app = await BuildAppAsync(
                     cancellationTokenSource,
                     args,
                     environmentVariables,
+                    scanAssemblies,
                     instances);
 
                 return app;
@@ -439,17 +519,25 @@ namespace Arbor.AspNetCore.Host
                 }
                 catch (ObjectDisposedException)
                 {
+                    // ignore
                 }
             }
         }
 
-        public async Task<int> RunAsync([NotNull] params string[] args)
+        public Task<int> RunAsync([NotNull] params string[] args)
         {
-            if (args == null)
+            if (args is null)
             {
                 throw new ArgumentNullException(nameof(args));
             }
-            bool runAsService = args.Any(arg => arg.Equals(ApplicationConstants.RunAsService, StringComparison.OrdinalIgnoreCase));
+
+            return InternalRunAsync(args);
+        }
+
+        private async Task<int> InternalRunAsync([NotNull] params string[] args)
+        {
+            bool runAsService = args.Any(arg =>
+                arg.Equals(ApplicationConstants.RunAsService, StringComparison.OrdinalIgnoreCase));
 
             try
             {
@@ -466,6 +554,13 @@ namespace Arbor.AspNetCore.Host
                 throw new InvalidOperationException($"Could not build web host in {AppInstance}", ex);
             }
 
+            var preStartModules = Host.Services.GetServices<IPreStartModule>().ToArray();
+
+            foreach (var preStartModule in preStartModules.OrderBy(module => module.Order))
+            {
+                await preStartModule.RunAsync(CancellationToken.None);
+            }
+
             if (runAsService)
             {
                 Logger.Information("Starting {AppInstance} as a Windows Service", AppInstance);
@@ -478,7 +573,7 @@ namespace Arbor.AspNetCore.Host
                 {
                     Logger.Fatal(ex, "Could not start web host as a Windows service, {AppInstance}", AppInstance);
                     throw new InvalidOperationException(
-                        $"Could not start web host as a Windows service, configuration, {Configuration?.SourceChain} {AppInstance} ",
+                        $"Could not start web host as a Windows service, configuration, {Configuration.SourceChain} {AppInstance} ",
                         ex);
                 }
             }
@@ -490,11 +585,20 @@ namespace Arbor.AspNetCore.Host
                 {
                     await Host.StartAsync(CancellationTokenSource.Token);
                 }
+                catch (TaskCanceledException ex)
+                {
+                    Logger.Information(ex, "App cancellation was requested");
+                }
+                catch (OperationCanceledException ex)
+                {
+                    Logger.Information(ex, "App cancellation was requested");
+                }
                 catch (Exception ex) when (!ex.IsFatal())
                 {
                     Logger.Fatal(ex, "Could not start web host, {AppInstance}", AppInstance);
+
                     throw new InvalidOperationException(
-                        $"Could not start web host, configuration {Configuration?.SourceChain} {AppInstance}",
+                        $"Could not start web host, configuration {Configuration.SourceChain} {AppInstance}",
                         ex);
                 }
             }
