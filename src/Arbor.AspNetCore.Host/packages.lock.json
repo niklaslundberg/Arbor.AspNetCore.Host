@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v5.0": {
       "Arbor.App.Extensions": {
         "type": "Direct",
-        "requested": "[0.5.0, )",
-        "resolved": "0.5.0",
-        "contentHash": "9d0bTLoZRX8VVdXrn1GbJJc3Q2UtTAjweyva9grn27oNqaU7rtZYDXIeWgcm1oyzOxBoxzpdkiosgLbk+D2pYA==",
+        "requested": "[0.5.1, )",
+        "resolved": "0.5.1",
+        "contentHash": "mID3Rv4mUGrV3FxhDq8kkxYVkX1E0bCvAqNZKoL/2DqxnHsvfDHyU769wCqWZhUbrvG9SSs5Pt6AD8CH5RKVXg==",
         "dependencies": {
           "Arbor.KVConfiguration.Urns": "1.1.0",
           "JetBrains.Annotations": "2020.3.0",
@@ -106,11 +106,11 @@
       },
       "Arbor.ModelBinding": {
         "type": "Direct",
-        "requested": "[1.0.0-build.*, )",
-        "resolved": "1.0.0-build.1597411066",
-        "contentHash": "sdtetD6sTs+/72osk4ILjvxKmmVyDZyC5EnsBWsT2v82k60iQE+oIrUagWURW23N0lGDube0ejXzixkK5jxqgg==",
+        "requested": "[1.0.0, )",
+        "resolved": "1.0.0",
+        "contentHash": "dql1DEbqvY5zJlr7VHzze820rE8jzJhqGCsrnffDL8M4IMYRODIX0QovJ+92JagmaWojT4W9TL14IKzWSLO9mg==",
         "dependencies": {
-          "Microsoft.Extensions.Primitives": "5.0.0-preview.7.20364.11",
+          "Microsoft.Extensions.Primitives": "[5.0.0, 6.0.0)",
           "Newtonsoft.Json": "12.0.1"
         }
       },

@@ -13,6 +13,7 @@ SET Arbor.Build.MSBuild.NuGetRestore.Enabled=true
 SET Arbor.Build.Tools.External.Xunit.NetCoreApp.Enabled=false
 SET Arbor.Build.BuildNumber.UnixEpochSecondsEnabled=true
 SET Arbor.Build.Tools.External.MSBuild.DotNet.Enabled=true
+SET Arbor.Build.Vcs.Branch.BranchModel=GitFlowBuildOnMain
 
 SET Fallback.Version.Build=0
 
