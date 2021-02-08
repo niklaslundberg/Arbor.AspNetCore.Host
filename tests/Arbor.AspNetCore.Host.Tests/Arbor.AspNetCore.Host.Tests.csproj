@@ -21,8 +21,4 @@
     <ProjectReference Include="..\..\src\Arbor.AspNetCore.Host\Arbor.AspNetCore.Host.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Arbor.KVConfiguration.Schema.Json" Version="1.1.6" />
-  </ItemGroup>
-
 </Project>
