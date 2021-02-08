@@ -45,7 +45,7 @@
     <PackageReference Include="Arbor.KVConfiguration.Microsoft.Extensions.Configuration.Urns" Version="1.1.6" />
     <PackageReference Include="Arbor.KVConfiguration.Urns" Version="1.1.6" />
     <PackageReference Include="Arbor.KVConfiguration.UserConfiguration" Version="1.1.6" />
-    <PackageReference Include="Arbor.ModelBinding" Version="1.0.0" />
+    <PackageReference Include="Arbor.ModelBinding" Version="1.0.1" />
 
   </ItemGroup>
 

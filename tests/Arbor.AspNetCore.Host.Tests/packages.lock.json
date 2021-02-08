@@ -182,8 +182,8 @@
       },
       "Arbor.ModelBinding": {
         "type": "Transitive",
-        "resolved": "1.0.0",
-        "contentHash": "dql1DEbqvY5zJlr7VHzze820rE8jzJhqGCsrnffDL8M4IMYRODIX0QovJ+92JagmaWojT4W9TL14IKzWSLO9mg==",
+        "resolved": "1.0.1",
+        "contentHash": "P7+q15VgARzsS06JsWmJkongwRjNCy1z8sz9qUmLk6AoK6fvpHouwaYBawPDOeZDZ+ryOS7647UuxwIdXC7Tjw==",
         "dependencies": {
           "Microsoft.Extensions.Primitives": "[5.0.0, 6.0.0)",
           "Newtonsoft.Json": "12.0.1"
@@ -1818,7 +1818,7 @@
           "Arbor.KVConfiguration.Schema.Json": "1.1.6",
           "Arbor.KVConfiguration.Urns": "1.1.6",
           "Arbor.KVConfiguration.UserConfiguration": "1.1.6",
-          "Arbor.ModelBinding": "1.0.0",
+          "Arbor.ModelBinding": "1.0.1",
           "Arbor.Processing": "0.6.0",
           "JetBrains.Annotations": "2020.3.0",
           "Marten.Analyzers": "1.5.0",
