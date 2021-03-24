@@ -16,7 +16,7 @@ namespace Arbor.AspNetCore.Host.Tests
             return Task.CompletedTask;
         }
 
-        public TestScheduledService([NotNull] ISchedule schedule, [NotNull] ITimer timer) : base(schedule, timer)
+        public TestScheduledService([NotNull] ISchedule schedule, [NotNull] IScheduler scheduler) : base(schedule, scheduler)
         {
 
         }

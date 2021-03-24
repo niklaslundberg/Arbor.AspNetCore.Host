@@ -6,9 +6,9 @@ namespace Arbor.AspNetCore.Host
 {
     public abstract class ScheduledService
     {
-        private readonly ITimer _time;
+        private readonly IScheduler _time;
 
-        protected ScheduledService(ISchedule schedule, ITimer time)
+        protected ScheduledService(ISchedule schedule, IScheduler time)
         {
             _time = time;
             Schedule = schedule;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Xunit;
@@ -13,13 +12,13 @@ namespace Arbor.AspNetCore.Host.Tests
         {
             var clock = new TestClock(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
             var schedule = new ScheduleOnce(new DateTimeOffset(2000, 1, 1, 0, 0, 4, 0, TimeSpan.Zero));
-            ITimer timer = new CustomTimer(clock);
-            var testService =  new TestScheduledService(schedule, timer);
+            using var testTimer = new TestTimer();
+            IScheduler scheduler = new Scheduler(clock, testTimer);
+            var testService =  new TestScheduledService(schedule, scheduler);
 
             for (int i = 0; i < 60; i++)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(10));
-                clock.UtcNow();
+                testTimer.Tick();
             }
 
             await Task.Delay(TimeSpan.FromSeconds(3));
@@ -33,13 +32,13 @@ namespace Arbor.AspNetCore.Host.Tests
         {
             var clock = new TestClock(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero));
             var schedule = new ScheduleEvery3Second(new DateTimeOffset(2000, 1, 1, 0, 0, 4, 0, TimeSpan.Zero));
-            ITimer timer = new CustomTimer(clock);
-            var testService =  new TestScheduledService(schedule, timer);
+            using var testTimer = new TestTimer();
+            IScheduler scheduler = new Scheduler(clock, testTimer);
+            var testService =  new TestScheduledService(schedule, scheduler);
 
-            for (int i = 0; i < 160; i++)
+            for (int i = 0; i < 60; i++)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(2));
-                clock.UtcNow();
+                testTimer.Tick();
             }
 
             await Task.Delay(TimeSpan.FromSeconds(6));

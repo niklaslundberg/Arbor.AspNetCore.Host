@@ -1,10 +1,9 @@
 ﻿using System;
-using System.Threading.Tasks;
 
 namespace Arbor.AspNetCore.Host
 {
-    public interface ITimer
+    public interface ITimer : IDisposable
     {
-        public Task Add(ISchedule schedule, Func<DateTimeOffset, Task> task);
+        void Register(Action onTick);
     }
 }
