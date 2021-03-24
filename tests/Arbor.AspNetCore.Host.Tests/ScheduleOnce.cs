@@ -8,24 +8,50 @@ namespace Arbor.AspNetCore.Host.Tests
 
         private bool _fired;
 
+        private int invokedCount;
+
+        private object lockObject = new ();
+
         public ScheduleOnce(DateTimeOffset dateTimeOffset) => _dateTimeOffset = dateTimeOffset;
 
-        public DateTimeOffset? Next(DateTimeOffset now)
+        public DateTimeOffset? Next(DateTimeOffset currentTime)
         {
-            Console.WriteLine("Schedule once invokation");
-
             if (_fired)
             {
                 return null;
             }
 
-            if (now > _dateTimeOffset)
+            ++invokedCount;
+
+            Console.WriteLine($"{nameof(ScheduleOnce)} invoked {invokedCount}");
+
+            if (currentTime > _dateTimeOffset)
             {
-                _fired = true;
+                if (_fired)
+                {
+                    return null;
+                }
+
+                lock (lockObject)
+                {
+                    if (_fired)
+                    {
+                        return null;
+                    }
+
+                    _fired = true;
+
+                    Console.WriteLine($"Schedule once fired {invokedCount}");
+
+                    return _dateTimeOffset;
+                }
+            }
+            else
+            {
+                Console.WriteLine($"{nameof(ScheduleOnce)} not yet ready {invokedCount}");
             }
 
             return _dateTimeOffset;
-
         }
     }
 }

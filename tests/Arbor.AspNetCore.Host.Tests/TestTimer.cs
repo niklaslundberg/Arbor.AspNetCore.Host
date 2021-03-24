@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Arbor.AspNetCore.Host.Tests
 {
-    public class TestTimer : ITimer
+    public sealed class TestTimer : ITimer
     {
-        private List<Action> _actions = new();
+        private readonly List<Action> _actions = new();
 
         public void Tick()
         {
@@ -17,12 +17,8 @@ namespace Arbor.AspNetCore.Host.Tests
 
         public void Dispose()
         {
-
         }
 
-        public void Register(Action onTick)
-        {
-            _actions.Add(onTick);
-        }
+        public void Register(Action onTick) => _actions.Add(onTick);
     }
 }

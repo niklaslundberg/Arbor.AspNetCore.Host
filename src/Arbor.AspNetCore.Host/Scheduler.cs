@@ -10,9 +10,8 @@ namespace Arbor.AspNetCore.Host
     public sealed class Scheduler : IScheduler, IDisposable
     {
         private readonly ICustomClock _clock;
-        private readonly ConcurrentDictionary<ISchedule, DateTimeOffset> _running = new();
         private readonly ConcurrentDictionary<ISchedule, OnTickAsync> _schedules = new();
-        private readonly object TickLock = new();
+        private readonly object _tickLock = new();
         private readonly CancellationTokenSource _cancellationTokenSource;
         private bool _isDisposed;
         private bool _isDisposing;
@@ -22,7 +21,6 @@ namespace Arbor.AspNetCore.Host
         public Scheduler(ICustomClock clock, ITimer timer)
         {
             _clock = clock;
-            _timer = timer;
             _timer = timer;
             _timer.Register(Schedule);
             _cancellationTokenSource = new CancellationTokenSource();
@@ -69,31 +67,37 @@ namespace Arbor.AspNetCore.Host
             }
         }
 
-        private ManualResetEventSlim _resetEvent = new(false);
+        private readonly ManualResetEventSlim _resetEvent = new(false);
 
         private Task OnTickInternal(DateTimeOffset currentTime)
         {
+            Console.WriteLine(nameof(OnTickInternal) + " " + currentTime);
+
             if (_isRunning)
             {
+                Console.WriteLine(nameof(OnTickInternal) + " is already running...");
                 return Task.CompletedTask;
             }
 
-            lock (TickLock)
+            lock (_tickLock)
             {
                 if (_isRunning)
                 {
                     return Task.CompletedTask;
                 }
 
-                _isRunning = true;
-
-                if (!_cancellationTokenSource.IsCancellationRequested)
+                if (_cancellationTokenSource.IsCancellationRequested)
                 {
+                    _isRunning = false;
                     return Task.CompletedTask;
                 }
 
+                _isRunning = true;
+                Console.WriteLine(nameof(OnTickInternal) + " is now running...");
+
                 if (_schedules.IsEmpty)
                 {
+                    _isRunning = false;
                     return Task.CompletedTask;
                 }
 
@@ -112,22 +116,18 @@ namespace Arbor.AspNetCore.Host
                     Console.WriteLine($"Current {currentTime}, Next {nextTime.Value}");
                     bool executeNow = currentTime >= nextTime.Value;
 
-                    double diff = Math.Abs((nextTime.Value - currentTime).TotalMilliseconds);
+                    double diff = (currentTime - nextTime.Value).TotalMilliseconds;
 
-                    Console.WriteLine($"Diff {diff}");
-
-                    if (executeNow)
+                    if (executeNow && diff < 100)
                     {
-                        _running.TryAdd(pair.Key, currentTime);
+                        Console.WriteLine($"  Executing trigger now {executeNow} with diff {diff:F1}");
                         Task.Run(() => pair.Value(currentTime), _cancellationTokenSource.Token);
-                        Console.WriteLine($"Execute now {executeNow} {diff:F1}");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"N IsInFuture {executeNow} {diff:F1}");
                     }
 
-                    _running.TryRemove(pair.Key, out _);
+                    if (currentTime < nextTime.Value)
+                    {
+                        Console.WriteLine($"Still time to wait before trigger {currentTime} {nextTime.Value}");
+                    }
                 }
 
                 foreach (var schedule in toRemove)
@@ -140,6 +140,8 @@ namespace Arbor.AspNetCore.Host
                     _isRunning = false;
                     _resetEvent.Set();
                 }
+
+                _isRunning = false;
             }
 
             return Task.CompletedTask;
