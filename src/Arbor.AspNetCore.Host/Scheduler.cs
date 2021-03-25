@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using Arbor.App.Extensions.Time;
@@ -12,6 +13,7 @@ namespace Arbor.AspNetCore.Host
     {
         private readonly ICustomClock _clock;
         private readonly ConcurrentDictionary<ISchedule, OnTickAsync> _schedules = new();
+        private readonly ConcurrentDictionary<ISchedule, DateTimeOffset?> _lastRun = new();
         private readonly object _tickLock = new();
         private readonly CancellationTokenSource _cancellationTokenSource;
         private bool _isDisposed;
@@ -59,6 +61,8 @@ namespace Arbor.AspNetCore.Host
 
             return _schedules.TryAdd(schedule, onTick);
         }
+
+        public ImmutableArray<ISchedule> Schedules => _schedules.Keys.ToImmutableArray();
 
         private void Schedule() => Task.Run(() => OnTickInternal(_clock.UtcNow()));
 
@@ -112,14 +116,25 @@ namespace Arbor.AspNetCore.Host
                         continue;
                     }
 
-                    bool executeNow = currentTime >= nextTime.Value;
+                    _lastRun.TryGetValue(pair.Key, out var lastRun);
+
+                    if (lastRun.HasValue && lastRun.Value == nextTime)
+                    {
+                        continue;
+                    }
 
                     double diff = (currentTime - nextTime.Value).TotalMilliseconds;
 
-                    if (executeNow && diff < 100)
+                    double absoluteDiff = Math.Abs(diff);
+
+                    if (absoluteDiff < 50 && _lastRun.TryAdd(pair.Key, nextTime))
                     {
                         _logger.Verbose("Running schedule {Schedule}", pair.Key);
                         Task.Run(() => pair.Value(currentTime), _cancellationTokenSource.Token);
+                    }
+                    else if (nextTime > lastRun)
+                    {
+                        _lastRun.TryRemove(pair.Key, out _);
                     }
                 }
 

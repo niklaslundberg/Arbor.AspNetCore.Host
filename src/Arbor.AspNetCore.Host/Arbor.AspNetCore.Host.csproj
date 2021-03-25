@@ -12,6 +12,8 @@
   <ItemGroup>
 
     <PackageReference Include="Arbor.App.Extensions" Version="0.6.2" />
+
+    <PackageReference Include="Cronos" Version="0.7.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
     <PackageReference Include="Marten.Analyzers" Version="1.5.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />

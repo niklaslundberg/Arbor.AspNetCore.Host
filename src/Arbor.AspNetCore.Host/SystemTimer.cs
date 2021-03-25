@@ -9,7 +9,7 @@ namespace Arbor.AspNetCore.Host
         private readonly List<Action> _actions = new();
 
         private Timer? _timer;
-        public SystemTimer() => _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(1));
+        public SystemTimer() => _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromMilliseconds(10));
 
         public void Register(Action onTick)
         {

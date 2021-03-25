@@ -25,7 +25,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
             Console.WriteLine($"{nameof(ScheduleOnce)} invoked {_invokedCount}");
 
-            if (currentTime > _dateTimeOffset)
+            if (currentTime >= _dateTimeOffset)
             {
                 if (_fired)
                 {

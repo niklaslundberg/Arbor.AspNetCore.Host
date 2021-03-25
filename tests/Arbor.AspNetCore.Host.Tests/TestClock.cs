@@ -6,12 +6,17 @@ namespace Arbor.AspNetCore.Host.Tests
     public class TestClock : ICustomClock
     {
         private DateTimeOffset _dateTimeOffset;
+        private readonly TimeSpan _tickDuration;
 
-        public TestClock(DateTimeOffset dateTimeOffset) => _dateTimeOffset = dateTimeOffset;
+        public TestClock(DateTimeOffset dateTimeOffset, TimeSpan tickDuration)
+        {
+            _dateTimeOffset = dateTimeOffset;
+            _tickDuration = tickDuration;
+        }
 
         public DateTimeOffset UtcNow()
         {
-            _dateTimeOffset = _dateTimeOffset.AddMilliseconds(1000);
+            _dateTimeOffset = _dateTimeOffset.Add(_tickDuration);
 
             return _dateTimeOffset;
         }

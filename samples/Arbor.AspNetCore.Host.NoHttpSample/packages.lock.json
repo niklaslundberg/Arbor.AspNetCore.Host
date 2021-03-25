@@ -138,6 +138,11 @@
         "resolved": "0.6.0",
         "contentHash": "KcuciNAfg/ArkDdcM1hHMeIprKwQjdHWV6zXBFAqmKDxGB9rdDHk9a1jHTVQ5r7y5gxAowCUGLgEcfheKItoig=="
       },
+      "Cronos": {
+        "type": "Transitive",
+        "resolved": "0.7.0",
+        "contentHash": "r7bwVGU2Kkh95cbXB88BtOtZyUOE/DDX+Shhe9SXgcsHV+LFPulygdoVxGLTqTpibwGw4B09WTNqQgFr3QrP9g=="
+      },
       "JetBrains.Annotations": {
         "type": "Transitive",
         "resolved": "2020.3.0",
@@ -1083,6 +1088,7 @@
           "Arbor.KVConfiguration.UserConfiguration": "1.1.6",
           "Arbor.ModelBinding": "1.0.1",
           "Arbor.Processing": "0.6.0",
+          "Cronos": "0.7.0",
           "JetBrains.Annotations": "2020.3.0",
           "Marten.Analyzers": "1.5.0",
           "MediatR.Extensions.Microsoft.DependencyInjection": "9.0.0",
