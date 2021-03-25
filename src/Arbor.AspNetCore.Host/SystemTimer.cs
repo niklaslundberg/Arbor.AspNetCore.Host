@@ -29,6 +29,11 @@ namespace Arbor.AspNetCore.Host
 
         private void DoWork(object? state)
         {
+            if (_actions.Count == 0)
+            {
+                return;
+            }
+
             foreach (var action in _actions)
             {
                 action.Invoke();

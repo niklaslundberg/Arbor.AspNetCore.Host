@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Arbor.App.Extensions.Time;
+using Serilog;
 
 namespace Arbor.AspNetCore.Host
 {
@@ -17,11 +18,13 @@ namespace Arbor.AspNetCore.Host
         private bool _isDisposing;
         private bool _isRunning;
         private readonly ITimer? _timer;
+        private readonly ILogger _logger;
 
-        public Scheduler(ICustomClock clock, ITimer timer)
+        public Scheduler(ICustomClock clock, ITimer timer, ILogger logger)
         {
             _clock = clock;
             _timer = timer;
+            _logger = logger;
             _timer.Register(Schedule);
             _cancellationTokenSource = new CancellationTokenSource();
         }
@@ -71,11 +74,8 @@ namespace Arbor.AspNetCore.Host
 
         private Task OnTickInternal(DateTimeOffset currentTime)
         {
-            Console.WriteLine(nameof(OnTickInternal) + " " + currentTime);
-
             if (_isRunning)
             {
-                Console.WriteLine(nameof(OnTickInternal) + " is already running...");
                 return Task.CompletedTask;
             }
 
@@ -93,7 +93,6 @@ namespace Arbor.AspNetCore.Host
                 }
 
                 _isRunning = true;
-                Console.WriteLine(nameof(OnTickInternal) + " is now running...");
 
                 if (_schedules.IsEmpty)
                 {
@@ -113,20 +112,14 @@ namespace Arbor.AspNetCore.Host
                         continue;
                     }
 
-                    Console.WriteLine($"Current {currentTime}, Next {nextTime.Value}");
                     bool executeNow = currentTime >= nextTime.Value;
 
                     double diff = (currentTime - nextTime.Value).TotalMilliseconds;
 
                     if (executeNow && diff < 100)
                     {
-                        Console.WriteLine($"  Executing trigger now {executeNow} with diff {diff:F1}");
+                        _logger.Verbose("Running schedule {Schedule}", pair.Key);
                         Task.Run(() => pair.Value(currentTime), _cancellationTokenSource.Token);
-                    }
-
-                    if (currentTime < nextTime.Value)
-                    {
-                        Console.WriteLine($"Still time to wait before trigger {currentTime} {nextTime.Value}");
                     }
                 }
 
@@ -137,6 +130,7 @@ namespace Arbor.AspNetCore.Host
 
                 if (_cancellationTokenSource.IsCancellationRequested)
                 {
+                    _logger.Debug("Cancellation is requested, stopping schedules");
                     _isRunning = false;
                     _resetEvent.Set();
                 }

@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Arbor.App.Extensions.Time;
 using FluentAssertions;
+using Serilog.Core;
 using Xunit;
 
 namespace Arbor.AspNetCore.Host.Tests
@@ -15,7 +16,7 @@ namespace Arbor.AspNetCore.Host.Tests
             var dateTimeOffset = new DateTimeOffset(2000, 1, 1, 0, 0, 4, 0, TimeSpan.Zero);
             var schedule = new ScheduleOnce(dateTimeOffset);
             using var timer = new TestTimer();
-            using var scheduler = new Scheduler(clock, timer);
+            using var scheduler = new Scheduler(clock, timer, Logger.None);
             var testService =  new TestScheduledService(schedule, scheduler);
 
             for (int i = 0; i < 8; i++)
@@ -37,7 +38,7 @@ namespace Arbor.AspNetCore.Host.Tests
             var start = new DateTimeOffset(2000, 1, 1, 0, 0, 4, 0, TimeSpan.Zero);
             var schedule = new ScheduleEveryInterval(TimeSpan.FromSeconds(4), start);
             using var timer = new TestTimer();
-            using var scheduler = new Scheduler(clock, timer);
+            using var scheduler = new Scheduler(clock, timer, Logger.None);
             var testService =  new TestScheduledService(schedule, scheduler);
 
             for (int i = 0; i < 10; i++)
@@ -59,8 +60,8 @@ namespace Arbor.AspNetCore.Host.Tests
             var start = new DateTimeOffset(2000, 1, 1, 0, 0, 4, 0, TimeSpan.Zero);
             var schedule = new ScheduleEveryInterval(TimeSpan.FromSeconds(1), start);
             using var timer = new TestTimer();
-            using var scheduler = new Scheduler(clock, timer
-);
+            using var scheduler = new Scheduler(clock, timer, Logger.None);
+
             var testService =  new TestScheduledService(schedule, scheduler);
 
             for (int i = 0; i < 10; i++)
@@ -85,7 +86,7 @@ namespace Arbor.AspNetCore.Host.Tests
             var start = new DateTimeOffset(2000, 1, 1, 0, 0, 4, 0, TimeSpan.Zero);
             var schedule = new ScheduleEveryInterval(TimeSpan.FromSeconds(2), start);
             using var timer = new TestTimer();
-            using var scheduler = new Scheduler(clock, timer);
+            using var scheduler = new Scheduler(clock, timer, Logger.None);
             var testService =  new TestScheduledService(schedule, scheduler);
 
             for (int i = 0; i < ticks; i++)
@@ -108,7 +109,7 @@ namespace Arbor.AspNetCore.Host.Tests
             var start = clock.UtcNow().AddMilliseconds(100);
             var schedule = new ScheduleEveryInterval(TimeSpan.FromMilliseconds(interval), start);
             using var timer = new SystemTimer();
-            IScheduler scheduler = new Scheduler(clock, timer);
+            using var scheduler = new Scheduler(clock, timer, Logger.None);
             var testService =  new TestScheduledService(schedule, scheduler);
 
             await Task.Delay(TimeSpan.FromMilliseconds(milliseconds));

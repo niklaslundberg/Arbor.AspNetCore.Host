@@ -8,9 +8,9 @@ namespace Arbor.AspNetCore.Host.Tests
 
         private bool _fired;
 
-        private int invokedCount;
+        private int _invokedCount;
 
-        private object lockObject = new ();
+        private readonly object _lockObject = new ();
 
         public ScheduleOnce(DateTimeOffset dateTimeOffset) => _dateTimeOffset = dateTimeOffset;
 
@@ -21,9 +21,9 @@ namespace Arbor.AspNetCore.Host.Tests
                 return null;
             }
 
-            ++invokedCount;
+            ++_invokedCount;
 
-            Console.WriteLine($"{nameof(ScheduleOnce)} invoked {invokedCount}");
+            Console.WriteLine($"{nameof(ScheduleOnce)} invoked {_invokedCount}");
 
             if (currentTime > _dateTimeOffset)
             {
@@ -32,7 +32,7 @@ namespace Arbor.AspNetCore.Host.Tests
                     return null;
                 }
 
-                lock (lockObject)
+                lock (_lockObject)
                 {
                     if (_fired)
                     {
@@ -41,14 +41,14 @@ namespace Arbor.AspNetCore.Host.Tests
 
                     _fired = true;
 
-                    Console.WriteLine($"Schedule once fired {invokedCount}");
+                    Console.WriteLine($"Schedule once fired {_invokedCount}");
 
                     return _dateTimeOffset;
                 }
             }
             else
             {
-                Console.WriteLine($"{nameof(ScheduleOnce)} not yet ready {invokedCount}");
+                Console.WriteLine($"{nameof(ScheduleOnce)} not yet ready {_invokedCount}");
             }
 
             return _dateTimeOffset;

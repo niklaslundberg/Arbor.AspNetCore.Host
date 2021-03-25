@@ -17,6 +17,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
         public void Dispose()
         {
+            // ignore
         }
 
         public void Register(Action onTick) => _actions.Add(onTick);
