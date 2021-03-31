@@ -19,7 +19,7 @@ namespace Arbor.AspNetCore.Host.Configuration
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                await Task.Delay(TimeSpan.FromHours(1), stoppingToken);
+                await Task.Delay(TimeSpan.FromHours(1), stoppingToken).ConfigureAwait(false);
             }
         }
     }

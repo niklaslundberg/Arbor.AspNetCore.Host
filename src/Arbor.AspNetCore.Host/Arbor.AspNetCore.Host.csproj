@@ -11,7 +11,7 @@
 
   <ItemGroup>
 
-    <PackageReference Include="Arbor.App.Extensions" Version="1.1.6-build.1616388748" />
+    <PackageReference Include="Arbor.App.Extensions" Version="0.7.0-build.*" />
 
     <PackageReference Include="Cronos" Version="0.7.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2020.3.0" />
@@ -38,14 +38,14 @@
     <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Arbor.Processing" Version="0.6.0" />
-    <PackageReference Include="Arbor.AspNetCore.Mvc.Formatting.HtmlForms" Version="0.11.0" />
+    <PackageReference Include="Arbor.AspNetCore.Mvc.Formatting.HtmlForms" Version="1.0.0-build.1617189400" />
     <PackageReference Include="Arbor.KVConfiguration.DependencyInjection" Version="1.2.0-build.1617034280" />
     <PackageReference Include="Arbor.KVConfiguration.Core" Version="1.2.0-build.1617034280" />
     <PackageReference Include="Arbor.KVConfiguration.JsonConfiguration" Version="1.2.0-build.1617034280" />
     <PackageReference Include="Arbor.KVConfiguration.Microsoft.Extensions.Configuration.Urns" Version="1.2.0-build.1617034280" />
     <PackageReference Include="Arbor.KVConfiguration.Urns" Version="1.2.0-build.1617034280" />
     <PackageReference Include="Arbor.KVConfiguration.UserConfiguration" Version="1.2.0-build.1617034280" />
-    <PackageReference Include="Arbor.ModelBinding" Version="1.0.1" />
+    <PackageReference Include="Arbor.ModelBinding" Version="1.1.0-build.1617179722.systemtextjson" />
     <PackageReference Include="Arbor.KVConfiguration.Schema.Json" Version="1.2.0-build.1617034280" />
 
   </ItemGroup>

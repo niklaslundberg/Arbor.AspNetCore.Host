@@ -8,6 +8,5 @@ namespace Arbor.AspNetCore.Host.Sample.Areas
         [Route("~/in-area")]
         [HttpGet]
         public IActionResult Index() => View();
-
     }
 }

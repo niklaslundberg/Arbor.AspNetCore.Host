@@ -1,0 +1,4 @@
+# .NET Code Style Settings
+[*.{cs,csx,cake,vb}]
+
+dotnet_diagnostic.RCS1090.severity = silent

@@ -11,8 +11,7 @@ namespace Arbor.AspNetCore.Host.Sample
     {
         private readonly ILogger _logger;
 
-
-        public ScheduledLog([NotNull] IScheduler time, ILogger logger) : base(new CronSchedule(CronExpression.Parse("* * * * * *", CronFormat.IncludeSeconds)), time) => _logger = logger;
+        public ScheduledLog([NotNull] IScheduler scheduler, ILogger logger) : base(new CronSchedule(CronExpression.Parse("* * * * * *", CronFormat.IncludeSeconds)), scheduler) => _logger = logger;
 
         protected override Task RunAsync(DateTimeOffset currentTime, CancellationToken stoppingToken)
         {

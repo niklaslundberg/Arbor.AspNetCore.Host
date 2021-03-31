@@ -18,7 +18,6 @@ namespace Arbor.AspNetCore.Host.Tests
 
         public TestScheduledService([NotNull] ISchedule schedule, [NotNull] IScheduler scheduler) : base(schedule, scheduler)
         {
-
         }
     }
 }

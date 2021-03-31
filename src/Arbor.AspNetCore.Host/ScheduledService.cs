@@ -6,19 +6,19 @@ namespace Arbor.AspNetCore.Host
 {
     public abstract class ScheduledService
     {
-        private readonly IScheduler _time;
+        private readonly IScheduler _scheduler;
 
-        protected ScheduledService(ISchedule schedule, IScheduler time)
+        protected ScheduledService(ISchedule schedule, IScheduler scheduler)
         {
-            _time = time;
+            _scheduler = scheduler;
             Schedule = schedule;
 
-            time.Add(schedule, Run);
+            scheduler.Add(schedule, Run);
         }
 
         public ISchedule Schedule { get; }
 
-        private async Task Run(DateTimeOffset dateTimeOffset) => await RunAsync(dateTimeOffset, CancellationToken.None);
+        private async Task Run(DateTimeOffset dateTimeOffset) => await RunAsync(dateTimeOffset, CancellationToken.None).ConfigureAwait(false);
 
         protected virtual Task RunAsync(DateTimeOffset currentTime, CancellationToken stoppingToken) =>
             Task.CompletedTask;

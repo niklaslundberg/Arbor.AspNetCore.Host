@@ -19,7 +19,6 @@ namespace Arbor.AspNetCore.Host.Tests
             app.UseRouting();
 
             app.UseEndpoints(builder => builder.MapControllers());
-
         }
     }
 }
