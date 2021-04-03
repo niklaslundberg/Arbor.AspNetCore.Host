@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 
-namespace Arbor.AspNetCore.Host
+namespace Arbor.AspNetCore.Host.Scheduling
 {
     public sealed class SystemTimer : ITimer
     {

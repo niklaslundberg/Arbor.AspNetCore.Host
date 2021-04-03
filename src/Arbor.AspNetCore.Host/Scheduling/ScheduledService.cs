@@ -2,21 +2,25 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Arbor.AspNetCore.Host
+namespace Arbor.AspNetCore.Host.Scheduling
 {
     public abstract class ScheduledService
     {
-        private readonly IScheduler _scheduler;
-
         protected ScheduledService(ISchedule schedule, IScheduler scheduler)
         {
-            _scheduler = scheduler;
+            Scheduler = scheduler;
             Schedule = schedule;
 
             scheduler.Add(schedule, Run);
         }
 
         public ISchedule Schedule { get; }
+
+        public override string ToString() => Name;
+
+        public IScheduler Scheduler { get; }
+
+        public virtual string Name => GetType().Name;
 
         private async Task Run(DateTimeOffset dateTimeOffset) => await RunAsync(dateTimeOffset, CancellationToken.None).ConfigureAwait(false);
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Arbor.AspNetCore.Host
+namespace Arbor.AspNetCore.Host.Scheduling
 {
     public interface ITimer : IDisposable
     {

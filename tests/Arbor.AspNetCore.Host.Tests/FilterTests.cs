@@ -43,7 +43,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
             var httpClient = httpClientFactory.CreateClient();
 
-            var response = await httpClient.PostAsync("http://localhost:" + TestConfigureEnvironment.HttpPort, new StringContent("{}", Encoding.UTF8, "application/json"));
+            var response = await httpClient.PostAsync($"http://localhost:{TestConfigureEnvironment.HttpPort}", new StringContent("{}", Encoding.UTF8, "application/json"));
 
             await Task.Delay(1.Seconds());
 

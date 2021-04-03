@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Arbor.App.Extensions.Time;
 using Serilog;
 
-namespace Arbor.AspNetCore.Host
+namespace Arbor.AspNetCore.Host.Scheduling
 {
     public sealed class Scheduler : IScheduler, IDisposable
     {

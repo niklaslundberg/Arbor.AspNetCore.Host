@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
-namespace Arbor.AspNetCore.Host.Sample
+namespace Arbor.AspNetCore.Host.Scheduling
 {
+    [UsedImplicitly]
     public class SchedulerBackgroundService : BackgroundService
     {
         private readonly IScheduler _scheduler;
@@ -22,7 +25,7 @@ namespace Arbor.AspNetCore.Host.Sample
 
         protected override Task ExecuteAsync(CancellationToken stoppingToken)
         {
-            _logger.Information("Found {Schedules} schedules", _services);
+            _logger.Information("Found {@Schedules} schedules", _services.Select(service => service.Name).ToArray());
             _logger.Information("Running scheduler {Scheduler}", _scheduler);
 
             return Task.CompletedTask;

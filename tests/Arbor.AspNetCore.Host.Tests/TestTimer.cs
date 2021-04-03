@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Arbor.AspNetCore.Host.Scheduling;
 
 namespace Arbor.AspNetCore.Host.Tests
 {

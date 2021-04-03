@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Arbor.App.Extensions.Time;
+using Arbor.AspNetCore.Host.Scheduling;
 using Cronos;
 using FluentAssertions;
 using Serilog.Core;

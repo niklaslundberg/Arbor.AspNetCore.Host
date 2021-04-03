@@ -38,14 +38,14 @@
     <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
     <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Arbor.Processing" Version="0.6.0" />
-    <PackageReference Include="Arbor.AspNetCore.Mvc.Formatting.HtmlForms" Version="*-*" />
+    <PackageReference Include="Arbor.AspNetCore.Mvc.Formatting.HtmlForms" Version="*" />
     <PackageReference Include="Arbor.KVConfiguration.DependencyInjection" Version="1.2.0" />
     <PackageReference Include="Arbor.KVConfiguration.Core" Version="1.2.0" />
     <PackageReference Include="Arbor.KVConfiguration.JsonConfiguration" Version="1.2.0" />
     <PackageReference Include="Arbor.KVConfiguration.Microsoft.Extensions.Configuration.Urns" Version="1.2.0" />
     <PackageReference Include="Arbor.KVConfiguration.Urns" Version="1.2.0" />
     <PackageReference Include="Arbor.KVConfiguration.UserConfiguration" Version="1.2.0" />
-    <PackageReference Include="Arbor.ModelBinding" Version="*-*" />
+    <PackageReference Include="Arbor.ModelBinding" Version="*" />
     <PackageReference Include="Arbor.KVConfiguration.Schema.Json" Version="1.2.0" />
 
   </ItemGroup>

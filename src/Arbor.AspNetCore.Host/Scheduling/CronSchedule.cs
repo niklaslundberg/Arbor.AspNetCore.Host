@@ -1,7 +1,7 @@
 ﻿using System;
 using Cronos;
 
-namespace Arbor.AspNetCore.Host
+namespace Arbor.AspNetCore.Host.Scheduling
 {
     public class CronSchedule : ISchedule
     {

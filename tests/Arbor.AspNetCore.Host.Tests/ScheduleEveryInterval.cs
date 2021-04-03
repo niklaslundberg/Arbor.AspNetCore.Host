@@ -1,4 +1,5 @@
 ﻿using System;
+using Arbor.AspNetCore.Host.Scheduling;
 
 namespace Arbor.AspNetCore.Host.Tests
 {

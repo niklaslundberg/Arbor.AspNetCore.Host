@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Arbor.AspNetCore.Host.Scheduling;
 using Cronos;
 using JetBrains.Annotations;
 using Serilog;
@@ -19,5 +20,6 @@ namespace Arbor.AspNetCore.Host.Sample
 
             return Task.CompletedTask;
         }
+        public override string Name { get; } = "My custom scheduled service";
     }
 }

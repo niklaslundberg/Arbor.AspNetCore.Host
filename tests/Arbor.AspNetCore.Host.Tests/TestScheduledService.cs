@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Arbor.AspNetCore.Host.Scheduling;
 using JetBrains.Annotations;
 
 namespace Arbor.AspNetCore.Host.Tests
