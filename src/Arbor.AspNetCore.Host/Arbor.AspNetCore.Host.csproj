@@ -40,7 +40,7 @@
     <PackageReference Include="Arbor.AspNetCore.Mvc.Formatting.HtmlForms" Version="0.11.0" />
     <PackageReference Include="Arbor.KVConfiguration.DependencyInjection" Version="1.1.6" />
     <PackageReference Include="Arbor.KVConfiguration.Core" Version="1.1.6" />
-    <PackageReference Include="Arbor.KVConfiguration.JsonConfiguration" Version="1.1.6" />
+    <PackageReference Include="Arbor.KVConfiguration.JsonConfiguration" Version="1.2.0" />
     <PackageReference Include="Arbor.KVConfiguration.Microsoft.Extensions.Configuration.Urns" Version="1.1.6" />
     <PackageReference Include="Arbor.KVConfiguration.Urns" Version="1.1.6" />
     <PackageReference Include="Arbor.KVConfiguration.UserConfiguration" Version="1.1.6" />
