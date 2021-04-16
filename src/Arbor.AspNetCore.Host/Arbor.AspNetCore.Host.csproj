@@ -46,6 +46,7 @@
     <PackageReference Include="Arbor.KVConfiguration.Urns" Version="1.2.0" />
     <PackageReference Include="Arbor.KVConfiguration.UserConfiguration" Version="1.2.0" />
     <PackageReference Include="Arbor.ModelBinding" Version="*-*" />
+    <PackageReference Include="Arbor.ModelBinding.NewtonsoftJson" Version="*-*" />
     <PackageReference Include="Arbor.KVConfiguration.Schema.Json" Version="1.2.0" />
 
   </ItemGroup>

@@ -119,18 +119,18 @@
       },
       "Arbor.ModelBinding": {
         "type": "Transitive",
-        "resolved": "1.1.0-build.1617222349.systemtextjson",
-        "contentHash": "m78gi3vQIILb8uhaWGWuyw5bKHps2cbWPetiYR5jh7aUpRXvJqbcRQu0dXmxUmfrp3fyOYs9r77yH5kuJMc1qA==",
+        "resolved": "1.1.0-build.1617741586.systemtextjson",
+        "contentHash": "I4mcRwAAaHY1boUw+QXJA5VwplrOol3zIdjBD1TkzBFH81FFiRsvuL94enF7t+3huEdryqu/+8HovvGITMzfBw==",
         "dependencies": {
           "Microsoft.Extensions.Primitives": "5.0.0"
         }
       },
       "Arbor.ModelBinding.NewtonsoftJson": {
         "type": "Transitive",
-        "resolved": "1.1.0-build.1617217709.systemtextjson",
-        "contentHash": "bkC04zsd+0i0U2of8bBCYvadz5tSfdVnlUd4A6UTwDb9zchn+uAtesoD0VXM1CV+a5eWPJuNCsNzVV1lGf9d1w==",
+        "resolved": "1.1.0-build.1617741586.systemtextjson",
+        "contentHash": "xpq6cc4JjmiWen76PHVttX8Ds9ohSNsRhHLu6hrGwHlGPeWixGQuJ0h8TMKToHh2QlKfG+T0QF6F6s0i4WjApA==",
         "dependencies": {
-          "Arbor.ModelBinding": "1.1.0-build.1617217709.systemtextjson",
+          "Arbor.ModelBinding": "1.1.0-build.1617741586.systemtextjson",
           "Microsoft.Extensions.Primitives": "5.0.0",
           "Newtonsoft.Json": "13.0.1"
         }
@@ -187,8 +187,8 @@
       },
       "Microsoft.AspNetCore.Hosting.WindowsServices": {
         "type": "Transitive",
-        "resolved": "5.0.4",
-        "contentHash": "zDqTN9fJJgZp8+NgLER0ICddQFOIv0i4c5gumSzI/bVaqNaFY7Y7PpOKSpRgl24mIlOyCdXuX7ckm6DEPMaEgw==",
+        "resolved": "5.0.0",
+        "contentHash": "4u1BazlxPRGw8gM8Bvsy9ncTByP/SSkbM6PBtBPiCeLTc57DctsSm2UMlY40equtRAZ+2k0b8/75u5PKhO/qBw==",
         "dependencies": {
           "System.ServiceProcess.ServiceController": "5.0.0"
         }
@@ -1097,13 +1097,14 @@
           "Arbor.KVConfiguration.Urns": "1.2.0",
           "Arbor.KVConfiguration.UserConfiguration": "1.2.0",
           "Arbor.ModelBinding": "0.0.0-0",
+          "Arbor.ModelBinding.NewtonsoftJson": "0.0.0-0",
           "Arbor.Processing": "0.6.0",
           "Cronos": "0.7.0",
           "JetBrains.Annotations": "2020.3.0",
           "Marten.Analyzers": "1.5.0",
           "MediatR.Extensions.Microsoft.DependencyInjection": "9.0.0",
           "Microsoft.AspNetCore.Authentication.OpenIdConnect": "5.0.4",
-          "Microsoft.AspNetCore.Hosting.WindowsServices": "5.0.4",
+          "Microsoft.AspNetCore.Hosting.WindowsServices": "5.0.0",
           "Microsoft.AspNetCore.Mvc.NewtonsoftJson": "5.0.4",
           "Microsoft.CodeAnalysis.CSharp": "3.9.0",
           "Microsoft.Extensions.Configuration": "5.0.0",
