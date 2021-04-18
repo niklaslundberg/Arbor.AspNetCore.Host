@@ -33,7 +33,7 @@ namespace Arbor.AspNetCore.Host.Logging
                 _logger.Verbose("Starting request {RequestInfo}", commonRequestInfo);
             }
 
-            await _next.Invoke(context);
+            await _next.Invoke(context).ConfigureAwait(false);
 
             if (loggingEnabled)
             {

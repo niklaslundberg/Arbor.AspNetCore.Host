@@ -25,6 +25,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host.Tests
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Arbor.AspNetCore.Host.NoHttpSample", "samples\Arbor.AspNetCore.Host.NoHttpSample\Arbor.AspNetCore.Host.NoHttpSample.csproj", "{C94E01FC-5EAB-4AAC-B585-52BF5F7B029C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{007EB412-1CCF-40EE-9668-99C02BB4A07F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{C17EFB17-3774-489C-A509-61326B431450}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,6 +90,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{F80FBA6A-83C7-45C0-AAE9-6C62EB8F43B8} = {C17EFB17-3774-489C-A509-61326B431450}
+		{583EF38F-5B5E-420E-83F2-7D94A62FDA5B} = {007EB412-1CCF-40EE-9668-99C02BB4A07F}
+		{C94E01FC-5EAB-4AAC-B585-52BF5F7B029C} = {C17EFB17-3774-489C-A509-61326B431450}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {55844DB4-9377-439C-973C-7E379A8B28CC}

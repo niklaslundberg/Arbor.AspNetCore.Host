@@ -323,7 +323,7 @@ namespace Arbor.AspNetCore.Host
                         {
                             foreach (var @interface in interfaces)
                             {
-                                serviceCollection.AddSingleton(@interface, context => item.Value);
+                                serviceCollection.AddSingleton(@interface, _ => item.Value);
                             }
 
                             var serviceType = item.Value.GetType();
@@ -336,7 +336,7 @@ namespace Arbor.AspNetCore.Host
 
                         foreach (var @interface in interfaces)
                         {
-                            serviceCollection.AddSingleton(@interface, context => instance);
+                            serviceCollection.AddSingleton(@interface, _ => instance);
                         }
 
                         var serviceType = instance.GetType();
@@ -439,7 +439,6 @@ namespace Arbor.AspNetCore.Host
             loggingLevelSwitch.MinimumLevel = defaultLevel;
         }
 
-
         private static ImmutableArray<IModule> GetConfigurationModules(
             ConfigurationInstanceHolder holder,
             IReadOnlyCollection<Assembly> scanAssemblies)
@@ -497,7 +496,7 @@ namespace Arbor.AspNetCore.Host
                     args,
                     environmentVariables,
                     scanAssemblies,
-                    instances);
+                    instances).ConfigureAwait(false);
 
                 return app;
             }
@@ -558,7 +557,7 @@ namespace Arbor.AspNetCore.Host
 
             foreach (var preStartModule in preStartModules.OrderBy(module => module.Order))
             {
-                await preStartModule.RunAsync(CancellationToken.None);
+                await preStartModule.RunAsync(CancellationToken.None).ConfigureAwait(false);
             }
 
             if (runAsService)
@@ -567,7 +566,7 @@ namespace Arbor.AspNetCore.Host
 
                 try
                 {
-                    await Host.WaitForShutdownAsync();
+                    await Host.WaitForShutdownAsync().ConfigureAwait(false);
                 }
                 catch (Exception ex) when (!ex.IsFatal())
                 {
@@ -583,7 +582,7 @@ namespace Arbor.AspNetCore.Host
 
                 try
                 {
-                    await Host.StartAsync(CancellationTokenSource.Token);
+                    await Host.StartAsync(CancellationTokenSource.Token).ConfigureAwait(false);
                 }
                 catch (TaskCanceledException ex)
                 {

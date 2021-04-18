@@ -23,10 +23,10 @@ namespace Arbor.AspNetCore.Host.Sample
                 .AddApplicationPart(typeof(TestController).Assembly);
 
             var loaded = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(assembly => !assembly.IsDynamic)
-                .Where(assembly =>
-                    !assembly.GetName().Name!.StartsWith("Microsoft")
-                    && assembly.GetName().Name!.Contains("Views", StringComparison.OrdinalIgnoreCase)).ToArray();
+                .Where(assembly => !assembly.IsDynamic
+                                   && !assembly.GetName().Name!.StartsWith("Microsoft")
+                                   && assembly.GetName().Name!.Contains("Views", StringComparison.OrdinalIgnoreCase))
+                .ToArray();
 
             assemblies.AddRange(loaded);
 

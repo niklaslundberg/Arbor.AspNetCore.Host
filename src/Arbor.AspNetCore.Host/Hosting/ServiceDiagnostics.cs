@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Arbor.AspNetCore.Host.Hosting
 {
-    public class ServiceDiagnostics
+    public sealed class ServiceDiagnostics
     {
         private ServiceDiagnostics(IEnumerable<ServiceRegistrationInfo> registrations) =>
             Registrations = registrations.SafeToImmutableArray();
