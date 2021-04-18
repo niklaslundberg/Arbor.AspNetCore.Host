@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Arbor.AspNetCore.Host.Hosting
 {
-    public class ServiceRegistrationInfo
+    public sealed class ServiceRegistrationInfo
     {
         private ServiceRegistrationInfo(
             Type serviceDescriptorServiceType,

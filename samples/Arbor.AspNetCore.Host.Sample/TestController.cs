@@ -51,6 +51,5 @@ namespace Arbor.AspNetCore.Host.Sample
 
             return Ok();
         }
-
     }
 }

@@ -62,7 +62,7 @@ namespace Arbor.AspNetCore.Host.Hosting
             IHostBuilder hostBuilder = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(commandLineArgs);
 
             hostBuilder
-                .ConfigureLogging((context, builder) => { builder.AddProvider(new SerilogLoggerProvider(logger)); })
+                .ConfigureLogging((_, builder) => builder.AddProvider(new SerilogLoggerProvider(logger)))
                 .ConfigureServices(services =>
                 {
                     foreach (var serviceDescriptor in serviceProviderHolder.ServiceCollection)
@@ -133,16 +133,12 @@ namespace Arbor.AspNetCore.Host.Hosting
                                 }
                             }
 
-
                             kestrelServerOptions.Add(options);
                         })
                         .UseContentRoot(contentRoot)
-                        .ConfigureAppConfiguration((hostingContext, config) => { config.AddEnvironmentVariables(); })
+                        .ConfigureAppConfiguration((_, config) => config.AddEnvironmentVariables())
                         .UseIISIntegration()
-                        .UseDefaultServiceProvider((context, options) =>
-                        {
-                            options.ValidateScopes = context.HostingEnvironment.IsDevelopment();
-                        })
+                        .UseDefaultServiceProvider((context, options) => options.ValidateScopes = context.HostingEnvironment.IsDevelopment())
                         .UseStartup<T>();
 
                     if (environmentConfiguration.EnvironmentName is {})

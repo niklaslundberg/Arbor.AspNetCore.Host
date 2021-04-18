@@ -20,9 +20,9 @@ namespace Arbor.AspNetCore.Host.Hosting
                 }
             }, waitForStop);
 
-            await waitForStop.Task;
+            await waitForStop.Task.ConfigureAwait(false);
 
-            await host.StopAsync();
+            await host.StopAsync().ConfigureAwait(false);
         }
     }
 }

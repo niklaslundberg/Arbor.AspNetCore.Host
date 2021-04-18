@@ -66,7 +66,7 @@ namespace Arbor.AspNetCore.Host
 
                     using var app = await App<T>.CreateAsync(cancellationTokenSource, args, environmentVariables,
                         assemblies,
-                        instances);
+                        instances).ConfigureAwait(false);
 
                     bool runAsService = app.Configuration.ValueOrDefault(ApplicationConstants.RunAsService)
                                         && !Debugger.IsAttached;
@@ -98,13 +98,13 @@ namespace Arbor.AspNetCore.Host
                         runArgs = args;
                     }
 
-                    await app.RunAsync(runArgs);
+                    await app.RunAsync(runArgs).ConfigureAwait(false);
 
                     if (!runAsService)
                     {
                         app.Logger.Debug("Started {App}, waiting for web host shutdown", app.AppInstance);
 
-                        await app.Host.WaitForShutdownAsync(cancellationTokenSource.Token);
+                        await app.Host.WaitForShutdownAsync(cancellationTokenSource.Token).ConfigureAwait(false);
                     }
 
                     app.Logger.Information(
@@ -123,12 +123,12 @@ namespace Arbor.AspNetCore.Host
                     environmentVariables.GetValueOrDefault(ConfigurationConstants.ShutdownTimeInSeconds),
                     out int shutDownTimeInSeconds) && shutDownTimeInSeconds > 0)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(shutDownTimeInSeconds), CancellationToken.None);
+                    await Task.Delay(TimeSpan.FromSeconds(shutDownTimeInSeconds), CancellationToken.None).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
             {
-                await Task.Delay(TimeSpan.FromMilliseconds(2000));
+                await Task.Delay(TimeSpan.FromMilliseconds(2000)).ConfigureAwait(false);
 
                 string? exceptionLogDirectory = args?.ParseParameter("exceptionDir");
 
@@ -154,14 +154,14 @@ namespace Arbor.AspNetCore.Host
                     logger.Fatal(ex, "Could not start application");
                     TempLogger.FlushWith(logger);
 
-                    await Task.Delay(TimeSpan.FromMilliseconds(1000));
+                    await Task.Delay(TimeSpan.FromMilliseconds(1000)).ConfigureAwait(false);
                 }
 
                 string exceptionLogFile = Path.Combine(logDirectory, "Exception.log");
 
-                await File.WriteAllTextAsync(exceptionLogFile, ex.ToString(), Encoding.UTF8);
+                await File.WriteAllTextAsync(exceptionLogFile, ex.ToString(), Encoding.UTF8).ConfigureAwait(false);
 
-                await Task.Delay(TimeSpan.FromMilliseconds(3000));
+                await Task.Delay(TimeSpan.FromMilliseconds(3000)).ConfigureAwait(false);
 
                 return 1;
             }
