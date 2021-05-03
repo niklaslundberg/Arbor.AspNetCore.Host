@@ -15,10 +15,10 @@ namespace Arbor.AspNetCore.Host.Hosting
 
         public void Dispose() => _webHostImplementation.Dispose();
 
-        public Task StartAsync(CancellationToken cancellationToken = new CancellationToken()) =>
+        public Task StartAsync(CancellationToken cancellationToken = new()) =>
             _webHostImplementation.StartAsync(cancellationToken);
 
-        public Task StopAsync(CancellationToken cancellationToken = new CancellationToken()) =>
+        public Task StopAsync(CancellationToken cancellationToken = new()) =>
             _webHostImplementation.StopAsync(cancellationToken);
 
         public IServiceProvider Services => _webHostImplementation.Services;

@@ -5,7 +5,7 @@ namespace Arbor.AspNetCore.Host.Configuration
 {
     public static class OrderExtensions
     {
-        public static int GetRegistrationOrder(this object instance, int defaultOrder)
+        public static int GetRegistrationOrder(this object? instance, int defaultOrder)
         {
             if (instance is null)
             {

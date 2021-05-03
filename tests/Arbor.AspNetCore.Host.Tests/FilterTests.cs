@@ -22,8 +22,6 @@ namespace Arbor.AspNetCore.Host.Tests
 
         private readonly ITestOutputHelper _outputHelper;
 
-
-
         [Fact]
         public async Task WhenNoValidationClassAttributeStatusCodeShouldNotBeBadRequest()
         {

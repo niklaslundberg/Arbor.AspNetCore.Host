@@ -4,9 +4,9 @@
     ".NETCoreApp,Version=v5.0": {
       "Arbor.App.Extensions": {
         "type": "Direct",
-        "requested": "[0.8.0, )",
-        "resolved": "0.8.0",
-        "contentHash": "/Ice263khR/uoQ6/5E3hisWFEyU7GKRKCzaXfbo+kWt1a2Q4Iyl7vmKL23LBEZllQYsOgIafbmCUmDhVBzl/kg==",
+        "requested": "[0.9.0-build.1620060829, )",
+        "resolved": "0.9.0-build.1620060829",
+        "contentHash": "JaZ9yfA2htpll9HnSkvMaqWybrzWsOFdopT9WxlNayY0pfP2sl6nPFU0dh//undQ1i38JeWV7boJaIqDkeBXGQ==",
         "dependencies": {
           "Arbor.KVConfiguration.Core": "1.2.0",
           "Arbor.KVConfiguration.Schema": "1.2.0",
@@ -22,7 +22,7 @@
           "Serilog.Sinks.Console": "3.1.1",
           "Serilog.Sinks.Debug": "2.0.0",
           "Serilog.Sinks.File": "4.1.0",
-          "Serilog.Sinks.Seq": "5.0.0",
+          "Serilog.Sinks.Seq": "5.0.1",
           "System.Collections.Immutable": "5.0.0",
           "System.ComponentModel.Annotations": "5.0.0"
         }
@@ -322,9 +322,9 @@
       },
       "Serilog.Sinks.Seq": {
         "type": "Direct",
-        "requested": "[5.0.0, )",
-        "resolved": "5.0.0",
-        "contentHash": "jBVpmd7O5YdY9mOkn+k6hmjjrejeq7FOfT64MeMr0Rdmy+AeQbYKOirlOKuX/Vl0xvHWQEtICC34J7TZZkrY6g==",
+        "requested": "[5.0.1, )",
+        "resolved": "5.0.1",
+        "contentHash": "SyoNjPcnV+vuOGtBErh2pMp4uimyqHqv8UnKcN8VY7c1DuDdbxelaWn1PI5gu/tyblhKy/mFSa3Jcvth07a5+A==",
         "dependencies": {
           "Serilog": "2.10.0",
           "Serilog.Formatting.Compact": "1.1.0",
