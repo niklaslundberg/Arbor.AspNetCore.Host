@@ -11,7 +11,7 @@
 
   <ItemGroup>
 
-    <PackageReference Include="Arbor.App.Extensions" Version="0.9.0-build.1620060829" />
+    <PackageReference Include="Arbor.App.Extensions" Version="0.9.0-build.1620909921" />
 
     <PackageReference Include="Cronos" Version="0.7.0" />
     <PackageReference Include="JetBrains.Annotations" Version="2021.1.0" />
