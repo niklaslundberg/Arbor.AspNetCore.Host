@@ -24,5 +24,6 @@ namespace Arbor.AspNetCore.Host.Tests
         public DateTime LocalNow() => throw new NotSupportedException();
 
         public DateTime ToLocalTime(DateTime dateTimeUtc) => throw new NotSupportedException();
+        public TimeZoneInfo DefaultTimeZone { get; } = TimeZoneInfo.Utc;
     }
 }

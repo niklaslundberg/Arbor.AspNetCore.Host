@@ -28,7 +28,7 @@ namespace Arbor.AspNetCore.Host.Startup
                     return true;
                 }
 
-                var pendingStartupTasks = _startupTasks.Where(task => !task.IsCompleted)
+                string?[] pendingStartupTasks = _startupTasks.Where(task => !task.IsCompleted)
                     .Select(task => task.ToString())
                     .ToArray();
 
