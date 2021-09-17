@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -51,7 +52,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
             TempLogger.FlushWith(logger);
 
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
         }
 
         [Fact]
@@ -83,7 +84,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
             TempLogger.FlushWith(logger);
 
-            response.StatusCode.Should().Be(StatusCodes.Status200OK);
+            response.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status200OK);
         }
 
         [Fact]
@@ -115,7 +116,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
             TempLogger.FlushWith(logger);
 
-            response.StatusCode.Should().Be(StatusCodes.Status400BadRequest);
+            response.StatusCode.Should().Be((HttpStatusCode)StatusCodes.Status400BadRequest);
         }
     }
 }
