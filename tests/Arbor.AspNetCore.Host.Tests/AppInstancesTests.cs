@@ -14,8 +14,12 @@ namespace Arbor.AspNetCore.Host.Tests
         public async Task CreateApp()
         {
             object[] instances = Array.Empty<object>();
+
             using App<TestStartup> app = await App<TestStartup>.CreateAsync(new CancellationTokenSource(),
-                Array.Empty<string>(), new Dictionary<string, string>(), Array.Empty<Assembly>(), instances);
+                Array.Empty<string>(),
+                new Dictionary<string, string>(),
+                Array.Empty<Assembly>(),
+                instances);
 
             app.Should().NotBeNull();
         }

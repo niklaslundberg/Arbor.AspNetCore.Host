@@ -22,9 +22,9 @@ namespace Arbor.AspNetCore.Host.Mvc
                     if (parameters.Length == 1)
                     {
                         var parameter = parameters[0];
+
                         bool hasNoValidationAttribute = parameter.GetCustomAttributes()
-                            .OfType<NoValidationAttribute>()
-                            .Any();
+                                                                 .OfType<NoValidationAttribute>().Any();
 
                         if (hasNoValidationAttribute || parameter.ParameterType.HasAttribute<NoValidationAttribute>())
                         {

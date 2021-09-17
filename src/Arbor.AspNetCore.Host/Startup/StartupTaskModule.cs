@@ -19,15 +19,17 @@ namespace Arbor.AspNetCore.Host.Startup
         public IServiceCollection Register(IServiceCollection builder)
         {
             IEnumerable<Type> startupTaskTypes = _assemblyResolver.GetAssemblies()
-                .SelectMany(assembly => assembly.GetLoadableTypes())
-                .Where(t => t.IsPublicConcreteTypeImplementing<IStartupTask>());
+                                                                  .SelectMany(assembly => assembly.GetLoadableTypes())
+                                                                  .Where(t => t
+                                                                      .IsPublicConcreteTypeImplementing<
+                                                                           IStartupTask>());
 
             foreach (Type startupTask in startupTaskTypes)
             {
                 builder.AddSingleton<IStartupTask>(context => context.GetRequiredService(startupTask), this);
 
-                if (builder.Any(serviceDescriptor => serviceDescriptor.ImplementationType == startupTask
-                                                     && serviceDescriptor.ServiceType == startupTask))
+                if (builder.Any(serviceDescriptor => serviceDescriptor.ImplementationType == startupTask &&
+                                                     serviceDescriptor.ServiceType == startupTask))
                 {
                     continue;
                 }

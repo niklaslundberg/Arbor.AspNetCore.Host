@@ -8,10 +8,10 @@ namespace Arbor.AspNetCore.Host.Startup
 {
     public class StartupTaskContext
     {
+        private readonly ILogger _logger;
         private readonly ImmutableArray<IStartupTask> _startupTasks;
 
         private bool _isCompleted;
-        private readonly ILogger _logger;
 
         public StartupTaskContext(IEnumerable<IStartupTask> startupTasks, ILogger logger)
         {
@@ -29,8 +29,7 @@ namespace Arbor.AspNetCore.Host.Startup
                 }
 
                 string?[] pendingStartupTasks = _startupTasks.Where(task => !task.IsCompleted)
-                    .Select(task => task.ToString())
-                    .ToArray();
+                                                             .Select(task => task.ToString()).ToArray();
 
                 _isCompleted = pendingStartupTasks.Length == 0;
 

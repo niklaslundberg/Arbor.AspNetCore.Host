@@ -9,6 +9,38 @@ namespace Arbor.AspNetCore.Host.Tests
 {
     public class EnvironmentConfiguratorTests
     {
+        [Fact]
+        public void EnvironmentConfiguratorsShouldRespectAttributeOrder()
+        {
+            EnvironmentConfiguration configuration = new();
+            ConfigurationInstanceHolder holder = new();
+
+            holder.AddInstance(configuration);
+            holder.AddInstance(new Configurator1());
+            holder.AddInstance(new Configurator2());
+            holder.AddInstance(new Configurator3());
+
+            EnvironmentConfigurator.ConfigureEnvironment(holder);
+
+            configuration.ApplicationName.Should().Be("app 3");
+        }
+
+        [Fact]
+        public void EnvironmentConfiguratorsShouldRespectAttributeOrderRegardlessOfRegistrationOrder()
+        {
+            EnvironmentConfiguration configuration = new();
+            ConfigurationInstanceHolder holder = new();
+
+            holder.AddInstance(configuration);
+            holder.AddInstance(new Configurator3());
+            holder.AddInstance(new Configurator2());
+            holder.AddInstance(new Configurator1());
+
+            EnvironmentConfigurator.ConfigureEnvironment(holder);
+
+            configuration.ApplicationName.Should().Be("app 3");
+        }
+
         [RegistrationOrder(100)]
         private class Configurator1 : IConfigureEnvironment
         {
@@ -27,38 +59,6 @@ namespace Arbor.AspNetCore.Host.Tests
         {
             public void Configure(EnvironmentConfiguration environmentConfiguration) =>
                 environmentConfiguration.ApplicationName = "app 3";
-        }
-
-        [Fact]
-        public void EnvironmentConfiguratorsShouldRespectAttributeOrder()
-        {
-            EnvironmentConfiguration configuration = new EnvironmentConfiguration();
-            ConfigurationInstanceHolder holder = new ConfigurationInstanceHolder();
-
-            holder.AddInstance(configuration);
-            holder.AddInstance(new Configurator1());
-            holder.AddInstance(new Configurator2());
-            holder.AddInstance(new Configurator3());
-
-            EnvironmentConfigurator.ConfigureEnvironment(holder);
-
-            configuration.ApplicationName.Should().Be("app 3");
-        }
-
-        [Fact]
-        public void EnvironmentConfiguratorsShouldRespectAttributeOrderRegardlessOfRegistrationOrder()
-        {
-            EnvironmentConfiguration configuration = new EnvironmentConfiguration();
-            ConfigurationInstanceHolder holder = new ConfigurationInstanceHolder();
-
-            holder.AddInstance(configuration);
-            holder.AddInstance(new Configurator3());
-            holder.AddInstance(new Configurator2());
-            holder.AddInstance(new Configurator1());
-
-            EnvironmentConfigurator.ConfigureEnvironment(holder);
-
-            configuration.ApplicationName.Should().Be("app 3");
         }
     }
 }

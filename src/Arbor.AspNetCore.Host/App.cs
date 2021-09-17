@@ -34,8 +34,7 @@ namespace Arbor.AspNetCore.Host
         private bool _disposed;
         private bool _disposing;
 
-        public App(
-            [NotNull] IHostBuilder hostBuilder,
+        public App([NotNull] IHostBuilder hostBuilder,
             [NotNull] CancellationTokenSource cancellationTokenSource,
             [NotNull] ILogger appLogger,
             MultiSourceKeyValueConfiguration configuration,
@@ -44,6 +43,7 @@ namespace Arbor.AspNetCore.Host
         {
             CancellationTokenSource = cancellationTokenSource ??
                                       throw new ArgumentNullException(nameof(cancellationTokenSource));
+
             Logger = appLogger ?? throw new ArgumentNullException(nameof(appLogger));
             Configuration = configuration;
             ScanAssemblies = scanAssemblies.SafeToImmutableArray();
@@ -83,19 +83,11 @@ namespace Arbor.AspNetCore.Host
             Stop();
             _disposing = true;
 
-            Logger.Debug("Disposing application {Application} {Instance}",
-                ApplicationName,
-                _instanceId);
-            Logger.Verbose("Disposing web host {Application} {Instance}",
-                ApplicationName,
-                _instanceId);
+            Logger.Debug("Disposing application {Application} {Instance}", ApplicationName, _instanceId);
+            Logger.Verbose("Disposing web host {Application} {Instance}", ApplicationName, _instanceId);
             Host?.SafeDispose();
-            Logger.Verbose("Disposing Application root scope {Application} {Instance}",
-                ApplicationName,
-                _instanceId);
-            Logger.Verbose("Disposing configuration {Application} {Instance}",
-                ApplicationName,
-                _instanceId);
+            Logger.Verbose("Disposing Application root scope {Application} {Instance}", ApplicationName, _instanceId);
+            Logger.Verbose("Disposing configuration {Application} {Instance}", ApplicationName, _instanceId);
             Configuration.SafeDispose();
 
             Logger.Debug("Application disposal complete, disposing logging {Application} {Instance}",
@@ -104,16 +96,12 @@ namespace Arbor.AspNetCore.Host
 
             if (Logger is IDisposable disposable)
             {
-                Logger.Verbose("Disposing Logger {Application} {Instance}",
-                    ApplicationName,
-                    _instanceId);
+                Logger.Verbose("Disposing Logger {Application} {Instance}", ApplicationName, _instanceId);
                 disposable.SafeDispose();
             }
             else
             {
-                Logger.Debug("Logger is not disposable {Application} {Instance}",
-                    ApplicationName,
-                    _instanceId);
+                Logger.Debug("Logger is not disposable {Application} {Instance}", ApplicationName, _instanceId);
             }
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -126,16 +114,14 @@ namespace Arbor.AspNetCore.Host
             _disposing = false;
         }
 
-        private static Task<App<T>> BuildAppAsync(
-            CancellationTokenSource cancellationTokenSource,
+        private static Task<App<T>> BuildAppAsync(CancellationTokenSource cancellationTokenSource,
             string[] commandLineArgs,
             IReadOnlyDictionary<string, string> environmentVariables,
             IReadOnlyCollection<Assembly> scanAssemblies,
             params object[] instances)
         {
             MultiSourceKeyValueConfiguration startupConfiguration =
-                ConfigurationInitialization.InitializeStartupConfiguration(
-                    commandLineArgs,
+                ConfigurationInitialization.InitializeStartupConfiguration(commandLineArgs,
                     environmentVariables,
                     scanAssemblies);
 
@@ -169,28 +155,29 @@ namespace Arbor.AspNetCore.Host
             }
 
             var startupLoggerConfigurationHandlers = assemblyResolver.GetAssemblies()
-                .GetLoadablePublicConcreteTypesImplementing<IStartupLoggerConfigurationHandler>()
-                .Select(type => configurationInstanceHolder.Create(type) as IStartupLoggerConfigurationHandler)
-                .Where(item => item is {})
-                .ToImmutableArray();
+                                                                     .GetLoadablePublicConcreteTypesImplementing<
+                                                                          IStartupLoggerConfigurationHandler>()
+                                                                     .Select(type =>
+                                                                          configurationInstanceHolder.Create(type) as
+                                                                              IStartupLoggerConfigurationHandler)
+                                                                     .Where(item => item is { }).ToImmutableArray();
 
-            var startupLogger =
-                SerilogApiInitialization.InitializeStartupLogging(
-                    file => GetBaseDirectoryFile(paths.BasePath, file),
-                    environmentVariables,
-                    startupLoggerConfigurationHandlers);
+            var startupLogger = SerilogApiInitialization.InitializeStartupLogging(
+                file => GetBaseDirectoryFile(paths.BasePath, file),
+                environmentVariables,
+                startupLoggerConfigurationHandlers);
 
             MultiSourceKeyValueConfiguration appConfiguration;
+
             try
             {
-                appConfiguration =
-                    ConfigurationInitialization.InitializeConfiguration(
-                        file => GetBaseDirectoryFile(paths.BasePath, file),
-                        paths.ContentBasePath,
-                        scanAssemblies,
-                        commandLineArgs,
-                        environmentVariables,
-                        startupConfiguration);
+                appConfiguration = ConfigurationInitialization.InitializeConfiguration(
+                    file => GetBaseDirectoryFile(paths.BasePath, file),
+                    paths.ContentBasePath,
+                    scanAssemblies,
+                    commandLineArgs,
+                    environmentVariables,
+                    startupConfiguration);
 
                 configurationInstanceHolder.AddInstance(appConfiguration);
                 configurationInstanceHolder.AddInstance(new EnvironmentVariables(environmentVariables));
@@ -210,24 +197,23 @@ namespace Arbor.AspNetCore.Host
 
                 foreach (var appInstance in appInstances)
                 {
-                    if (configurationInstanceHolder.Get(registeredType, appInstance.Key) is var item && item is {})
+                    if (configurationInstanceHolder.Get(registeredType, appInstance.Key) is var item && item is { })
                     {
-                        configurationInstanceHolder.TryRemove(appInstance.Key, appInstance.Value.GetType(),
-                            out _);
+                        configurationInstanceHolder.TryRemove(appInstance.Key, appInstance.Value.GetType(), out _);
                     }
 
                     configurationInstanceHolder.Add(new NamedInstance<object>(appInstance.Value, appInstance.Key));
                 }
             }
 
-            startupLogger.Information("Configuration done using chain {Chain}",
-                appConfiguration.SourceChain);
+            startupLogger.Information("Configuration done using chain {Chain}", appConfiguration.SourceChain);
 
             startupLogger.Verbose("Configuration values {KeyValues}",
                 appConfiguration.AllValues.Select(pair =>
                     $"\"{pair.Key}\": \"{pair.Value.MakeAnonymous(pair.Key, $"{ArborStringExtensions.DefaultAnonymousKeyWords.ToArray()}\"")}"));
 
             App<T> app;
+
             try
             {
                 startupLogger.Verbose("Trying to create application");
@@ -239,20 +225,20 @@ namespace Arbor.AspNetCore.Host
                 startupLogger.Verbose("Log level: {Level}", loggingLevelSwitch.MinimumLevel);
 
                 IEnumerable<ILoggerConfigurationHandler> loggerConfigurationHandlers = assemblyResolver.GetAssemblies()
-                    .GetLoadablePublicConcreteTypesImplementing<ILoggerConfigurationHandler>()
-                    .Select(type => configurationInstanceHolder.Create(type) as ILoggerConfigurationHandler)
-                    .Where(item => item is {})!;
+                   .GetLoadablePublicConcreteTypesImplementing<ILoggerConfigurationHandler>()
+                   .Select(type => configurationInstanceHolder.Create(type) as ILoggerConfigurationHandler)
+                   .Where(item => item is { })!;
 
                 ILogger appLogger;
+
                 try
                 {
                     startupLogger.Verbose("Creating application logger");
-                    appLogger =
-                        SerilogApiInitialization.InitializeAppLogging(
-                            appConfiguration,
-                            startupLogger,
-                            loggerConfigurationHandlers,
-                            loggingLevelSwitch);
+
+                    appLogger = SerilogApiInitialization.InitializeAppLogging(appConfiguration,
+                        startupLogger,
+                        loggerConfigurationHandlers,
+                        loggingLevelSwitch);
 
                     configurationInstanceHolder.AddInstance(appLogger);
 
@@ -272,7 +258,8 @@ namespace Arbor.AspNetCore.Host
                     ApplicationBasePath = paths.BasePath,
                     ContentBasePath = paths.ContentBasePath,
                     CommandLineArgs = commandLineArgs.ToImmutableArray(),
-                    EnvironmentName = environmentVariables.ValueOrDefault(ApplicationConstants.AspNetEnvironment) ?? "Production"
+                    EnvironmentName = environmentVariables.ValueOrDefault(ApplicationConstants.AspNetEnvironment) ??
+                                      "Production"
                 };
 
                 var serviceCollection = new ServiceCollection();
@@ -294,15 +281,15 @@ namespace Arbor.AspNetCore.Host
                     throw;
                 }
 
-                var environmentConfigurators =
-                    scanAssemblies.GetLoadablePublicConcreteTypesImplementing<IConfigureEnvironment>()
-                        .Select(type => configurationInstanceHolder.Create(type) as IConfigureEnvironment)
-                        .Where(item => item is {})
-                        .Select(item => item!)
-                        .ToImmutableArray();
+                var environmentConfigurators = scanAssemblies
+                                              .GetLoadablePublicConcreteTypesImplementing<IConfigureEnvironment>()
+                                              .Select(type =>
+                                                   configurationInstanceHolder.Create(type) as IConfigureEnvironment)
+                                              .Where(item => item is { }).Select(item => item!).ToImmutableArray();
 
                 var sorted = environmentConfigurators
-                    .OrderBy(configurator => configurator.GetRegistrationOrder(int.MaxValue)).ToImmutableArray();
+                            .OrderBy(configurator => configurator.GetRegistrationOrder(int.MaxValue))
+                            .ToImmutableArray();
 
                 foreach (var configurator in sorted)
                 {
@@ -371,8 +358,7 @@ namespace Arbor.AspNetCore.Host
                     appLogger,
                     commandLineArgs);
 
-                app = new App<T>(
-                    hostBuilder,
+                app = new App<T>(hostBuilder,
                     cancellationTokenSource,
                     appLogger,
                     appConfiguration,
@@ -399,15 +385,18 @@ namespace Arbor.AspNetCore.Host
             MultiSourceKeyValueConfiguration startupConfiguration,
             IReadOnlyCollection<Assembly> scanAssemblies)
         {
-            ConfigurationRegistrations startupRegistrations = startupConfiguration.ScanRegistrations(scanAssemblies.ToArray());
+            ConfigurationRegistrations startupRegistrations =
+                startupConfiguration.ScanRegistrations(scanAssemblies.ToArray());
 
-            if (startupRegistrations.UrnTypeRegistrations
-                .Any(registrationErrors => !registrationErrors.ConfigurationRegistrationErrors.IsDefaultOrEmpty))
+            if (startupRegistrations.UrnTypeRegistrations.Any(registrationErrors =>
+                !registrationErrors.ConfigurationRegistrationErrors.IsDefaultOrEmpty))
             {
                 var errors = startupRegistrations.UrnTypeRegistrations
-                    .Where(registrationErrors => registrationErrors.ConfigurationRegistrationErrors.Length > 0)
-                    .SelectMany(registrationErrors => registrationErrors.ConfigurationRegistrationErrors)
-                    .Select(registrationError => registrationError.ErrorMessage);
+                                                 .Where(registrationErrors =>
+                                                      registrationErrors.ConfigurationRegistrationErrors.Length > 0)
+                                                 .SelectMany(registrationErrors =>
+                                                      registrationErrors.ConfigurationRegistrationErrors)
+                                                 .Select(registrationError => registrationError.ErrorMessage);
 
                 throw new InvalidOperationException(
                     $"Error {string.Join(Environment.NewLine, errors)}"); // review exception
@@ -421,8 +410,7 @@ namespace Arbor.AspNetCore.Host
         {
             if (commandLineArgs.Length > 0)
             {
-                appLogger.Debug("Application started with command line args, {Args}",
-                    commandLineArgs);
+                appLogger.Debug("Application started with command line args, {Args}", commandLineArgs);
             }
             else if (appLogger.IsEnabled(LogEventLevel.Verbose))
             {
@@ -434,25 +422,20 @@ namespace Arbor.AspNetCore.Host
             MultiSourceKeyValueConfiguration configuration)
         {
             var defaultLevel = configuration[ConfigurationConstants.LogLevel]
-                .ParseOrDefault(loggingLevelSwitch.MinimumLevel);
+               .ParseOrDefault(loggingLevelSwitch.MinimumLevel);
 
             loggingLevelSwitch.MinimumLevel = defaultLevel;
         }
 
-        private static ImmutableArray<IModule> GetConfigurationModules(
-            ConfigurationInstanceHolder holder,
+        private static ImmutableArray<IModule> GetConfigurationModules(ConfigurationInstanceHolder holder,
             IReadOnlyCollection<Assembly> scanAssemblies)
         {
-            var moduleTypes = scanAssemblies
-                .SelectMany(assembly => assembly.GetLoadableTypes())
-                .Where(type => type.IsPublicConcreteTypeImplementing<IModule>())
-                .ToImmutableArray();
+            var moduleTypes = scanAssemblies.SelectMany(assembly => assembly.GetLoadableTypes())
+                                            .Where(type => type.IsPublicConcreteTypeImplementing<IModule>())
+                                            .ToImmutableArray();
 
-            ImmutableArray<IModule> modules = moduleTypes
-                .Select(moduleType =>
-                    holder.Create(moduleType) as IModule)
-                .Where(instance => instance is {})
-                .ToImmutableArray()!;
+            ImmutableArray<IModule> modules = moduleTypes.Select(moduleType => holder.Create(moduleType) as IModule)
+                                                         .Where(instance => instance is { }).ToImmutableArray()!;
 
             return modules;
         }
@@ -467,8 +450,7 @@ namespace Arbor.AspNetCore.Host
             return Path.Combine(basePath, fileName);
         }
 
-        public static Task<App<T>> CreateAsync(
-            CancellationTokenSource cancellationTokenSource,
+        public static Task<App<T>> CreateAsync(CancellationTokenSource cancellationTokenSource,
             [NotNull] string[] args,
             IReadOnlyDictionary<string, string> environmentVariables,
             IReadOnlyCollection<Assembly> scanAssemblies,
@@ -482,8 +464,7 @@ namespace Arbor.AspNetCore.Host
             return CreateInternalAsync(cancellationTokenSource, args, environmentVariables, scanAssemblies, instances);
         }
 
-        private static async Task<App<T>> CreateInternalAsync(
-            CancellationTokenSource cancellationTokenSource,
+        private static async Task<App<T>> CreateInternalAsync(CancellationTokenSource cancellationTokenSource,
             string[] args,
             IReadOnlyDictionary<string, string> environmentVariables,
             IReadOnlyCollection<Assembly> scanAssemblies,
@@ -491,8 +472,7 @@ namespace Arbor.AspNetCore.Host
         {
             try
             {
-                var app = await BuildAppAsync(
-                    cancellationTokenSource,
+                var app = await BuildAppAsync(cancellationTokenSource,
                     args,
                     environmentVariables,
                     scanAssemblies,
@@ -571,6 +551,7 @@ namespace Arbor.AspNetCore.Host
                 catch (Exception ex) when (!ex.IsFatal())
                 {
                     Logger.Fatal(ex, "Could not start web host as a Windows service, {AppInstance}", AppInstance);
+
                     throw new InvalidOperationException(
                         $"Could not start web host as a Windows service, configuration, {Configuration.SourceChain} {AppInstance} ",
                         ex);

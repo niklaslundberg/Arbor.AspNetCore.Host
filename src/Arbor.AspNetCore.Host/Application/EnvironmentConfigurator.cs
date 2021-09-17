@@ -30,12 +30,9 @@ namespace Arbor.AspNetCore.Host.Application
             }
 
             var ordered = configureEnvironments
-                .Select(environmentConfigurator =>
-                    (EnvironmentConfigurator: environmentConfigurator,
-                        Order: environmentConfigurator.GetRegistrationOrder(0)))
-                .OrderBy(pair => pair.Order)
-                .Select(pair => pair.EnvironmentConfigurator)
-                .ToArray();
+                         .Select(environmentConfigurator => (EnvironmentConfigurator: environmentConfigurator,
+                              Order: environmentConfigurator.GetRegistrationOrder(0))).OrderBy(pair => pair.Order)
+                         .Select(pair => pair.EnvironmentConfigurator).ToArray();
 
             foreach (var configureEnvironment in ordered)
             {

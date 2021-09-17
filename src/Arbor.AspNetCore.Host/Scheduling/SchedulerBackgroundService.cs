@@ -12,9 +12,9 @@ namespace Arbor.AspNetCore.Host.Scheduling
     [UsedImplicitly]
     public class SchedulerBackgroundService : BackgroundService
     {
+        private readonly ILogger _logger;
         private readonly IScheduler _scheduler;
         private readonly ImmutableArray<ScheduledService> _services;
-        private readonly ILogger _logger;
 
         public SchedulerBackgroundService(IScheduler scheduler, IEnumerable<ScheduledService> services, ILogger logger)
         {

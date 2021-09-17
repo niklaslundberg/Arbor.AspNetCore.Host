@@ -8,6 +8,13 @@ namespace Arbor.AspNetCore.Host.Tests
     {
         private readonly List<Action> _actions = new();
 
+        public void Dispose()
+        {
+            // ignore
+        }
+
+        public void Register(Action onTick) => _actions.Add(onTick);
+
         public void Tick()
         {
             foreach (var action in _actions)
@@ -15,12 +22,5 @@ namespace Arbor.AspNetCore.Host.Tests
                 action();
             }
         }
-
-        public void Dispose()
-        {
-            // ignore
-        }
-
-        public void Register(Action onTick) => _actions.Add(onTick);
     }
 }

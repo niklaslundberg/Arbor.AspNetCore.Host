@@ -19,14 +19,14 @@ namespace Arbor.AspNetCore.Host.Hosting
         public IServiceCollection Register(IServiceCollection builder)
         {
             var types = _applicationAssemblyResolver.GetAssemblies()
-                .GetLoadablePublicConcreteTypesImplementing<IHostedService>();
+                                                    .GetLoadablePublicConcreteTypesImplementing<IHostedService>();
 
             foreach (var type in types)
             {
                 builder.AddSingleton<IHostedService>(context => context.GetRequiredService(type), this);
 
-                if (builder.Any(serviceDescriptor => serviceDescriptor.ImplementationType == type
-                                                     && serviceDescriptor.ServiceType == type))
+                if (builder.Any(serviceDescriptor =>
+                    serviceDescriptor.ImplementationType == type && serviceDescriptor.ServiceType == type))
                 {
                     continue;
                 }

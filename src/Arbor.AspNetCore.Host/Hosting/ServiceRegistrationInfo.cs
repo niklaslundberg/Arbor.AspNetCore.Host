@@ -6,8 +6,7 @@ namespace Arbor.AspNetCore.Host.Hosting
 {
     public sealed class ServiceRegistrationInfo
     {
-        private ServiceRegistrationInfo(
-            Type serviceDescriptorServiceType,
+        private ServiceRegistrationInfo(Type serviceDescriptorServiceType,
             Type serviceDescriptorImplementationType,
             object? serviceDescriptorImplementationInstance,
             ServiceLifetime serviceDescriptorLifetime,
@@ -23,10 +22,15 @@ namespace Arbor.AspNetCore.Host.Hosting
         }
 
         public Type ServiceDescriptorServiceType { get; }
+
         public Type ServiceDescriptorImplementationType { get; }
+
         public object? ServiceDescriptorImplementationInstance { get; }
+
         public ServiceLifetime ServiceDescriptorLifetime { get; }
+
         public Func<IServiceProvider, object>? Factory { get; }
+
         public Type? Module { get; }
 
         public static ServiceRegistrationInfo Create(ServiceDescriptor serviceDescriptor)
@@ -38,9 +42,12 @@ namespace Arbor.AspNetCore.Host.Hosting
                 module = extendedServiceDescriptor.ModuleType;
             }
 
-            return new ServiceRegistrationInfo(serviceDescriptor.ServiceType, serviceDescriptor.ImplementationType!,
-                serviceDescriptor.ImplementationInstance, serviceDescriptor.Lifetime,
-                serviceDescriptor.ImplementationFactory, module);
+            return new ServiceRegistrationInfo(serviceDescriptor.ServiceType,
+                serviceDescriptor.ImplementationType!,
+                serviceDescriptor.ImplementationInstance,
+                serviceDescriptor.Lifetime,
+                serviceDescriptor.ImplementationFactory,
+                module);
         }
     }
 }

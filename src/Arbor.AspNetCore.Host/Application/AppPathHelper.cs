@@ -16,6 +16,7 @@ namespace Arbor.AspNetCore.Host.Application
             {
                 TempLogger.WriteLine(
                     $"Switching current directory from {Directory.GetCurrentDirectory()} to {currentDomainBaseDirectory}");
+
                 Directory.SetCurrentDirectory(currentDomainBaseDirectory);
             }
 

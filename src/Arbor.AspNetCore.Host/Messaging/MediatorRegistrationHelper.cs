@@ -27,10 +27,8 @@ namespace Arbor.AspNetCore.Host.Messaging
                 throw new ArgumentNullException(nameof(assemblies));
             }
 
-            var concreteTypes = assemblies
-                .SelectMany(assembly => assembly.GetLoadableTypes())
-                .Where(type => type.IsPublic && type.IsConcrete())
-                .ToArray();
+            var concreteTypes = assemblies.SelectMany(assembly => assembly.GetLoadableTypes())
+                                          .Where(type => type.IsPublic && type.IsConcrete()).ToArray();
 
             RegisterTypes(typeof(IRequestHandler<>), builder, ServiceLifetime.Singleton, concreteTypes);
             RegisterTypes(typeof(IRequestHandler<,>), builder, ServiceLifetime.Singleton, concreteTypes);
@@ -42,25 +40,20 @@ namespace Arbor.AspNetCore.Host.Messaging
             builder.AddSingleton<ServiceFactory>(p => p.GetRequiredService, module);
             builder.AddSingleton<IMediator, Mediator>(module);
 
-            builder.AddSingleton(typeof(IPipelineBehavior<,>),
-                typeof(RequestPreProcessorBehavior<,>),
-                module);
+            builder.AddSingleton(typeof(IPipelineBehavior<,>), typeof(RequestPreProcessorBehavior<,>), module);
 
             builder.AddSingleton(typeof(IPipelineBehavior<,>), typeof(RequestPostProcessorBehavior<,>), module);
 
             return builder;
         }
 
-        private static void RegisterTypes(
-            Type openGenericType,
+        private static void RegisterTypes(Type openGenericType,
             IServiceCollection builder,
             ServiceLifetime serviceLifetime,
             Type[] concreteTypes,
             IModule? module = null)
         {
-            var types = concreteTypes
-                .Where(concreteType => concreteType.Closes(openGenericType))
-                .ToArray();
+            var types = concreteTypes.Where(concreteType => concreteType.Closes(openGenericType)).ToArray();
 
             foreach (var implementationType in types)
             {
@@ -75,7 +68,7 @@ namespace Arbor.AspNetCore.Host.Messaging
                 }
 
                 var interfaces = implementationType.GetInterfaces()
-                    .Where(@interface => @interface.Closes(openGenericType));
+                                                   .Where(@interface => @interface.Closes(openGenericType));
 
                 foreach (var @interface in interfaces)
                 {

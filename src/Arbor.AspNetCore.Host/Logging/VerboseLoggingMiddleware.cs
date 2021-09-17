@@ -30,6 +30,7 @@ namespace Arbor.AspNetCore.Host.Logging
             {
                 commonRequestInfo =
                     $"{context.Request.GetDisplayUrl()} from remote IP {context.Connection.RemoteIpAddress}";
+
                 _logger.Verbose("Starting request {RequestInfo}", commonRequestInfo);
             }
 

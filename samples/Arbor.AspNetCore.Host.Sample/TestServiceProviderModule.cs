@@ -18,15 +18,14 @@ namespace Arbor.AspNetCore.Host.Sample
             ViewAssemblyLoader.LoadViewAssemblies(logger);
 
             var assemblies = new List<Assembly>();
-            var builder = serviceProviderHolder.ServiceCollection
-                .AddMvc()
-                .AddApplicationPart(typeof(TestController).Assembly);
 
-            var loaded = AppDomain.CurrentDomain.GetAssemblies()
-                .Where(assembly => !assembly.IsDynamic
-                                   && !assembly.GetName().Name!.StartsWith("Microsoft")
-                                   && assembly.GetName().Name!.Contains("Views", StringComparison.OrdinalIgnoreCase))
-                .ToArray();
+            var builder = serviceProviderHolder.ServiceCollection.AddMvc()
+                                               .AddApplicationPart(typeof(TestController).Assembly);
+
+            var loaded = AppDomain.CurrentDomain.GetAssemblies().Where(assembly =>
+                !assembly.IsDynamic &&
+                !assembly.GetName().Name!.StartsWith("Microsoft") &&
+                assembly.GetName().Name!.Contains("Views", StringComparison.OrdinalIgnoreCase)).ToArray();
 
             assemblies.AddRange(loaded);
 

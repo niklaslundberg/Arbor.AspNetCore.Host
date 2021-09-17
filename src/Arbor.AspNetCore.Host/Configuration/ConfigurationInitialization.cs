@@ -23,17 +23,12 @@ namespace Arbor.AspNetCore.Host.Configuration
             IReadOnlyCollection<Assembly> assemblies)
         {
             var tempSource = KeyValueConfigurationManager.Add(NoConfiguration.Empty)
-                .AddEnvironmentVariables(environmentVariables)
-                .AddCommandLineArgsSettings(args)
-                .Build();
+                                                         .AddEnvironmentVariables(environmentVariables)
+                                                         .AddCommandLineArgsSettings(args).Build();
 
-            var multiSourceKeyValueConfiguration = KeyValueConfigurationManager
-                .Add(NoConfiguration.Empty)
-                .AddReflectionSettings(assemblies, tempSource)
-                .AddEnvironmentVariables(environmentVariables)
-                .AddCommandLineArgsSettings(args)
-                .DecorateWith(new ExpandKeyValueConfigurationDecorator())
-                .Build();
+            var multiSourceKeyValueConfiguration = KeyValueConfigurationManager.Add(NoConfiguration.Empty)
+               .AddReflectionSettings(assemblies, tempSource).AddEnvironmentVariables(environmentVariables)
+               .AddCommandLineArgsSettings(args).DecorateWith(new ExpandKeyValueConfigurationDecorator()).Build();
 
             return multiSourceKeyValueConfiguration;
         }
@@ -52,9 +47,9 @@ namespace Arbor.AspNetCore.Host.Configuration
         {
             var loggingSettings = new NameValueCollection
             {
-                {"Logging:LogLevel:Default", "Warning"},
-                {"Logging:LogLevel:System.Net.Http.HttpClient", "Warning"},
-                {"LogLevel:System.Net.Http.HttpClient", "Warning"}
+                { "Logging:LogLevel:Default", "Warning" },
+                { "Logging:LogLevel:System.Net.Http.HttpClient", "Warning" },
+                { "LogLevel:System.Net.Http.HttpClient", "Warning" }
             };
 
             var memoryKeyValueConfiguration = new InMemoryKeyValueConfiguration(loggingSettings);
@@ -70,25 +65,23 @@ namespace Arbor.AspNetCore.Host.Configuration
                 return appSettingsBuilder;
             }
 
-            foreach (var currentAssembly in scanAssemblies
-                .Where(assembly => assembly.FullName is {})
-                .OrderBy(assembly => assembly.FullName))
+            foreach (var currentAssembly in scanAssemblies.Where(assembly => assembly.FullName is { })
+                                                          .OrderBy(assembly => assembly.FullName))
             {
                 string[] allValues =
                     configuration?.AllValues.Where(pair => pair.Key.Equals(ApplicationConstants.AssemblyPrefix))
-                        .Select(pair => pair.Value).ToArray() ?? Array.Empty<string>();
+                                  .Select(pair => pair.Value).ToArray() ??
+                    Array.Empty<string>();
 
-                if (allValues.Length > 0 && !allValues.Any(currentValue =>
-                    currentAssembly.FullName!.StartsWith(currentValue)))
+                if (allValues.Length > 0 &&
+                    !allValues.Any(currentValue => currentAssembly.FullName!.StartsWith(currentValue)))
                 {
                     continue;
                 }
 
                 try
                 {
-                    appSettingsBuilder =
-                        appSettingsBuilder.Add(
-                            new ReflectionKeyValueConfiguration(currentAssembly));
+                    appSettingsBuilder = appSettingsBuilder.Add(new ReflectionKeyValueConfiguration(currentAssembly));
                 }
                 catch (Exception ex) when (!ex.IsFatal())
                 {
@@ -104,43 +97,35 @@ namespace Arbor.AspNetCore.Host.Configuration
             IReadOnlyList<string>? args,
             IReadOnlyDictionary<string, string>? environmentVariables)
         {
-            string? settingsPath = args?.ParseParameter(ConfigurationConstants.JsonSettingsFile)
-                                   ?? environmentVariables?.ValueOrDefault(ConfigurationConstants.JsonSettingsFile);
+            string? settingsPath = args?.ParseParameter(ConfigurationConstants.JsonSettingsFile) ??
+                                   environmentVariables?.ValueOrDefault(ConfigurationConstants.JsonSettingsFile);
 
             if (settingsPath.HasValue() && File.Exists(settingsPath))
             {
-                appSettingsBuilder =
-                    appSettingsBuilder.Add(new JsonKeyValueConfiguration(settingsPath));
+                appSettingsBuilder = appSettingsBuilder.Add(new JsonKeyValueConfiguration(settingsPath));
             }
 
             return appSettingsBuilder;
         }
 
-        public static MultiSourceKeyValueConfiguration InitializeConfiguration(
-            Func<string?, string>? basePath = null,
+        public static MultiSourceKeyValueConfiguration InitializeConfiguration(Func<string?, string>? basePath = null,
             string? contentBasePath = null,
             IReadOnlyCollection<Assembly>? scanAssemblies = null,
             IReadOnlyList<string>? args = null,
             IReadOnlyDictionary<string, string>? environmentVariables = null,
             IKeyValueConfiguration? keyValueConfiguration = null)
         {
-            var multiSourceKeyValueConfiguration = KeyValueConfigurationManager
-                .Add(NoConfiguration.Empty)
-                .AddReflectionSettings(scanAssemblies, keyValueConfiguration)
-                .AddLoggingSettings()
-                .AddJsonSettings(basePath, args, environmentVariables)
-                .AddMachineSpecificSettings(basePath)
-                .AddSettingsFileFromArgsOrEnvironment(args, environmentVariables)
-                .AddEnvironmentVariables(environmentVariables)
-                .AddUserSettings(contentBasePath)
-                .AddCommandLineArgsSettings(args)
-                .DecorateWith(new ExpandKeyValueConfigurationDecorator()).Build();
+            var multiSourceKeyValueConfiguration = KeyValueConfigurationManager.Add(NoConfiguration.Empty)
+               .AddReflectionSettings(scanAssemblies, keyValueConfiguration).AddLoggingSettings()
+               .AddJsonSettings(basePath, args, environmentVariables).AddMachineSpecificSettings(basePath)
+               .AddSettingsFileFromArgsOrEnvironment(args, environmentVariables)
+               .AddEnvironmentVariables(environmentVariables).AddUserSettings(contentBasePath)
+               .AddCommandLineArgsSettings(args).DecorateWith(new ExpandKeyValueConfigurationDecorator()).Build();
 
             return multiSourceKeyValueConfiguration;
         }
 
-        public static AppSettingsBuilder AddEnvironmentVariables(
-            this AppSettingsBuilder builder,
+        public static AppSettingsBuilder AddEnvironmentVariables(this AppSettingsBuilder builder,
             IReadOnlyDictionary<string, string>? environmentVariables)
         {
             if (environmentVariables is null)
@@ -149,6 +134,7 @@ namespace Arbor.AspNetCore.Host.Configuration
             }
 
             var nameValueCollection = new NameValueCollection();
+
             foreach (var environmentVariable in environmentVariables)
             {
                 nameValueCollection.Add(environmentVariable.Key, environmentVariable.Value);
@@ -157,8 +143,7 @@ namespace Arbor.AspNetCore.Host.Configuration
             return builder.Add(new InMemoryKeyValueConfiguration(nameValueCollection));
         }
 
-        public static AppSettingsBuilder AddCommandLineArgsSettings(
-            this AppSettingsBuilder builder,
+        public static AppSettingsBuilder AddCommandLineArgsSettings(this AppSettingsBuilder builder,
             IReadOnlyList<string>? args)
         {
             if (args is null)
@@ -191,8 +176,7 @@ namespace Arbor.AspNetCore.Host.Configuration
             return builder.Add(inMemoryKeyValueConfiguration);
         }
 
-        public static AppSettingsBuilder AddJsonSettings(
-            this AppSettingsBuilder appSettingsBuilder,
+        public static AppSettingsBuilder AddJsonSettings(this AppSettingsBuilder appSettingsBuilder,
             Func<string, string>? basePath,
             IReadOnlyCollection<string>? args,
             IReadOnlyDictionary<string, string>? environmentVariables)
@@ -202,16 +186,16 @@ namespace Arbor.AspNetCore.Host.Configuration
                 return appSettingsBuilder;
             }
 
-            string environmentName = args?.ParseParameter(ApplicationConstants.AspNetEnvironment)
-                                     ?? environmentVariables?.ValueOrDefault(ApplicationConstants.AspNetEnvironment)
-                                     ?? ApplicationConstants.EnvironmentProduction;
+            string environmentName = args?.ParseParameter(ApplicationConstants.AspNetEnvironment) ??
+                                     environmentVariables?.ValueOrDefault(ApplicationConstants.AspNetEnvironment) ??
+                                     ApplicationConstants.EnvironmentProduction;
 
             return appSettingsBuilder.Add(new JsonKeyValueConfiguration(basePath("settings.json"), false))
-                .Add(new JsonKeyValueConfiguration(basePath($"settings.{environmentName}.json"), false));
+                                     .Add(new JsonKeyValueConfiguration(basePath($"settings.{environmentName}.json"),
+                                          false));
         }
 
-        public static AppSettingsBuilder AddMachineSpecificSettings(
-            this AppSettingsBuilder appSettingsBuilder,
+        public static AppSettingsBuilder AddMachineSpecificSettings(this AppSettingsBuilder appSettingsBuilder,
             Func<string?, string>? basePath)
         {
             if (basePath is null)
@@ -234,7 +218,7 @@ namespace Arbor.AspNetCore.Host.Configuration
 
                 var currentDirectory = baseDirectory;
 
-                while (machineSpecificConfig is null && currentDirectory is {})
+                while (machineSpecificConfig is null && currentDirectory is { })
                 {
                     try
                     {

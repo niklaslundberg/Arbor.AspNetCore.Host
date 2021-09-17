@@ -18,6 +18,7 @@ namespace Arbor.AspNetCore.Host.Hosting
         {
             _webHostBuilderImplementation.ConfigureServices(services =>
                 services.Add(new ServiceDescriptor(typeof(ServiceDiagnostics), ServiceDiagnostics.Create(services))));
+
             return new HostWrapper(_webHostBuilderImplementation.Build());
         }
 
@@ -36,12 +37,12 @@ namespace Arbor.AspNetCore.Host.Hosting
             _webHostBuilderImplementation.ConfigureServices(configureDelegate);
 
         public IHostBuilder
-            UseServiceProviderFactory<TContainerBuilder>(IServiceProviderFactory<TContainerBuilder> factory) where TContainerBuilder : notnull =>
-            _webHostBuilderImplementation.UseServiceProviderFactory(factory);
+            UseServiceProviderFactory<TContainerBuilder>(IServiceProviderFactory<TContainerBuilder> factory)
+            where TContainerBuilder : notnull => _webHostBuilderImplementation.UseServiceProviderFactory(factory);
 
         public IHostBuilder UseServiceProviderFactory<TContainerBuilder>(
-            Func<HostBuilderContext, IServiceProviderFactory<TContainerBuilder>> factory) where TContainerBuilder : notnull =>
-            _webHostBuilderImplementation.UseServiceProviderFactory(factory);
+            Func<HostBuilderContext, IServiceProviderFactory<TContainerBuilder>> factory)
+            where TContainerBuilder : notnull => _webHostBuilderImplementation.UseServiceProviderFactory(factory);
 
         public IDictionary<object, object> Properties => _webHostBuilderImplementation.Properties;
     }

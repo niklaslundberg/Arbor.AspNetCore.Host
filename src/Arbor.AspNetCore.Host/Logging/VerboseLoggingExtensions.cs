@@ -5,8 +5,7 @@ namespace Arbor.AspNetCore.Host.Logging
 {
     public static class VerboseLoggingExtensions
     {
-        public static IApplicationBuilder AddRequestLogging(
-            this IApplicationBuilder app,
+        public static IApplicationBuilder AddRequestLogging(this IApplicationBuilder app,
             EnvironmentConfiguration environmentConfiguration)
         {
             if (environmentConfiguration.UseVerboseLogging)

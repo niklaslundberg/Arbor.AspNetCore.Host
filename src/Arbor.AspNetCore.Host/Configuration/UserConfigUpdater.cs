@@ -17,21 +17,19 @@ namespace Arbor.AspNetCore.Host.Configuration
         private FileSystemWatcher? _fileSystemWatcher;
         private bool _isDisposed;
 
-        public UserConfigUpdater(
-            ConfigurationInstanceHolder configurationHolder,
+        public UserConfigUpdater(ConfigurationInstanceHolder configurationHolder,
             EnvironmentConfiguration applicationEnvironment)
         {
             _configurationHolder = configurationHolder;
 
-            _fileName = Path.Combine(
-                applicationEnvironment.ContentBasePath ?? Directory.GetCurrentDirectory(),
+            _fileName = Path.Combine(applicationEnvironment.ContentBasePath ?? Directory.GetCurrentDirectory(),
                 "config.user");
 
             if (File.Exists(_fileName))
             {
                 var fileInfo = new FileInfo(_fileName);
 
-                if (fileInfo.Directory is {})
+                if (fileInfo.Directory is { })
                 {
                     _fileSystemWatcher = new FileSystemWatcher(fileInfo.Directory.FullName, fileInfo.Name);
                     _fileSystemWatcher.Changed += WatcherOnChanged;
@@ -48,7 +46,7 @@ namespace Arbor.AspNetCore.Host.Configuration
                 return;
             }
 
-            if (_fileSystemWatcher is {})
+            if (_fileSystemWatcher is { })
             {
                 _fileSystemWatcher.EnableRaisingEvents = false;
                 _fileSystemWatcher.Changed -= WatcherOnChanged;
@@ -68,9 +66,7 @@ namespace Arbor.AspNetCore.Host.Configuration
                 return;
             }
 
-            var types = _configurationHolder.RegisteredTypes
-                .Where(type => type.HasAttribute<UrnAttribute>())
-                .ToArray();
+            var types = _configurationHolder.RegisteredTypes.Where(type => type.HasAttribute<UrnAttribute>()).ToArray();
 
             var jsonKeyValueConfiguration = new JsonKeyValueConfiguration(_fileName);
 
@@ -95,7 +91,7 @@ namespace Arbor.AspNetCore.Host.Configuration
                 throw new ObjectDisposedException(nameof(UserConfigUpdater));
             }
 
-            if (File.Exists(_fileName) && _fileSystemWatcher is {})
+            if (File.Exists(_fileName) && _fileSystemWatcher is { })
             {
                 _fileSystemWatcher.EnableRaisingEvents = true;
             }

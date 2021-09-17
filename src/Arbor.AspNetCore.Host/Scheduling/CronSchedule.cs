@@ -12,6 +12,7 @@ namespace Arbor.AspNetCore.Host.Scheduling
         public DateTimeOffset? Next(DateTimeOffset currentTime)
         {
             var adjusted = currentTime;
+
             if (currentTime.Millisecond == 0)
             {
                 adjusted = currentTime.UtcDateTime.AddMilliseconds(-1);

@@ -56,7 +56,9 @@ namespace Arbor.AspNetCore.Host.Tests
         [Fact]
         public async Task ScheduleEverySecond()
         {
-            var clock = new TestClock(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero), TimeSpan.FromMilliseconds(200));
+            var clock = new TestClock(new DateTimeOffset(2000, 1, 1, 0, 0, 0, TimeSpan.Zero),
+                TimeSpan.FromMilliseconds(200));
+
             var start = new DateTimeOffset(2000, 1, 1, 0, 0, 4, 0, TimeSpan.Zero);
             var schedule = new ScheduleEveryInterval(TimeSpan.FromSeconds(1), start);
             using var timer = new TestTimer();

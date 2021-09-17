@@ -31,7 +31,8 @@ namespace Arbor.AspNetCore.Host.Mvc
                 return;
             }
 
-            logger.Debug("Found {ViewDllCount} view dll files in directory {AppDirectory}", viewDllFiles.Length,
+            logger.Debug("Found {ViewDllCount} view dll files in directory {AppDirectory}",
+                viewDllFiles.Length,
                 applicationDirectory);
 
             foreach (var fileInfo in viewDllFiles)
@@ -40,7 +41,8 @@ namespace Arbor.AspNetCore.Host.Mvc
                 {
                     var assembly = assemblyLoadContext.LoadFromAssemblyPath(fileInfo.FullName);
 
-                    logger.Debug("Successfully loaded assembly {Assembly} from DLL file {DllFile}", assembly.FullName,
+                    logger.Debug("Successfully loaded assembly {Assembly} from DLL file {DllFile}",
+                        assembly.FullName,
                         fileInfo.FullName);
                 }
                 catch (Exception ex) when (!ex.IsFatal())

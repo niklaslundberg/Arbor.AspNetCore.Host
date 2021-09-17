@@ -20,8 +20,7 @@ namespace Arbor.AspNetCore.Host
 {
     public static class AppStarter<T> where T : class
     {
-        public static async Task<int> StartAsync(
-            string[] args,
+        public static async Task<int> StartAsync(string[] args,
             IReadOnlyDictionary<string, string> environmentVariables,
             CancellationTokenSource? cancellationTokenSource = null,
             IReadOnlyCollection<Assembly>? assemblies = null,
@@ -34,6 +33,7 @@ namespace Arbor.AspNetCore.Host
                 if (args.Length > 0)
                 {
                     TempLogger.WriteLine("Started with arguments:");
+
                     foreach (string arg in args)
                     {
                         TempLogger.WriteLine(arg);
@@ -42,9 +42,10 @@ namespace Arbor.AspNetCore.Host
 
                 bool shouldDisposeCancellationToken = cancellationTokenSource is null;
 
-                if (cancellationTokenSource is null && int.TryParse(
-                    environmentVariables.GetValueOrDefault(ConfigurationConstants.RestartTimeInSeconds),
-                    out int intervalInSeconds) && intervalInSeconds > 0)
+                if (cancellationTokenSource is null &&
+                    int.TryParse(environmentVariables.GetValueOrDefault(ConfigurationConstants.RestartTimeInSeconds),
+                        out int intervalInSeconds) &&
+                    intervalInSeconds > 0)
                 {
                     cancellationTokenSource = new CancellationTokenSource(TimeSpan.FromSeconds(intervalInSeconds));
                 }
@@ -61,22 +62,24 @@ namespace Arbor.AspNetCore.Host
 
                 try
                 {
-                    cancellationTokenSource.Token.Register(
-                        () => TempLogger.WriteLine("App cancellation token triggered"));
+                    cancellationTokenSource.Token.Register(() =>
+                        TempLogger.WriteLine("App cancellation token triggered"));
 
-                    using var app = await App<T>.CreateAsync(cancellationTokenSource, args, environmentVariables,
-                        assemblies,
-                        instances).ConfigureAwait(false);
+                    using var app = await App<T>
+                                         .CreateAsync(cancellationTokenSource,
+                                              args,
+                                              environmentVariables,
+                                              assemblies,
+                                              instances).ConfigureAwait(false);
 
-                    bool runAsService = app.Configuration.ValueOrDefault(ApplicationConstants.RunAsService)
-                                        && !Debugger.IsAttached;
+                    bool runAsService = app.Configuration.ValueOrDefault(ApplicationConstants.RunAsService) &&
+                                        !Debugger.IsAttached;
 
                     app.Logger.Information("Starting application {Application}", app.AppInstance);
 
                     if (intervalInSeconds > 0)
                     {
-                        app.Logger.Debug(
-                            "Restart time is set to {RestartIntervalInSeconds} seconds for {App}",
+                        app.Logger.Debug("Restart time is set to {RestartIntervalInSeconds} seconds for {App}",
                             intervalInSeconds,
                             app.AppInstance);
                     }
@@ -89,9 +92,7 @@ namespace Arbor.AspNetCore.Host
 
                     if (!args.Contains(ApplicationConstants.RunAsService) && runAsService)
                     {
-                        runArgs = args
-                            .Concat(new[] { ApplicationConstants.RunAsService })
-                            .ToArray();
+                        runArgs = args.Concat(new[] { ApplicationConstants.RunAsService }).ToArray();
                     }
                     else
                     {
@@ -107,9 +108,7 @@ namespace Arbor.AspNetCore.Host
                         await app.Host.WaitForShutdownAsync(cancellationTokenSource.Token).ConfigureAwait(false);
                     }
 
-                    app.Logger.Information(
-                        "Stopping application {Application}",
-                        app.AppInstance);
+                    app.Logger.Information("Stopping application {Application}", app.AppInstance);
                 }
                 finally
                 {
@@ -119,11 +118,12 @@ namespace Arbor.AspNetCore.Host
                     }
                 }
 
-                if (int.TryParse(
-                    environmentVariables.GetValueOrDefault(ConfigurationConstants.ShutdownTimeInSeconds),
-                    out int shutDownTimeInSeconds) && shutDownTimeInSeconds > 0)
+                if (int.TryParse(environmentVariables.GetValueOrDefault(ConfigurationConstants.ShutdownTimeInSeconds),
+                        out int shutDownTimeInSeconds) &&
+                    shutDownTimeInSeconds > 0)
                 {
-                    await Task.Delay(TimeSpan.FromSeconds(shutDownTimeInSeconds), CancellationToken.None).ConfigureAwait(false);
+                    await Task.Delay(TimeSpan.FromSeconds(shutDownTimeInSeconds), CancellationToken.None)
+                              .ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
@@ -136,8 +136,8 @@ namespace Arbor.AspNetCore.Host
 
                 string fatalLogFile = Path.Combine(logDirectory, "Fatal.log");
 
-                var loggerConfiguration = new LoggerConfiguration()
-                    .WriteTo.File(fatalLogFile, flushToDiskInterval: TimeSpan.FromMilliseconds(50));
+                var loggerConfiguration = new LoggerConfiguration().WriteTo.File(fatalLogFile,
+                    flushToDiskInterval: TimeSpan.FromMilliseconds(50));
 
                 if (environmentVariables.TryGetValue(LoggingConstants.SeqStartupUrl, out string? url) &&
                     Uri.TryCreate(url, UriKind.Absolute, out var uri))
@@ -145,9 +145,7 @@ namespace Arbor.AspNetCore.Host
                     loggerConfiguration = loggerConfiguration.WriteTo.Seq(uri.AbsoluteUri);
                 }
 
-                var logger = loggerConfiguration
-                    .MinimumLevel.Verbose()
-                    .CreateLogger();
+                var logger = loggerConfiguration.MinimumLevel.Verbose().CreateLogger();
 
                 using (logger)
                 {

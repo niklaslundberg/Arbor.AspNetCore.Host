@@ -8,8 +8,7 @@ namespace Arbor.AspNetCore.Host.Hosting
     {
         private readonly IConfigurationRoot _hostingContextConfiguration;
 
-        public ConfigurationWrapper(
-            IConfigurationRoot hostingContextConfiguration,
+        public ConfigurationWrapper(IConfigurationRoot hostingContextConfiguration,
             ServiceProviderHolder serviceProviderHolder)
         {
             ServiceProviderHolder = serviceProviderHolder;

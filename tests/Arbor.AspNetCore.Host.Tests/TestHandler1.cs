@@ -7,9 +7,7 @@ using Serilog;
 
 namespace Arbor.AspNetCore.Host.Tests
 {
-    public sealed class TestHandler1 :
-        INotificationHandler<TestNotificationA>,
-        INotificationHandler<TestNotificationB>,
+    public sealed class TestHandler1 : INotificationHandler<TestNotificationA>, INotificationHandler<TestNotificationB>,
         IRequestHandler<TestRequest, Unit>
     {
         private readonly Guid _id;
@@ -22,22 +20,29 @@ namespace Arbor.AspNetCore.Host.Tests
             _logger.Information("Created test handler {Id}", ToString());
         }
 
-        public List<IIdNotification> InvokedNotifications { get; } = new List<IIdNotification>();
-        public List<IRequest<Unit>> InvokedRequests { get; } = new List<IRequest<Unit>>();
+        public List<IIdNotification> InvokedNotifications { get; } = new();
+
+        public List<IRequest<Unit>> InvokedRequests { get; } = new();
 
         public Task Handle(TestNotificationA notification, CancellationToken cancellationToken)
         {
             InvokedNotifications.Add(notification);
-            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(),
+
+            _logger.Information("Handler {Id} handling notification {NotificationId}",
+                ToString(),
                 notification.ToString());
+
             return Task.CompletedTask;
         }
 
         public Task Handle(TestNotificationB notification, CancellationToken cancellationToken)
         {
             InvokedNotifications.Add(notification);
-            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(),
+
+            _logger.Information("Handler {Id} handling notification {NotificationId}",
+                ToString(),
                 notification.ToString());
+
             return Task.CompletedTask;
         }
 

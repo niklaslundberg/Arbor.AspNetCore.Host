@@ -10,7 +10,8 @@ namespace Arbor.AspNetCore.Host.Scheduling
     {
         private readonly IApplicationAssemblyResolver _applicationAssemblyResolver;
 
-        public SchedulerModule(IApplicationAssemblyResolver applicationAssemblyResolver) => _applicationAssemblyResolver = applicationAssemblyResolver;
+        public SchedulerModule(IApplicationAssemblyResolver applicationAssemblyResolver) =>
+            _applicationAssemblyResolver = applicationAssemblyResolver;
 
         public IServiceCollection Register(IServiceCollection builder)
         {
@@ -22,8 +23,9 @@ namespace Arbor.AspNetCore.Host.Scheduling
             var loadablePublicConcreteTypesImplementing =
                 assemblies.GetLoadablePublicConcreteTypesImplementing<ScheduledService>();
 
-            foreach (var loadable in loadablePublicConcreteTypesImplementing
-                .Where(t=> t.GetConstructors().Length == 1 && !t.GetConstructors()[0].GetParameters().Any(p => p.ParameterType == typeof(ISchedule))))
+            foreach (var loadable in loadablePublicConcreteTypesImplementing.Where(t =>
+                t.GetConstructors().Length == 1 &&
+                !t.GetConstructors()[0].GetParameters().Any(p => p.ParameterType == typeof(ISchedule))))
             {
                 builder.AddSingleton(typeof(ScheduledService), loadable, this);
             }

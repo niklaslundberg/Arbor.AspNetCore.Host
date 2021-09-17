@@ -4,8 +4,8 @@ namespace Arbor.AspNetCore.Host.Scheduling
 {
     public interface IScheduler
     {
-        public bool Add(ISchedule schedule, OnTickAsync onTick);
-
         public ImmutableArray<ISchedule> Schedules { get; }
+
+        public bool Add(ISchedule schedule, OnTickAsync onTick);
     }
 }

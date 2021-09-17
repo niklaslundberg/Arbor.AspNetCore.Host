@@ -61,87 +61,85 @@ namespace Arbor.AspNetCore.Host.Hosting
 
             IHostBuilder hostBuilder = Microsoft.Extensions.Hosting.Host.CreateDefaultBuilder(commandLineArgs);
 
-            hostBuilder
-                .ConfigureLogging((_, builder) => builder.AddProvider(new SerilogLoggerProvider(logger)))
-                .ConfigureServices(services =>
-                {
-                    foreach (var serviceDescriptor in serviceProviderHolder.ServiceCollection)
-                    {
-                        logger.Verbose("Adding service descriptor {Descriptor}", serviceDescriptor.GetDescription());
-                        services.Add(serviceDescriptor);
-                    }
+            hostBuilder.ConfigureLogging((_, builder) => builder.AddProvider(new SerilogLoggerProvider(logger)))
+                       .ConfigureServices(services =>
+                        {
+                            foreach (var serviceDescriptor in serviceProviderHolder.ServiceCollection)
+                            {
+                                logger.Verbose("Adding service descriptor {Descriptor}",
+                                    serviceDescriptor.GetDescription());
 
-                    services.AddSingleton(environmentConfiguration);
-                    services.AddHttpClient();
+                                services.Add(serviceDescriptor);
+                            }
 
-                    onRegistration?.Invoke(services);
-                })
-                .ConfigureAppConfiguration((hostingContext, config) =>
-                {
-                    config.AddKeyValueConfigurationSource(configuration);
+                            services.AddSingleton(environmentConfiguration);
+                            services.AddHttpClient();
 
-                    hostingContext.Configuration =
-                        new ConfigurationWrapper((IConfigurationRoot)hostingContext.Configuration,
-                            serviceProviderHolder);
+                            onRegistration?.Invoke(services);
+                        }).ConfigureAppConfiguration((hostingContext, config) =>
+                        {
+                            config.AddKeyValueConfigurationSource(configuration);
 
-                    if (!string.IsNullOrWhiteSpace(environmentConfiguration.ApplicationName))
-                    {
-                        hostingContext.HostingEnvironment.ApplicationName = environmentConfiguration.ApplicationName;
-                    }
-                });
+                            hostingContext.Configuration =
+                                new ConfigurationWrapper((IConfigurationRoot)hostingContext.Configuration,
+                                    serviceProviderHolder);
+
+                            if (!string.IsNullOrWhiteSpace(environmentConfiguration.ApplicationName))
+                            {
+                                hostingContext.HostingEnvironment.ApplicationName =
+                                    environmentConfiguration.ApplicationName;
+                            }
+                        });
 
             if (environmentConfiguration.HttpEnabled)
             {
                 hostBuilder.ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder
-                        .UseKestrel(options =>
-                        {
-                            if (kestrelServerOptions.Contains(options))
-                            {
-                                logger.Debug("Kestrel options has already been configured");
-                                return;
-                            }
+                    webBuilder.UseKestrel(options =>
+                               {
+                                   if (kestrelServerOptions.Contains(options))
+                                   {
+                                       logger.Debug("Kestrel options has already been configured");
+                                       return;
+                                   }
 
-                            if (environmentConfiguration.UseExplicitPorts)
-                            {
-                                logger.Debug("Environment configuration is set to use explicit ports");
+                                   if (environmentConfiguration.UseExplicitPorts)
+                                   {
+                                       logger.Debug("Environment configuration is set to use explicit ports");
 
-                                if (environmentConfiguration.HttpPort.HasValue)
-                                {
-                                    logger.Information("Listening on http port {Port}",
-                                        environmentConfiguration.HttpPort.Value);
+                                       if (environmentConfiguration.HttpPort.HasValue)
+                                       {
+                                           logger.Information("Listening on http port {Port}",
+                                               environmentConfiguration.HttpPort.Value);
 
-                                    options.Listen(IPAddress.Any,
-                                        environmentConfiguration.HttpPort.Value);
-                                }
+                                           options.Listen(IPAddress.Any, environmentConfiguration.HttpPort.Value);
+                                       }
 
-                                if (environmentConfiguration.HttpsPort.HasValue
-                                    && environmentConfiguration.PfxFile.HasValue()
-                                    && environmentConfiguration.PfxPassword.HasValue())
-                                {
-                                    logger.Information("Listening on https port {Port}",
-                                        environmentConfiguration.HttpsPort.Value);
+                                       if (environmentConfiguration.HttpsPort.HasValue &&
+                                           environmentConfiguration.PfxFile.HasValue() &&
+                                           environmentConfiguration.PfxPassword.HasValue())
+                                       {
+                                           logger.Information("Listening on https port {Port}",
+                                               environmentConfiguration.HttpsPort.Value);
 
-                                    options.Listen(IPAddress.Any,
-                                        environmentConfiguration.HttpsPort.Value,
-                                        listenOptions =>
-                                        {
-                                            listenOptions.UseHttps(environmentConfiguration.PfxFile,
-                                                environmentConfiguration.PfxPassword);
-                                        });
-                                }
-                            }
+                                           options.Listen(IPAddress.Any,
+                                               environmentConfiguration.HttpsPort.Value,
+                                               listenOptions =>
+                                               {
+                                                   listenOptions.UseHttps(environmentConfiguration.PfxFile,
+                                                       environmentConfiguration.PfxPassword);
+                                               });
+                                       }
+                                   }
 
-                            kestrelServerOptions.Add(options);
-                        })
-                        .UseContentRoot(contentRoot)
-                        .ConfigureAppConfiguration((_, config) => config.AddEnvironmentVariables())
-                        .UseIISIntegration()
-                        .UseDefaultServiceProvider((context, options) => options.ValidateScopes = context.HostingEnvironment.IsDevelopment())
-                        .UseStartup<T>();
+                                   kestrelServerOptions.Add(options);
+                               }).UseContentRoot(contentRoot)
+                              .ConfigureAppConfiguration((_, config) => config.AddEnvironmentVariables())
+                              .UseIISIntegration()
+                              .UseDefaultServiceProvider((context, options) =>
+                                   options.ValidateScopes = context.HostingEnvironment.IsDevelopment()).UseStartup<T>();
 
-                    if (environmentConfiguration.EnvironmentName is {})
+                    if (environmentConfiguration.EnvironmentName is { })
                     {
                         webBuilder.UseEnvironment(environmentConfiguration.EnvironmentName);
                     }

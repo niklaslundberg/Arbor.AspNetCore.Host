@@ -14,16 +14,15 @@ namespace Arbor.AspNetCore.Host.Tests
 {
     public class MediatorRegistrationTests
     {
-        public MediatorRegistrationTests(ITestOutputHelper testOutputHelper) => _testOutputHelper = testOutputHelper;
-
         private readonly ITestOutputHelper _testOutputHelper;
+        public MediatorRegistrationTests(ITestOutputHelper testOutputHelper) => _testOutputHelper = testOutputHelper;
 
         [Fact]
         public async Task NotificationsAndRequestsShouldBeHandledOnlyOncePerConcreteType()
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddSingleton(Logger.None);
-            var assemblies = new List<Assembly> {GetType().Assembly};
+            var assemblies = new List<Assembly> { GetType().Assembly };
             MediatorRegistrationHelper.Register(serviceCollection, assemblies);
 
             var serviceProvider = serviceCollection.BuildServiceProvider();
@@ -56,9 +55,7 @@ namespace Arbor.AspNetCore.Host.Tests
                 _testOutputHelper.WriteLine($"Request: {request}");
             }
 
-            var ids = testHandler1.InvokedNotifications
-                .Select(n => n.Id)
-                .ToArray();
+            var ids = testHandler1.InvokedNotifications.Select(n => n.Id).ToArray();
 
             Assert.Equal(3, testHandler1.InvokedNotifications.Count);
             Assert.Equal(3, testHandler2.InvokedNotifications.Count);

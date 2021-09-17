@@ -13,12 +13,13 @@ namespace Arbor.AspNetCore.Host.Hosting
             var waitForStop = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
 
             applicationLifetime.ApplicationStopping.Register(obj =>
-            {
-                if (obj is TaskCompletionSource<object> tcs)
                 {
-                    tcs.TrySetResult(new object());
-                }
-            }, waitForStop);
+                    if (obj is TaskCompletionSource<object> tcs)
+                    {
+                        tcs.TrySetResult(new object());
+                    }
+                },
+                waitForStop);
 
             await waitForStop.Task.ConfigureAwait(false);
 

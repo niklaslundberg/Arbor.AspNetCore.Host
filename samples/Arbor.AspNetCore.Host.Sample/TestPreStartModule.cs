@@ -9,8 +9,8 @@ namespace Arbor.AspNetCore.Host.Sample
     [UsedImplicitly]
     public class TestPreStartModule : IPreStartModule
     {
-        private readonly ILogger _logger;
         private readonly IApplicationAssemblyResolver _applicationAssemblyResolver;
+        private readonly ILogger _logger;
 
         public TestPreStartModule(ILogger logger, IApplicationAssemblyResolver applicationAssemblyResolver)
         {
@@ -20,7 +20,8 @@ namespace Arbor.AspNetCore.Host.Sample
 
         public Task RunAsync(CancellationToken cancellationToken)
         {
-            _logger.Information("Assembly resolver is {AssemblyResolver}", _applicationAssemblyResolver.GetType().FullName);
+            _logger.Information("Assembly resolver is {AssemblyResolver}",
+                _applicationAssemblyResolver.GetType().FullName);
 
             return Task.CompletedTask;
         }

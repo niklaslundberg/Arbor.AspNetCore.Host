@@ -8,6 +8,11 @@ namespace Arbor.AspNetCore.Host.Tests
 {
     public class TestScheduledService : ScheduledService
     {
+        public TestScheduledService([NotNull] ISchedule schedule, [NotNull] IScheduler scheduler) : base(schedule,
+            scheduler)
+        {
+        }
+
         public int Invokations { get; private set; }
 
         protected override Task RunAsync(DateTimeOffset currentTime, CancellationToken stoppingToken)
@@ -15,10 +20,6 @@ namespace Arbor.AspNetCore.Host.Tests
             ++Invokations;
 
             return Task.CompletedTask;
-        }
-
-        public TestScheduledService([NotNull] ISchedule schedule, [NotNull] IScheduler scheduler) : base(schedule, scheduler)
-        {
         }
     }
 }

@@ -19,20 +19,23 @@ namespace Arbor.AspNetCore.Host.Tests
 {
     public class FilterTests
     {
-        public FilterTests(ITestOutputHelper outputHelper) => _outputHelper = outputHelper;
-
         private readonly ITestOutputHelper _outputHelper;
+        public FilterTests(ITestOutputHelper outputHelper) => _outputHelper = outputHelper;
 
         [Fact]
         public async Task WhenNoValidationClassAttributeStatusCodeShouldNotBeBadRequest()
         {
             using var cancellationTokenSource = new CancellationTokenSource();
 
-            object[] instances = {new TestDependency()};
+            object[] instances = { new TestDependency() };
 
             var assemblies = ApplicationAssemblies.FilteredAssemblies();
-            using var app = await App<TestStartup>.CreateAsync(cancellationTokenSource, Array.Empty<string>(),
-                new Dictionary<string, string>(), assemblies, instances);
+
+            using var app = await App<TestStartup>.CreateAsync(cancellationTokenSource,
+                Array.Empty<string>(),
+                new Dictionary<string, string>(),
+                assemblies,
+                instances);
 
             int startExitCode = await app.RunAsync();
 
@@ -42,7 +45,8 @@ namespace Arbor.AspNetCore.Host.Tests
 
             var httpClient = httpClientFactory.CreateClient();
 
-            var response = await httpClient.PostAsync($"http://localhost:{TestConfigureEnvironment.HttpPort}", new StringContent("{}", Encoding.UTF8, "application/json"));
+            var response = await httpClient.PostAsync($"http://localhost:{TestConfigureEnvironment.HttpPort}",
+                new StringContent("{}", Encoding.UTF8, "application/json"));
 
             await Task.Delay(1.Seconds());
 
@@ -60,11 +64,15 @@ namespace Arbor.AspNetCore.Host.Tests
         {
             using var cancellationTokenSource = new CancellationTokenSource();
 
-            object[] instances = {new TestDependency()};
+            object[] instances = { new TestDependency() };
 
             var assemblies = ApplicationAssemblies.FilteredAssemblies();
-            using var app = await App<TestStartup>.CreateAsync(cancellationTokenSource, Array.Empty<string>(),
-                new Dictionary<string, string>(), assemblies, instances);
+
+            using var app = await App<TestStartup>.CreateAsync(cancellationTokenSource,
+                Array.Empty<string>(),
+                new Dictionary<string, string>(),
+                assemblies,
+                instances);
 
             int startExitCode = await app.RunAsync();
 
@@ -74,7 +82,9 @@ namespace Arbor.AspNetCore.Host.Tests
 
             var httpClient = httpClientFactory.CreateClient();
 
-            var response = await httpClient.PostAsync("http://localhost:" + TestConfigureEnvironment.HttpPort + "/no-validation", new StringContent("{}", Encoding.UTF8, "application/json"));
+            var response = await httpClient.PostAsync(
+                "http://localhost:" + TestConfigureEnvironment.HttpPort + "/no-validation",
+                new StringContent("{}", Encoding.UTF8, "application/json"));
 
             await Task.Delay(1.Seconds());
 
@@ -92,11 +102,15 @@ namespace Arbor.AspNetCore.Host.Tests
         {
             using var cancellationTokenSource = new CancellationTokenSource();
 
-            object[] instances = {new TestDependency()};
+            object[] instances = { new TestDependency() };
 
             var assemblies = ApplicationAssemblies.FilteredAssemblies();
-            using var app = await App<TestStartup>.CreateAsync(cancellationTokenSource, Array.Empty<string>(),
-                new Dictionary<string, string>(), assemblies, instances);
+
+            using var app = await App<TestStartup>.CreateAsync(cancellationTokenSource,
+                Array.Empty<string>(),
+                new Dictionary<string, string>(),
+                assemblies,
+                instances);
 
             int startExitCode = await app.RunAsync();
 
@@ -106,7 +120,9 @@ namespace Arbor.AspNetCore.Host.Tests
 
             var httpClient = httpClientFactory.CreateClient();
 
-            var response = await httpClient.PostAsync("http://localhost:" + TestConfigureEnvironment.HttpPort + "/validation", new StringContent("{}", Encoding.UTF8, "application/json"));
+            var response = await httpClient.PostAsync(
+                "http://localhost:" + TestConfigureEnvironment.HttpPort + "/validation",
+                new StringContent("{}", Encoding.UTF8, "application/json"));
 
             await Task.Delay(1.Seconds());
 

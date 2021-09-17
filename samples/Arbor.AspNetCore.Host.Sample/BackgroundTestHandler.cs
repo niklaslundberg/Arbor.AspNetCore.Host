@@ -7,12 +7,11 @@ using Serilog;
 
 namespace Arbor.AspNetCore.Host.Sample
 {
-    public sealed class BackgroundTestHandler : BackgroundService,
-        INotificationHandler<TestNotificationA>,
+    public sealed class BackgroundTestHandler : BackgroundService, INotificationHandler<TestNotificationA>,
         INotificationHandler<TestNotificationB>
     {
-        private readonly ILogger _logger;
         private readonly Guid _id;
+        private readonly ILogger _logger;
 
         public BackgroundTestHandler(ILogger logger)
         {
@@ -23,15 +22,19 @@ namespace Arbor.AspNetCore.Host.Sample
 
         public Task Handle(TestNotificationA notification, CancellationToken cancellationToken)
         {
-            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(),
+            _logger.Information("Handler {Id} handling notification {NotificationId}",
+                ToString(),
                 notification.ToString());
+
             return Task.CompletedTask;
         }
 
         public Task Handle(TestNotificationB notification, CancellationToken cancellationToken)
         {
-            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(),
+            _logger.Information("Handler {Id} handling notification {NotificationId}",
+                ToString(),
                 notification.ToString());
+
             return Task.CompletedTask;
         }
 

@@ -31,11 +31,9 @@ namespace Arbor.AspNetCore.Host.Application
             string proxiesValue = _keyValueConfiguration[ApplicationConstants.ProxyAddresses].WithDefault("")!;
 
             var proxies = proxiesValue.Split(",", StringSplitOptions.RemoveEmptyEntries)
-                .Select(ipString =>
-                    (HasIp: IPAddress.TryParse(ipString, out var address), IpAddress: address))
-                .Where(address => address.HasIp)
-                .Select(address => address.IpAddress)
-                .ToImmutableArray();
+                                      .Select(ipString => (HasIp: IPAddress.TryParse(ipString, out var address),
+                                           IpAddress: address)).Where(address => address.HasIp)
+                                      .Select(address => address.IpAddress).ToImmutableArray();
 
             environmentConfiguration.ProxyAddresses.AddRange(proxies);
 

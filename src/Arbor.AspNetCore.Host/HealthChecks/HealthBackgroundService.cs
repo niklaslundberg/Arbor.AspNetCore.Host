@@ -13,7 +13,8 @@ namespace Arbor.AspNetCore.Host.HealthChecks
         private readonly HealthChecker? _healthChecker;
         private readonly StartupTaskContext? _startupTaskContext;
 
-        public HealthBackgroundService(HealthChecker? healthChecker = null, StartupTaskContext? startupTaskContext = null)
+        public HealthBackgroundService(HealthChecker? healthChecker = null,
+            StartupTaskContext? startupTaskContext = null)
         {
             _healthChecker = healthChecker;
             _startupTaskContext = startupTaskContext;

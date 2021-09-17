@@ -13,7 +13,7 @@ namespace Arbor.AspNetCore.Host.HealthChecks
         public IServiceCollection Register(IServiceCollection builder)
         {
             foreach (Type type in ApplicationAssemblies.FilteredAssemblies()
-                .GetLoadablePublicConcreteTypesImplementing<IHealthCheck>())
+                                                       .GetLoadablePublicConcreteTypesImplementing<IHealthCheck>())
             {
                 builder.AddSingleton(type, this);
             }

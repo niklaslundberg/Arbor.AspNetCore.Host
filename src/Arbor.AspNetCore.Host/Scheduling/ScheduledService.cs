@@ -16,13 +16,14 @@ namespace Arbor.AspNetCore.Host.Scheduling
 
         public ISchedule Schedule { get; }
 
-        public override string ToString() => Name;
-
         public IScheduler Scheduler { get; }
 
         public virtual string Name => GetType().Name;
 
-        private async Task Run(DateTimeOffset dateTimeOffset) => await RunAsync(dateTimeOffset, CancellationToken.None).ConfigureAwait(false);
+        public override string ToString() => Name;
+
+        private async Task Run(DateTimeOffset dateTimeOffset) =>
+            await RunAsync(dateTimeOffset, CancellationToken.None).ConfigureAwait(false);
 
         protected virtual Task RunAsync(DateTimeOffset currentTime, CancellationToken stoppingToken) =>
             Task.CompletedTask;

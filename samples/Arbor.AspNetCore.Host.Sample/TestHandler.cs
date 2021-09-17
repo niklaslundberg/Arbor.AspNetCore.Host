@@ -8,9 +8,7 @@ using Serilog;
 namespace Arbor.AspNetCore.Host.Sample
 {
     [UsedImplicitly]
-    public sealed class TestHandler :
-        INotificationHandler<TestNotificationA>,
-        INotificationHandler<TestNotificationB>,
+    public sealed class TestHandler : INotificationHandler<TestNotificationA>, INotificationHandler<TestNotificationB>,
         IRequestHandler<TestRequest, Unit>
     {
         private readonly Guid _id;
@@ -25,7 +23,8 @@ namespace Arbor.AspNetCore.Host.Sample
 
         public Task Handle(TestNotificationA notification, CancellationToken cancellationToken)
         {
-            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(),
+            _logger.Information("Handler {Id} handling notification {NotificationId}",
+                ToString(),
                 notification.ToString());
 
             return Task.CompletedTask;
@@ -33,7 +32,8 @@ namespace Arbor.AspNetCore.Host.Sample
 
         public Task Handle(TestNotificationB notification, CancellationToken cancellationToken)
         {
-            _logger.Information("Handler {Id} handling notification {NotificationId}", ToString(),
+            _logger.Information("Handler {Id} handling notification {NotificationId}",
+                ToString(),
                 notification.ToString());
 
             return Task.CompletedTask;
@@ -45,6 +45,7 @@ namespace Arbor.AspNetCore.Host.Sample
 
             return Task.FromResult(Unit.Value);
         }
+
         public override string ToString() => $"{base.ToString()} {_id}";
     }
 }

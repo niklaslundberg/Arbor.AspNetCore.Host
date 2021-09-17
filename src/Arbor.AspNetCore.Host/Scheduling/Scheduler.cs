@@ -11,16 +11,18 @@ namespace Arbor.AspNetCore.Host.Scheduling
 {
     public sealed class Scheduler : IScheduler, IDisposable
     {
-        private readonly ICustomClock _clock;
-        private readonly ConcurrentDictionary<ISchedule, OnTickAsync> _schedules = new();
-        private readonly ConcurrentDictionary<ISchedule, DateTimeOffset?> _lastRun = new();
-        private readonly object _tickLock = new();
         private readonly CancellationTokenSource _cancellationTokenSource;
+        private readonly ICustomClock _clock;
+        private readonly ConcurrentDictionary<ISchedule, DateTimeOffset?> _lastRun = new();
+        private readonly ILogger _logger;
+
+        private readonly ManualResetEventSlim _resetEvent = new(false);
+        private readonly ConcurrentDictionary<ISchedule, OnTickAsync> _schedules = new();
+        private readonly object _tickLock = new();
+        private readonly ITimer? _timer;
         private bool _isDisposed;
         private bool _isDisposing;
         private bool _isRunning;
-        private readonly ITimer? _timer;
-        private readonly ILogger _logger;
 
         public Scheduler(ICustomClock clock, ITimer timer, ILogger logger)
         {
@@ -73,8 +75,6 @@ namespace Arbor.AspNetCore.Host.Scheduling
                 throw new ObjectDisposedException(GetType().Name);
             }
         }
-
-        private readonly ManualResetEventSlim _resetEvent = new(false);
 
         private Task OnTickInternal(DateTimeOffset currentTime)
         {

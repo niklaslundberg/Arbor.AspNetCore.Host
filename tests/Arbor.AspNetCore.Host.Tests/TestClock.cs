@@ -5,8 +5,8 @@ namespace Arbor.AspNetCore.Host.Tests
 {
     public class TestClock : ICustomClock
     {
-        private DateTimeOffset _dateTimeOffset;
         private readonly TimeSpan _tickDuration;
+        private DateTimeOffset _dateTimeOffset;
 
         public TestClock(DateTimeOffset dateTimeOffset, TimeSpan tickDuration)
         {
@@ -24,6 +24,7 @@ namespace Arbor.AspNetCore.Host.Tests
         public DateTime LocalNow() => throw new NotSupportedException();
 
         public DateTime ToLocalTime(DateTime dateTimeUtc) => throw new NotSupportedException();
+
         public TimeZoneInfo DefaultTimeZone { get; } = TimeZoneInfo.Utc;
     }
 }

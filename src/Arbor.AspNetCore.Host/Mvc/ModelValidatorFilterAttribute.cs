@@ -20,7 +20,8 @@ namespace Arbor.AspNetCore.Host.Mvc
 
         public override void OnActionExecuted(ActionExecutedContext context)
         {
-            if (context.HttpContext.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase) && context.Result is null)
+            if (context.HttpContext.Request.Method.Equals("GET", StringComparison.OrdinalIgnoreCase) &&
+                context.Result is null)
             {
                 context.Result = new NotFoundResult();
                 return;

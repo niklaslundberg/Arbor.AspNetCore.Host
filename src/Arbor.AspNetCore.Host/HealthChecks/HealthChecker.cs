@@ -16,8 +16,7 @@ namespace Arbor.AspNetCore.Host.HealthChecks
         private readonly ILogger _logger;
         private readonly TimeoutHelper _timeoutHelper;
 
-        public HealthChecker(
-            [NotNull] IEnumerable<IHealthCheck> healthChecks,
+        public HealthChecker([NotNull] IEnumerable<IHealthCheck> healthChecks,
             [NotNull] ILogger logger,
             TimeoutHelper timeoutHelper)
         {
@@ -43,8 +42,8 @@ namespace Arbor.AspNetCore.Host.HealthChecks
                     using CancellationTokenSource cts =
                         _timeoutHelper.CreateCancellationTokenSource(
                             TimeSpan.FromSeconds(healthCheck.TimeoutInSeconds));
-                    using var combined =
-                        CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, cts.Token);
+
+                    using var combined = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken, cts.Token);
                     _logger.Debug("Making health check with {Check}", healthCheck.Description);
                     await healthCheck.CheckHealthAsync(combined.Token);
                 }

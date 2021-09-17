@@ -25,8 +25,7 @@ namespace Arbor.AspNetCore.Host
 
                 if (currentProcess.MainModule is null)
                 {
-                    throw new InvalidOperationException(
-                        "The main module for the current process could not be found");
+                    throw new InvalidOperationException("The main module for the current process could not be found");
                 }
 
                 return currentProcess.StartInfo.ArgumentList.Contains(ApplicationConstants.RunAsService,

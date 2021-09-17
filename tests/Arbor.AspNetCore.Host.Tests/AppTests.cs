@@ -13,18 +13,20 @@ namespace Arbor.AspNetCore.Host.Tests
 {
     public class AppTests
     {
-        public AppTests(ITestOutputHelper outputHelper) => _outputHelper = outputHelper;
-
         private readonly ITestOutputHelper _outputHelper;
+        public AppTests(ITestOutputHelper outputHelper) => _outputHelper = outputHelper;
 
         [Fact]
         public async Task RunAppShouldReturnExitCode0()
         {
             using var cancellationTokenSource = new CancellationTokenSource();
 
-            object[] instances = {new TestDependency() };
-            var appTask = Task.Run(() => AppStarter<TestStartup>.StartAsync(
-                Array.Empty<string>(), new Dictionary<string, string>(), cancellationTokenSource, instances: instances));
+            object[] instances = { new TestDependency() };
+
+            var appTask = Task.Run(() => AppStarter<TestStartup>.StartAsync(Array.Empty<string>(),
+                new Dictionary<string, string>(),
+                cancellationTokenSource,
+                instances: instances));
 
             await Task.Delay(1.Seconds());
             cancellationTokenSource.Cancel();
@@ -35,7 +37,7 @@ namespace Arbor.AspNetCore.Host.Tests
 
             TempLogger.FlushWith(logger);
 
-            appExitCode.Should().Be(expected: 0);
+            appExitCode.Should().Be(0);
         }
     }
 }

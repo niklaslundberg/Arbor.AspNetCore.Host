@@ -7,11 +7,11 @@ namespace Arbor.AspNetCore.Host.Tests
     {
         private readonly DateTimeOffset _dateTimeOffset;
 
+        private readonly object _lockObject = new();
+
         private bool _fired;
 
         private int _invokedCount;
-
-        private readonly object _lockObject = new ();
 
         public ScheduleOnce(DateTimeOffset dateTimeOffset) => _dateTimeOffset = dateTimeOffset;
 
@@ -47,10 +47,8 @@ namespace Arbor.AspNetCore.Host.Tests
                     return _dateTimeOffset;
                 }
             }
-            else
-            {
-                Console.WriteLine($"{nameof(ScheduleOnce)} not yet ready {_invokedCount}");
-            }
+
+            Console.WriteLine($"{nameof(ScheduleOnce)} not yet ready {_invokedCount}");
 
             return _dateTimeOffset;
         }

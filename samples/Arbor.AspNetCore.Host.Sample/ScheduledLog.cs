@@ -12,7 +12,11 @@ namespace Arbor.AspNetCore.Host.Sample
     {
         private readonly ILogger _logger;
 
-        public ScheduledLog([NotNull] IScheduler scheduler, ILogger logger) : base(new CronSchedule(CronExpression.Parse("* * * * * *", CronFormat.IncludeSeconds)), scheduler) => _logger = logger;
+        public ScheduledLog([NotNull] IScheduler scheduler, ILogger logger) : base(
+            new CronSchedule(CronExpression.Parse("* * * * * *", CronFormat.IncludeSeconds)),
+            scheduler) => _logger = logger;
+
+        public override string Name { get; } = "My custom scheduled service";
 
         protected override Task RunAsync(DateTimeOffset currentTime, CancellationToken stoppingToken)
         {
@@ -20,6 +24,5 @@ namespace Arbor.AspNetCore.Host.Sample
 
             return Task.CompletedTask;
         }
-        public override string Name { get; } = "My custom scheduled service";
     }
 }
