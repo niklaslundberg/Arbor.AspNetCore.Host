@@ -11,7 +11,7 @@ namespace Arbor.AspNetCore.Host.Hosting
     {
         private readonly IHostBuilder _webHostBuilderImplementation;
 
-        public HostBuilderWrapper([NotNull] IHostBuilder webHostBuilder) => _webHostBuilderImplementation =
+        public HostBuilderWrapper(IHostBuilder webHostBuilder) => _webHostBuilderImplementation =
             webHostBuilder ?? throw new ArgumentNullException(nameof(webHostBuilder));
 
         public IHost Build()

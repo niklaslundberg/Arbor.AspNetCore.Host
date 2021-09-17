@@ -13,8 +13,8 @@ namespace Arbor.AspNetCore.Host.Messaging
 {
     public static class MediatorRegistrationHelper
     {
-        public static IServiceCollection Register([NotNull] IServiceCollection builder,
-            [NotNull] IReadOnlyCollection<Assembly> assemblies,
+        public static IServiceCollection Register(IServiceCollection builder,
+            IReadOnlyCollection<Assembly> assemblies,
             IModule? module = null)
         {
             if (builder is null)

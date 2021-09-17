@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Arbor.KVConfiguration.Core;
+using JetBrains.Annotations;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -13,6 +14,7 @@ namespace Arbor.AspNetCore.Host.Sample
 
         public TestMiddleware(RequestDelegate next) => _next = next;
 
+        [UsedImplicitly]
         public async Task InvokeAsync(HttpContext context)
         {
             var logger = context.RequestServices.GetRequiredService<ILogger>();

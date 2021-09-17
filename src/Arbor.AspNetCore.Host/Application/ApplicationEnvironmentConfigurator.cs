@@ -17,11 +17,11 @@ namespace Arbor.AspNetCore.Host.Application
     {
         private readonly IKeyValueConfiguration _keyValueConfiguration;
 
-        public ApplicationEnvironmentConfigurator([NotNull] IKeyValueConfiguration keyValueConfiguration) =>
+        public ApplicationEnvironmentConfigurator(IKeyValueConfiguration keyValueConfiguration) =>
             _keyValueConfiguration =
                 keyValueConfiguration ?? throw new ArgumentNullException(nameof(keyValueConfiguration));
 
-        public void Configure([NotNull] EnvironmentConfiguration environmentConfiguration)
+        public void Configure(EnvironmentConfiguration environmentConfiguration)
         {
             if (environmentConfiguration is null)
             {

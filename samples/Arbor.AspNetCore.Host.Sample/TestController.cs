@@ -35,7 +35,7 @@ namespace Arbor.AspNetCore.Host.Sample
         public async Task<IActionResult> Notify([FromServices] IMediator mediator,
             [FromServices] UsingBackgroundService usingBackgroundService)
         {
-            usingBackgroundService.CallOnBackgrounService();
+            usingBackgroundService.CallOnBackgroundService();
 
             await mediator.Publish(new TestNotificationA(Guid.NewGuid()));
 

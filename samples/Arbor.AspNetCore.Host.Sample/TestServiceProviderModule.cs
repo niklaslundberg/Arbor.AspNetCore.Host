@@ -4,11 +4,13 @@ using System.Linq;
 using System.Reflection;
 using Arbor.AspNetCore.Host.Hosting;
 using Arbor.AspNetCore.Host.Mvc;
+using JetBrains.Annotations;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 
 namespace Arbor.AspNetCore.Host.Sample
 {
+    [UsedImplicitly]
     public class TestServiceProviderModule : IServiceProviderModule
     {
         public void Register(ServiceProviderHolder serviceProviderHolder)

@@ -6,8 +6,8 @@ namespace Arbor.AspNetCore.Host.Hosting
 {
     public class ServiceProviderHolder
     {
-        public ServiceProviderHolder([NotNull] IServiceProvider serviceProvider,
-            [NotNull] IServiceCollection serviceCollection)
+        public ServiceProviderHolder(IServiceProvider serviceProvider,
+            IServiceCollection serviceCollection)
         {
             ServiceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
             ServiceCollection = serviceCollection ?? throw new ArgumentNullException(nameof(serviceCollection));

@@ -10,7 +10,7 @@ namespace Arbor.AspNetCore.Host.Hosting
     {
         private readonly IHost _webHostImplementation;
 
-        public HostWrapper([NotNull] IHost webHost) =>
+        public HostWrapper(IHost webHost) =>
             _webHostImplementation = webHost ?? throw new ArgumentNullException(nameof(webHost));
 
         public void Dispose() => _webHostImplementation.Dispose();

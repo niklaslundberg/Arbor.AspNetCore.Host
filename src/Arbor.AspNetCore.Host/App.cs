@@ -34,9 +34,9 @@ namespace Arbor.AspNetCore.Host
         private bool _disposed;
         private bool _disposing;
 
-        public App([NotNull] IHostBuilder hostBuilder,
-            [NotNull] CancellationTokenSource cancellationTokenSource,
-            [NotNull] ILogger appLogger,
+        public App(IHostBuilder hostBuilder,
+            CancellationTokenSource cancellationTokenSource,
+            ILogger appLogger,
             MultiSourceKeyValueConfiguration configuration,
             IReadOnlyCollection<Assembly> scanAssemblies,
             ConfigurationInstanceHolder configurationInstanceHolder)
@@ -451,7 +451,7 @@ namespace Arbor.AspNetCore.Host
         }
 
         public static Task<App<T>> CreateAsync(CancellationTokenSource cancellationTokenSource,
-            [NotNull] string[] args,
+            string[] args,
             IReadOnlyDictionary<string, string> environmentVariables,
             IReadOnlyCollection<Assembly> scanAssemblies,
             params object[] instances)
@@ -503,7 +503,7 @@ namespace Arbor.AspNetCore.Host
             }
         }
 
-        public Task<int> RunAsync([NotNull] params string[] args)
+        public Task<int> RunAsync(params string[] args)
         {
             if (args is null)
             {
@@ -513,7 +513,7 @@ namespace Arbor.AspNetCore.Host
             return InternalRunAsync(args);
         }
 
-        private async Task<int> InternalRunAsync([NotNull] params string[] args)
+        private async Task<int> InternalRunAsync(params string[] args)
         {
             bool runAsService = args.Any(arg =>
                 arg.Equals(ApplicationConstants.RunAsService, StringComparison.OrdinalIgnoreCase));

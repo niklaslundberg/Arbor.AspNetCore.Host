@@ -21,11 +21,11 @@ namespace Arbor.AspNetCore.Host.Hosting
 {
     public static class CustomHostBuilder<T> where T : class
     {
-        public static IHostBuilder GetHostBuilder([NotNull] EnvironmentConfiguration environmentConfiguration,
-            [NotNull] IKeyValueConfiguration configuration,
-            [NotNull] ServiceProviderHolder serviceProviderHolder,
-            [NotNull] ILogger logger,
-            [NotNull] string[] commandLineArgs,
+        public static IHostBuilder GetHostBuilder(EnvironmentConfiguration environmentConfiguration,
+            IKeyValueConfiguration configuration,
+            ServiceProviderHolder serviceProviderHolder,
+            ILogger logger,
+            string[] commandLineArgs,
             Action<IServiceCollection>? onRegistration = null)
         {
             if (environmentConfiguration == null)

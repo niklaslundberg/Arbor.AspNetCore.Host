@@ -8,6 +8,7 @@ using Serilog;
 
 namespace Arbor.AspNetCore.Host.Sample
 {
+    [UsedImplicitly]
     public class ScheduledLog : ScheduledService
     {
         private readonly ILogger _logger;

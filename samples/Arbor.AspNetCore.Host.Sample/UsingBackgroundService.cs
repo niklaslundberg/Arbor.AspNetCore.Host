@@ -15,8 +15,8 @@ namespace Arbor.AspNetCore.Host.Sample
             logger.Information("Created using test handler {Id}", ToString());
         }
 
-        public override string ToString() => base.ToString() + " " + _id;
+        public override string ToString() => $"{base.ToString()} {_id}";
 
-        public void CallOnBackgrounService() => _backgroundTestHandler.Test();
+        public void CallOnBackgroundService() => _backgroundTestHandler.Test();
     }
 }

@@ -16,8 +16,8 @@ namespace Arbor.AspNetCore.Host.HealthChecks
         private readonly ILogger _logger;
         private readonly TimeoutHelper _timeoutHelper;
 
-        public HealthChecker([NotNull] IEnumerable<IHealthCheck> healthChecks,
-            [NotNull] ILogger logger,
+        public HealthChecker(IEnumerable<IHealthCheck> healthChecks,
+            ILogger logger,
             TimeoutHelper timeoutHelper)
         {
             _healthChecks = healthChecks.SafeToImmutableArray();

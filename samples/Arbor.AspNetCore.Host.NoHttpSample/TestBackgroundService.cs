@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace Arbor.AspNetCore.Host.NoHttpSample
 {
+    [UsedImplicitly]
     public class TestBackgroundService : BackgroundService
     {
         private readonly ILogger _logger;

@@ -13,7 +13,7 @@ namespace Arbor.AspNetCore.Host.Logging
         private readonly ILogger _logger;
         private readonly RequestDelegate _next;
 
-        public VerboseLoggingMiddleware([NotNull] ILogger logger, RequestDelegate next)
+        public VerboseLoggingMiddleware(ILogger logger, RequestDelegate next)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _next = next;
